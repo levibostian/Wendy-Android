@@ -20,6 +20,7 @@ import com.curiosityio.wendy.R
 import com.curiosityio.wendy.config.WendyConfig
 import com.curiosityio.wendy.error.*
 import com.curiosityio.wendy.manager.PendingApiTasksManager
+import com.curiosityio.wendy.model.OfflineCapableModel
 import com.curiosityio.wendy.model.PendingApiTask
 import com.curiosityio.wendy.vo.ErrorResponseVo
 import io.realm.Realm
@@ -140,6 +141,7 @@ open class PendingApiTasksRunner(val context: Context) {
 
                 executeApiCall(apiCall!!, pendingApiTaskController.getApiErrorVo()).subscribe({ response ->
                     RealmInstanceManager.getInstance().executeTransaction { realm ->
+                        (response as? OfflineCapableModel)?.setRealmIdToApiId()
                         pendingApiTaskController.processApiResponse(realm, response)
 
                         val managedModelPendingApiTaskRepresents = pendingApiTaskController.getModelPendingApiTaskRepresents(realm)
