@@ -1,3 +1,4 @@
 <resources>
     <string name="preferences_current_api_sync_task_created_at">preferences_current_api_sync_task_created_at</string>
+    <string name="preferences_last_used_temp_model_id">preferences_last_used_temp_model_id</string>
 </resources>

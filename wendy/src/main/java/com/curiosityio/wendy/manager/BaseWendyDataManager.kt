@@ -1,8 +1,10 @@
 package com.curiosityio.wendy.manager
 
 import android.content.Context
+import com.curiosityio.androidboilerplate.manager.SharedPreferencesManager
 import com.curiosityio.androidboilerplate.util.ThreadUtil
 import com.curiosityio.androidrealm.extensions.findFirstOrNull
+import com.curiosityio.wendy.R
 import com.curiosityio.wendy.model.OfflineCapableModel
 import com.curiosityio.wendy.model.PendingApiModelInterface
 import com.curiosityio.wendy.model.PendingApiTask
@@ -11,7 +13,7 @@ import io.realm.RealmObject
 import rx.Completable
 import rx.schedulers.Schedulers
 
-abstract class BaseWendyDataManager {
+abstract class BaseWendyDataManager(val context: Context) {
 
     @Throws(RuntimeException::class)
     protected fun performRealmTransaction(changeData: Realm.Transaction, realm: Realm = Realm.getDefaultInstance()) {
@@ -35,16 +37,26 @@ abstract class BaseWendyDataManager {
         }.subscribeOn(Schedulers.io())
     }
 
+    fun getNextAvailableTempModelId(): Long {
+        val lastUsedId = SharedPreferencesManager.getLong(context, context.getString(R.string.preferences_last_used_temp_model_id), Long.MAX_VALUE)
+
+        val nextAvailableTempModelId = lastUsedId - 1
+
+        if (SharedPreferencesManager.edit(context).setLong(context.getString(R.string.preferences_last_used_temp_model_id), nextAvailableTempModelId).commit()) {
+            return nextAvailableTempModelId
+        } else {
+            throw RuntimeException("Error saving to device.")
+        }
+    }
+
     // surround these create, update, delete undodelete calls in `performRealmTransactionCompletable()`.
-    protected fun <MODEL, PENDING_API_TASK_MODEL> createData(realm: Realm, data: MODEL, makeAdditionalRealmChanges: (Realm, MODEL) -> Unit, pendingApiTask: PENDING_API_TASK_MODEL? = null) where MODEL: RealmObject, MODEL: PendingApiModelInterface, MODEL: OfflineCapableModel, PENDING_API_TASK_MODEL: RealmObject, PENDING_API_TASK_MODEL: PendingApiTask<Any> {
+    protected fun <MODEL, PENDING_API_TASK_MODEL> createData(realm: Realm, data: MODEL, makeAdditionalRealmChanges: (Realm, MODEL) -> Unit, pendingApiTask: PENDING_API_TASK_MODEL) where MODEL: RealmObject, MODEL: PendingApiModelInterface, MODEL: OfflineCapableModel, PENDING_API_TASK_MODEL: RealmObject, PENDING_API_TASK_MODEL: PendingApiTask<Any> {
         val managedData = realm.copyToRealmOrUpdate(data)
 
         makeAdditionalRealmChanges(realm, managedData)
 
-        pendingApiTask?.let {
-            realm.copyToRealm(it)
-            managedData.number_pending_api_syncs += 1
-        }
+        realm.copyToRealm(pendingApiTask)
+        managedData.number_pending_api_syncs += 1
     }
 
     // in future, make the pendingApiTask have have an interface for updating. We want to make sure that
