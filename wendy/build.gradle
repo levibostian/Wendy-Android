@@ -1,0 +1,52 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.0"
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 25
+        versionCode 1
+        versionName "0.1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    testCompile 'junit:junit:4.12'
+
+    def retrofitVersion = '2.1.0'
+    compile "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    compile "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    compile "com.squareup.retrofit2:converter-scalars:$retrofitVersion"
+    compile("com.squareup.retrofit2:adapter-rxjava:$retrofitVersion") {
+        exclude group: 'io.reactivex', module: 'rxjava'
+    }
+
+    def androidRealmVersion = '3f7d127e23'
+    compile "com.github.curiosityio.AndroidRealm:android-realm-core:$androidRealmVersion"
+    compile "com.github.curiosityio.AndroidRealm:android-realm-core-rx:$androidRealmVersion"
+
+    compile 'com.github.curiosityio:AndroidRx:6600816a13'
+
+    compile 'com.github.curiosityio:AndroidBoilerplate:0f3af4a76b'
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
+repositories {
+    mavenCentral()
+}
