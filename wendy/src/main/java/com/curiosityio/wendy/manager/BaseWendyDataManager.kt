@@ -50,7 +50,7 @@ abstract class BaseWendyDataManager(val context: Context) {
     }
 
     // surround these create, update, delete undodelete calls in `performRealmTransactionCompletable()`.
-    protected fun <MODEL, PENDING_API_TASK_MODEL> createData(realm: Realm, data: MODEL, makeAdditionalRealmChanges: (Realm, MODEL) -> Unit, pendingApiTask: PENDING_API_TASK_MODEL) where MODEL: RealmObject, MODEL: PendingApiModelInterface, MODEL: OfflineCapableModel, PENDING_API_TASK_MODEL: RealmObject, PENDING_API_TASK_MODEL: PendingApiTask<Any> {
+    protected fun <MODEL, PENDING_API_TASK_MODEL> createData(realm: Realm, data: MODEL, makeAdditionalRealmChanges: (Realm, MODEL) -> Unit, pendingApiTask: PENDING_API_TASK_MODEL) where MODEL: RealmObject, MODEL: PendingApiModelInterface, MODEL: OfflineCapableModel, PENDING_API_TASK_MODEL: RealmObject, PENDING_API_TASK_MODEL: PendingApiTask<out Any> {
         val managedData = realm.copyToRealmOrUpdate(data)
 
         makeAdditionalRealmChanges(realm, managedData)
@@ -61,12 +61,11 @@ abstract class BaseWendyDataManager(val context: Context) {
 
     // in future, make the pendingApiTask have have an interface for updating. We want to make sure that
     // only create, update, delete pending API models are calling the appropriate methods.
-    protected fun <MODEL> updateData(realm: Realm, modelClass: Class<MODEL>, realmId: Int, updateValues: (MODEL) -> Unit, pendingApiTask: RealmObject) where MODEL: RealmObject, MODEL: PendingApiModelInterface {
+    protected fun <MODEL, PENDING_API_TASK_MODEL> updateData(realm: Realm, modelClass: Class<MODEL>, realmId: Int, updateValues: (MODEL) -> Unit, pendingApiTask: PENDING_API_TASK_MODEL) where MODEL: RealmObject, MODEL: PendingApiModelInterface, PENDING_API_TASK_MODEL: RealmObject, PENDING_API_TASK_MODEL: PendingApiTask<out Any> {
         val modelToUpdateValues = realm.where(modelClass).equalTo("realm_id", realmId).findFirstOrNull() ?: throw RuntimeException(modelClass.simpleName + " model to update is null. Cannot find it in Realm.")
 
         updateValues(modelToUpdateValues)
 
-        pendingApiTask as PendingApiTask<Any>
         val existingPendingApiTask = pendingApiTask.buildQueryForExistingTask(realm.where(pendingApiTask.javaClass as Class<RealmObject>)).findFirstOrNull()
         if (existingPendingApiTask == null) {
             modelToUpdateValues.number_pending_api_syncs += 1
@@ -74,15 +73,13 @@ abstract class BaseWendyDataManager(val context: Context) {
         realm.copyToRealmOrUpdate(pendingApiTask) // updates created_at value which tells pending API task runner to run *another* update on the model.
     }
 
-    protected fun <MODEL> deleteData(realm: Realm, modelClass: Class<MODEL>, realmId: Int, updateValues: (MODEL) -> Unit, pendingApiTask: RealmObject? = null) where MODEL: RealmObject, MODEL: PendingApiModelInterface {
+    protected fun <MODEL, PENDING_API_TASK_MODEL> deleteData(realm: Realm, modelClass: Class<MODEL>, realmId: Int, updateValues: (MODEL) -> Unit, pendingApiTask: PENDING_API_TASK_MODEL? = null) where MODEL: RealmObject, MODEL: PendingApiModelInterface, PENDING_API_TASK_MODEL: RealmObject, PENDING_API_TASK_MODEL: PendingApiTask<out Any> {
         val modelToUpdateValues = realm.where(modelClass).equalTo("realm_id", realmId).findFirstOrNull() ?: throw RuntimeException(modelClass.simpleName + " model to update is null. Cannot find it in Realm.")
 
         modelToUpdateValues.deleted = true
         updateValues(modelToUpdateValues)
 
         pendingApiTask?.let { pendingApiTask ->
-            pendingApiTask as PendingApiTask<Any>
-
             val existingPendingApiTask = pendingApiTask.buildQueryForExistingTask(realm.where(pendingApiTask.javaClass as Class<RealmObject>)).findFirstOrNull()
             if (existingPendingApiTask == null) {
                 modelToUpdateValues.number_pending_api_syncs += 1

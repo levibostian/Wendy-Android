@@ -21,7 +21,7 @@ interface PendingApiTask<RESPONSE: Any> {
 
     fun getApiCall(realm: Realm): Observable<Response<RESPONSE>>
 
-    fun getApiErrorVo(): Class<ErrorResponseVo>
+    fun getApiErrorVo(): Class<out ErrorResponseVo>
 
     fun processApiResponse(realm: Realm, response: RESPONSE)
 
