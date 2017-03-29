@@ -17,7 +17,7 @@ interface PendingApiTask<RESPONSE: Any> {
 
     var created_at: Date
 
-    fun getModelPendingApiTaskRepresents(realm: Realm): PendingApiModelInterface
+    fun getOfflineModelTaskRepresents(realm: Realm): OfflineCapableModel
 
     fun getApiCall(realm: Realm): Observable<Response<RESPONSE>>
 
