@@ -7,9 +7,9 @@ import java.util.*
 class PendingApiTasksManager {
 
     companion object {
-        var registeredPendingApiTasks: ArrayList<Class<PendingApiTask<Any>>> = ArrayList()
+        var registeredPendingApiTasks: ArrayList<Class<out PendingApiTask<out Any>>> = ArrayList()
 
-        fun registerPendingApiTasks(vararg pendingApiTaskClasses: Class<PendingApiTask<Any>>) {
+        fun registerPendingApiTasks(vararg pendingApiTaskClasses: Class<out PendingApiTask<out Any>>) {
             registeredPendingApiTasks.addAll(pendingApiTaskClasses)
         }
     }

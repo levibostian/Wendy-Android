@@ -21,6 +21,7 @@ import com.curiosityio.wendy.config.WendyConfig
 import com.curiosityio.wendy.error.*
 import com.curiosityio.wendy.manager.PendingApiTasksManager
 import com.curiosityio.wendy.model.OfflineCapableModel
+import com.curiosityio.wendy.model.PendingApiModelInterfaceStatus
 import com.curiosityio.wendy.model.PendingApiTask
 import com.curiosityio.wendy.service.ApiNetworkingService
 import com.curiosityio.wendy.vo.ErrorResponseVo
@@ -131,42 +132,43 @@ open class PendingApiTasksRunner(val context: Context) {
 
             var apiCall: Observable<Response<Any>>? = null
             RealmInstanceManager.getInstance().executeTransaction { realm ->
-                pendingApiTaskController.getModelPendingApiTaskRepresents(realm).api_sync_in_progress = true
+                val modelForTask = pendingApiTaskController.getOfflineModelTaskRepresents(realm)
+                modelForTask.api_sync_in_progress = true
+                modelForTask.statusUpdate(pendingApiTaskController, PendingApiModelInterfaceStatus.RUNNING)
 
                 apiCall = pendingApiTaskController.getApiCall(realm)
             }
 
-            if (apiCall != null) {
-                // We save this to compare later on. If created_at times dont line up, then the model has been edited since API call triggered.
-                SharedPreferencesManager.edit(context).setLong(context.getString(R.string.preferences_current_api_sync_task_created_at), pendingApiTaskController.created_at.time).commit()
+            // We save this to compare later on. If created_at times dont line up, then the model has been edited since API call triggered.
+            SharedPreferencesManager.edit(context).setLong(context.getString(R.string.preferences_current_api_sync_task_created_at), pendingApiTaskController.created_at.time).commit()
 
-                ApiNetworkingService.executeApiCall(context, apiCall!!, pendingApiTaskController.getApiErrorVo()).subscribe({ response ->
-                    RealmInstanceManager.getInstance().executeTransaction { realm ->
-                        (response as? OfflineCapableModel)?.setRealmIdToApiId()
-                        pendingApiTaskController.processApiResponse(realm, response)
+            ApiNetworkingService.executeApiCall(context, apiCall!!, pendingApiTaskController.getApiErrorVo()).subscribe({ response ->
+                RealmInstanceManager.getInstance().executeTransaction { realm ->
+                    (response as? OfflineCapableModel)?.setRealmIdToApiId()
+                    pendingApiTaskController.processApiResponse(realm, response)
 
-                        val managedModelPendingApiTaskRepresents = pendingApiTaskController.getModelPendingApiTaskRepresents(realm)
-                        managedModelPendingApiTaskRepresents.api_sync_in_progress = false
+                    val managedModelPendingApiTaskRepresents = pendingApiTaskController.getOfflineModelTaskRepresents(realm)
+                    managedModelPendingApiTaskRepresents.api_sync_in_progress = false
+                    managedModelPendingApiTaskRepresents.statusUpdate(pendingApiTaskController, PendingApiModelInterfaceStatus.SUCCESS)
 
-                        // If created_at times before and after API call are the same, the model has not been updated by user action and we can safely delete this task and not run again. (update tasks can update during API call)
-                        val managedOriginalPendingApiTask: PendingApiTask<Any> = pendingApiTaskController.buildQueryForExistingTask(realm.where(pendingApiTaskController.javaClass as Class<RealmObject>)).findFirstOrNull()!! as PendingApiTask<Any>
-                        if (SharedPreferencesManager.getLong(context, context.getString(R.string.preferences_current_api_sync_task_created_at)) == managedOriginalPendingApiTask.created_at.time) {
-                            (managedOriginalPendingApiTask as RealmObject).deleteFromRealm()
-                            managedModelPendingApiTaskRepresents.number_pending_api_syncs -= 1
-                        }
+                    // If created_at times before and after API call are the same, the model has not been updated by user action and we can safely delete this task and not run again. (update tasks can update during API call)
+                    val managedOriginalPendingApiTask: PendingApiTask<Any> = pendingApiTaskController.buildQueryForExistingTask(realm.where(pendingApiTaskController.javaClass as Class<RealmObject>)).findFirstOrNull()!! as PendingApiTask<Any>
+                    if (SharedPreferencesManager.getLong(context, context.getString(R.string.preferences_current_api_sync_task_created_at)) == managedOriginalPendingApiTask.created_at.time) {
+                        (managedOriginalPendingApiTask as RealmObject).deleteFromRealm()
+                        managedModelPendingApiTaskRepresents.number_pending_api_syncs -= 1
                     }
+                }
 
-                    subscriber.onCompleted()
-                }, { error ->
-                    RealmInstanceManager.getInstance().executeTransaction { realm ->
-                        pendingApiTaskController.getModelPendingApiTaskRepresents(realm).api_sync_in_progress = false
-                    }
-
-                    subscriber.onError(error)
-                })
-            } else {
                 subscriber.onCompleted()
-            }
+            }, { error ->
+                RealmInstanceManager.getInstance().executeTransaction { realm ->
+                    val modelForTask = pendingApiTaskController.getOfflineModelTaskRepresents(realm)
+                    modelForTask.api_sync_in_progress = false
+                    modelForTask.statusUpdate(pendingApiTaskController, PendingApiModelInterfaceStatus.ERROR, error)
+                }
+
+                subscriber.onError(error)
+            })
         }
     }
 
