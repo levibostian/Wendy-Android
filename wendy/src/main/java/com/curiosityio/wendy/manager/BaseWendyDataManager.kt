@@ -15,7 +15,7 @@ import rx.schedulers.Schedulers
 
 abstract class BaseWendyDataManager(val context: Context) {
 
-    private lateinit var uiRealm: Realm
+    lateinit var uiRealm: Realm
 
     @Throws(RuntimeException::class)
     protected fun performRealmTransaction(changeData: Realm.Transaction, tempRealmInstance: Boolean = false) {
