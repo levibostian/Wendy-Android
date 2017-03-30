@@ -15,14 +15,7 @@ import rx.schedulers.Schedulers
 
 abstract class BaseWendyDataManager(val context: Context) {
 
-    var uiRealm: Realm?
-        get() {
-            if (uiRealm == null) throw RuntimeException("You did not initialize uiRealm in your data manager.")
-            else return uiRealm
-        }
-        set(value) {
-            uiRealm = value
-        }
+    private lateinit var uiRealm: Realm
 
     @Throws(RuntimeException::class)
     protected fun performRealmTransaction(changeData: Realm.Transaction, tempRealmInstance: Boolean = false) {
