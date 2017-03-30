@@ -40,19 +40,33 @@ import rx.Observable
 import rx.subjects.BehaviorSubject
 import java.util.concurrent.TimeUnit
 
-open class PendingApiTasksRunner(val context: Context) {
+object PendingApiTasksRunner {
 
     var lastFailedApiTaskCreatedAtTime: Date? = null // when an API task fails because of an API error (user error from API), we keep track of that created time to allow us to skip this parent and move onto the next group of tasks.
 
+    private lateinit var context: Context
+
     @Volatile private var currentlyRunningTasks = false
     @Volatile var numberPendingApiTasksRemaining: BehaviorSubject<Long>? = null
+    @Volatile var numberTempInstancePendingApiTasksRemaining: BehaviorSubject<Long>? = null
 
     fun getNumberPendingApiTasksOnce(): Long {
         return numberPendingApiTasksRemaining?.value ?: getNumberPendingApiTasksRemaining()
     }
 
-    private fun getNumberPendingApiTasksRemaining(): Long {
-        val realm: Realm = RealmInstanceManager.getInstance()
+    fun getNumberTempInstancePendingApiTasksOnce(): Long {
+        return numberTempInstancePendingApiTasksRemaining?.value ?: getNumberPendingApiTasksRemaining(true)
+    }
+
+    fun init(context: Context) {
+        this.context = context
+
+        if (numberPendingApiTasksRemaining == null) numberPendingApiTasksRemaining = BehaviorSubject.create(getNumberPendingApiTasksRemaining())
+        if (numberTempInstancePendingApiTasksRemaining == null) numberTempInstancePendingApiTasksRemaining = BehaviorSubject.create(getNumberPendingApiTasksRemaining(true))
+    }
+
+    private fun getNumberPendingApiTasksRemaining(useTempRealmInstance: Boolean = false): Long {
+        val realm: Realm = if (useTempRealmInstance) RealmInstanceManager.getTempInstance() else RealmInstanceManager.getInstance()
 
         var numberPendingTasks: Long = 0
         PendingApiTasksManager.registeredPendingApiTasks.forEach { pendingApiTaskClass ->
@@ -62,7 +76,7 @@ open class PendingApiTasksRunner(val context: Context) {
         return numberPendingTasks
     }
 
-    @Synchronized fun runPendingTasks(): Completable {
+    @Synchronized fun runPendingTasks(useTempRealmInstance: Boolean = false): Completable {
         if (currentlyRunningTasks || !(WendyConfig.wendyTasksRunnerManager?.shouldRunApiTasks() ?: true)) {
             return Completable.complete().subscribeOn(Schedulers.io())
         } else {
@@ -70,7 +84,6 @@ open class PendingApiTasksRunner(val context: Context) {
 
             return Completable.create { subscriber ->
                 fun getNextTaskToRun(realm: Realm): PendingApiTask<Any>? {
-                    if (numberPendingApiTasksRemaining == null) numberPendingApiTasksRemaining = BehaviorSubject.create(getNumberPendingApiTasksRemaining())
                     numberPendingApiTasksRemaining!!.onNext(getNumberPendingApiTasksRemaining())
 
                     PendingApiTasksManager.registeredPendingApiTasks.forEach { pendingApiTaskClass ->
@@ -98,7 +111,7 @@ open class PendingApiTasksRunner(val context: Context) {
                         if (error != null) subscriber.onError(error) else subscriber.onCompleted()
                     }
 
-                    val realm: Realm = RealmInstanceManager.getInstance()
+                    val realm: Realm = if (useTempRealmInstance) RealmInstanceManager.getTempInstance() else RealmInstanceManager.getInstance()
                     val nextTaskToRun = getNextTaskToRun(realm)
 
                     if (nextTaskToRun == null) {
@@ -127,11 +140,12 @@ open class PendingApiTasksRunner(val context: Context) {
         }
     }
 
-    private fun runTask(pendingApiTaskController: PendingApiTask<Any>): Completable {
+    private fun runTask(pendingApiTaskController: PendingApiTask<Any>, useTempRealmInstance: Boolean = false): Completable {
         return Completable.create { subscriber ->
 
             var apiCall: Observable<Response<Any>>? = null
-            RealmInstanceManager.getInstance().executeTransaction { realm ->
+            val realm: Realm = if (useTempRealmInstance) RealmInstanceManager.getTempInstance() else RealmInstanceManager.getInstance()
+            realm.executeTransaction { realm ->
                 val modelForTask = pendingApiTaskController.getOfflineModelTaskRepresents(realm)
                 modelForTask.api_sync_in_progress = true
                 modelForTask.statusUpdate(pendingApiTaskController, PendingApiModelInterfaceStatus.RUNNING)
@@ -143,7 +157,7 @@ open class PendingApiTasksRunner(val context: Context) {
             SharedPreferencesManager.edit(context).setLong(context.getString(R.string.preferences_current_api_sync_task_created_at), pendingApiTaskController.created_at.time).commit()
 
             ApiNetworkingService.executeApiCall(context, apiCall!!, pendingApiTaskController.getApiErrorVo()).subscribe({ response ->
-                RealmInstanceManager.getInstance().executeTransaction { realm ->
+                realm.executeTransaction { realm ->
                     (response as? OfflineCapableModel)?.setRealmIdToApiId()
                     pendingApiTaskController.processApiResponse(realm, response)
 
@@ -159,14 +173,16 @@ open class PendingApiTasksRunner(val context: Context) {
                     }
                 }
 
+                realm.close()
                 subscriber.onCompleted()
             }, { error ->
-                RealmInstanceManager.getInstance().executeTransaction { realm ->
+                realm.executeTransaction { realm ->
                     val modelForTask = pendingApiTaskController.getOfflineModelTaskRepresents(realm)
                     modelForTask.api_sync_in_progress = false
                     modelForTask.statusUpdate(pendingApiTaskController, PendingApiModelInterfaceStatus.ERROR, error)
                 }
 
+                realm.close()
                 subscriber.onError(error)
             })
         }

@@ -32,10 +32,9 @@ interface RealmInstanceActivityInitializer {
     /*
     override fun registerDataManagers(vararg baseDataManagers: BaseWendyDataManager) {
         if (uiRealm != null) {
-            registeredDataManagers.forEach {
+            baseDataManagers.forEach {
                 it.uiRealm = uiRealm
             }
-            registeredDataManagers = ArrayList()
         } else {
             registeredDataManagers.addAll(baseDataManagers)
         }
