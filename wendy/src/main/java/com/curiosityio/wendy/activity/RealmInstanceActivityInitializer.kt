@@ -1,4 +1,4 @@
-package com.curiosityio.wendy.`interface`
+package com.curiosityio.wendy.activity
 
 import android.support.v4.app.Fragment
 import com.curiosityio.wendy.manager.BaseWendyDataManager
@@ -12,50 +12,55 @@ interface RealmInstanceActivityInitializer {
         fun afterRealmClose()
     }
 
+    // Members to override and have:
+    /*
+    override var uiRealm: Realm? = null
+    private var registeredDataManagers = ArrayList<BaseWendyDataManager>()
+    private var realmClosedListeners = ArrayList<RealmInstanceActivityInitializer.RealmClosedListener>()
+     */
+
     // Usually do this in onCreate?
-    // uiRealm = RealmInstanceManager.getInstance()
-    //for (BaseDataManager baseDataManager : mRegisteredDataManagers) {
-    //  baseDataManager.setUiRealm(realm)
-    //}
-    //mRegisteredDataManagers = new ArrayList<>()
+    /*
+    uiRealm = RealmInstanceManager.getTempInstance()
+    registeredDataManagers.forEach {
+        it.uiRealm = uiRealm
+    }
+    registeredDataManagers = ArrayList()
+     */
     var uiRealm: Realm?
 
     /*
-    public void registerDataManagers(BaseDataManager... baseDataManagers) {
+    override fun registerDataManagers(vararg baseDataManagers: BaseWendyDataManager) {
         if (uiRealm != null) {
-            for (BaseDataManager dataManager : baseDataManagers) {
-                dataManager.setUiRealm(realm)
+            registeredDataManagers.forEach {
+                it.uiRealm = uiRealm
             }
+            registeredDataManagers = ArrayList()
         } else {
-            Collections.addAll(mRegisteredDataManagers, baseDataManagers);
+            registeredDataManagers.addAll(baseDataManagers)
         }
     }
      */
     fun registerDataManagers(vararg baseDataManagers: BaseWendyDataManager)
 
     /*
-    private ArrayList<RealmClosedListener> mRealmClosedListeners = new ArrayList<>()
-
-    public void addRealmClosedListener(RealmClosedListener realmClosedListener) {
-        mRealmClosedListeners.add(realmClosedListener)
+    override fun addRealmClosedListener(realmClosedListener: RealmInstanceActivityInitializer.RealmClosedListener) {
+        realmClosedListeners.add(realmClosedListener)
     }
      */
     fun addRealmClosedListener(realmClosedListener: RealmClosedListener)
 
     /*
-    private void closeRealmInstance() {
-        if (realm != null) {
-            for (RealmClosedListener listener : mRealmClosedListeners) {
-                listener.beforeRealmClose();
+    override fun closeRealmInstance() {
+        uiRealm?.let {
+            realmClosedListeners.forEach {
+                it.beforeRealmClose()
             }
-
-            realm.close();
-
-            for (RealmClosedListener listener : mRealmClosedListeners) {
-                listener.afterRealmClose();
+            uiRealm!!.close()
+            realmClosedListeners.forEach {
+                it.afterRealmClose()
             }
-
-            mRealmClosedListeners = new ArrayList<>();
+            realmClosedListeners = ArrayList()
         }
     }
      */
