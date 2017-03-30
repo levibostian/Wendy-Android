@@ -4,6 +4,7 @@ import android.content.Context
 import com.curiosityio.androidboilerplate.manager.SharedPreferencesManager
 import com.curiosityio.androidboilerplate.util.ThreadUtil
 import com.curiosityio.androidrealm.extensions.findFirstOrNull
+import com.curiosityio.androidrealm.manager.RealmInstanceManager
 import com.curiosityio.wendy.R
 import com.curiosityio.wendy.model.OfflineCapableModel
 import com.curiosityio.wendy.model.PendingApiTask
@@ -15,20 +16,22 @@ import rx.schedulers.Schedulers
 abstract class BaseWendyDataManager(val context: Context) {
 
     @Throws(RuntimeException::class)
-    protected fun performRealmTransaction(changeData: Realm.Transaction, realm: Realm = Realm.getDefaultInstance()) {
+    protected fun performRealmTransaction(changeData: Realm.Transaction, tempRealmInstance: Boolean = false) {
         if (ThreadUtil.isOnMainThread()) {
             throw RuntimeException("Cannot perform transaction from UI thread.")
         }
+        val realm: Realm = if (tempRealmInstance) RealmInstanceManager.getTempInstance() else RealmInstanceManager.getInstance()
         realm.executeTransaction(changeData)
         if (!realm.isClosed) realm.close()
     }
 
     @Throws(RuntimeException::class)
-    protected fun performRealmTransactionCompletable(changeData: Realm.Transaction, realm: Realm = Realm.getDefaultInstance()): Completable {
+    protected fun performRealmTransactionCompletable(changeData: Realm.Transaction, tempRealmInstance: Boolean = false): Completable {
         return Completable.create { subscriber ->
             if (ThreadUtil.isOnMainThread()) {
                 throw RuntimeException("Cannot perform transaction from UI thread.")
             }
+            val realm: Realm = if (tempRealmInstance) RealmInstanceManager.getTempInstance() else RealmInstanceManager.getInstance()
             realm.executeTransaction(changeData)
             if (!realm.isClosed) realm.close()
 
