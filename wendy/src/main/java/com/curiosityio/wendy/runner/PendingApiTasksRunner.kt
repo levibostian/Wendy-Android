@@ -51,22 +51,26 @@ object PendingApiTasksRunner {
     @Volatile var numberTempInstancePendingApiTasksRemaining: BehaviorSubject<Long>? = null
 
     fun getNumberPendingApiTasksOnce(): Long {
-        return numberPendingApiTasksRemaining?.value ?: getNumberPendingApiTasksRemaining()
+        return numberPendingApiTasksRemaining?.value ?: getNumberPendingApiTasksRemaining(false)
     }
 
     fun getNumberTempInstancePendingApiTasksOnce(): Long {
         return numberTempInstancePendingApiTasksRemaining?.value ?: getNumberPendingApiTasksRemaining(true)
     }
 
+    private fun getRealmInstance(tempInstance: Boolean): Realm {
+        return if (tempInstance) RealmInstanceManager.getTempInstance() else RealmInstanceManager.getInstance()
+    }
+
     fun init(context: Context) {
         this.context = context
 
-        if (numberPendingApiTasksRemaining == null) numberPendingApiTasksRemaining = BehaviorSubject.create(getNumberPendingApiTasksRemaining())
+        if (numberPendingApiTasksRemaining == null) numberPendingApiTasksRemaining = BehaviorSubject.create(getNumberPendingApiTasksRemaining(false))
         if (numberTempInstancePendingApiTasksRemaining == null) numberTempInstancePendingApiTasksRemaining = BehaviorSubject.create(getNumberPendingApiTasksRemaining(true))
     }
 
-    private fun getNumberPendingApiTasksRemaining(useTempRealmInstance: Boolean = false): Long {
-        val realm: Realm = if (useTempRealmInstance) RealmInstanceManager.getTempInstance() else RealmInstanceManager.getInstance()
+    private fun getNumberPendingApiTasksRemaining(useTempRealmInstance: Boolean): Long {
+        val realm: Realm = getRealmInstance(useTempRealmInstance)
 
         var numberPendingTasks: Long = 0
         PendingApiTasksManager.registeredPendingApiTasks.forEach { pendingApiTaskClass ->
@@ -84,7 +88,8 @@ object PendingApiTasksRunner {
 
             return Completable.create { subscriber ->
                 fun getNextTaskToRun(realm: Realm): PendingApiTask<Any>? {
-                    numberPendingApiTasksRemaining!!.onNext(getNumberPendingApiTasksRemaining())
+                    if (useTempRealmInstance) numberTempInstancePendingApiTasksRemaining!!.onNext(getNumberPendingApiTasksRemaining(true))
+                    else numberPendingApiTasksRemaining!!.onNext(getNumberPendingApiTasksRemaining(false))
 
                     PendingApiTasksManager.registeredPendingApiTasks.forEach { pendingApiTaskClass ->
                         var getAllPendingApiTasksQuery = realm.where(pendingApiTaskClass as Class<RealmObject>)
@@ -111,7 +116,7 @@ object PendingApiTasksRunner {
                         if (error != null) subscriber.onError(error) else subscriber.onCompleted()
                     }
 
-                    val realm: Realm = if (useTempRealmInstance) RealmInstanceManager.getTempInstance() else RealmInstanceManager.getInstance()
+                    val realm: Realm = getRealmInstance(useTempRealmInstance)
                     val nextTaskToRun = getNextTaskToRun(realm)
 
                     if (nextTaskToRun == null) {
@@ -121,7 +126,7 @@ object PendingApiTasksRunner {
                         val apiSyncController = realm.copyFromRealm(nextTaskToRun as RealmObject) as PendingApiTask<Any>
 
                         realm.close()
-                        runTask(apiSyncController).subscribe({
+                        runTask(apiSyncController, useTempRealmInstance).subscribe({
                             runNextPendingApiTask()
                         }, { error ->
                             if (error is NoInternetConnectionException || error is APIDownException) {
@@ -140,11 +145,11 @@ object PendingApiTasksRunner {
         }
     }
 
-    private fun runTask(pendingApiTaskController: PendingApiTask<Any>, useTempRealmInstance: Boolean = false): Completable {
+    private fun runTask(pendingApiTaskController: PendingApiTask<Any>, useTempRealmInstance: Boolean): Completable {
         return Completable.create { subscriber ->
 
             var apiCall: Observable<Response<Any>>? = null
-            val realm: Realm = if (useTempRealmInstance) RealmInstanceManager.getTempInstance() else RealmInstanceManager.getInstance()
+            val realm: Realm = getRealmInstance(useTempRealmInstance)
             realm.executeTransaction { realm ->
                 val modelForTask = pendingApiTaskController.getOfflineModelTaskRepresents(realm)
                 modelForTask.api_sync_in_progress = true

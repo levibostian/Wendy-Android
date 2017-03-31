@@ -6,6 +6,7 @@ import com.curiosityio.androidboilerplate.util.ThreadUtil
 import com.curiosityio.androidrealm.extensions.findFirstOrNull
 import com.curiosityio.androidrealm.manager.RealmInstanceManager
 import com.curiosityio.wendy.R
+import com.curiosityio.wendy.config.WendyConfig
 import com.curiosityio.wendy.model.OfflineCapableModel
 import com.curiosityio.wendy.model.PendingApiTask
 import io.realm.Realm
@@ -22,9 +23,13 @@ abstract class BaseWendyDataManager(val context: Context) {
         if (ThreadUtil.isOnMainThread()) {
             throw RuntimeException("Cannot perform transaction from UI thread.")
         }
-        val realm: Realm = if (tempRealmInstance) RealmInstanceManager.getTempInstance() else RealmInstanceManager.getInstance()
+        val realm: Realm = getRealmInstance(tempRealmInstance)
         realm.executeTransaction(changeData)
         if (!realm.isClosed) realm.close()
+    }
+
+    private fun getRealmInstance(tempInstance: Boolean): Realm {
+        return if (tempInstance) RealmInstanceManager.getTempInstance() else RealmInstanceManager.getInstance()
     }
 
     @Throws(RuntimeException::class)
@@ -33,7 +38,7 @@ abstract class BaseWendyDataManager(val context: Context) {
             if (ThreadUtil.isOnMainThread()) {
                 throw RuntimeException("Cannot perform transaction from UI thread.")
             }
-            val realm: Realm = if (tempRealmInstance) RealmInstanceManager.getTempInstance() else RealmInstanceManager.getInstance()
+            val realm: Realm = getRealmInstance(tempRealmInstance)
             realm.executeTransaction(changeData)
             if (!realm.isClosed) realm.close()
 

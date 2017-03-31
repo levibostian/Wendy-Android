@@ -3,6 +3,7 @@ package com.curiosityio.wendy.service
 import android.content.Context
 import android.os.NetworkOnMainThreadException
 import com.curiosityio.androidboilerplate.util.InternetConnectionUtil
+import com.curiosityio.androidboilerplate.util.LogUtil
 import com.curiosityio.wendy.config.WendyConfig
 import com.curiosityio.wendy.error.*
 import com.curiosityio.wendy.vo.ErrorResponseVo
@@ -29,7 +30,7 @@ class ApiNetworkingService {
                             throw RuntimeException("Running network on main thread exception ")
                         }
 
-                        subscriber.onError(error)
+                        subscriber.onError(WendyConfig.wendyProcessApiResponse?.networkFail(error) ?: NetworkException("Internet connection error. Please, try again."))
                     })
                 }
             }
@@ -43,7 +44,7 @@ class ApiNetworkingService {
                     WendyConfig.wendyProcessApiResponse?.success(response.body() as Any, response.headers())
                     subscriber.onSuccess(ApiResponse(response.body(), response.headers()))
                 } else {
-                    val userProcessedError = WendyConfig.wendyProcessApiResponse?.error(response.code(), response.errorBody(), response.headers())
+                    val userProcessedError = WendyConfig.wendyProcessApiResponse?.apiResponseError(response.code(), response.errorBody(), response.headers())
 
                     if (userProcessedError != null) {
                         subscriber.onError(userProcessedError)

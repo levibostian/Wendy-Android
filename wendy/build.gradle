@@ -1,5 +1,10 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'kotlin-android'
+
+// for installing to local maven repo
+group = 'com.curiosityio.wendy'
+version = '0.1.0'
 
 android {
     compileSdkVersion 25
