@@ -1,2 +1,2 @@
 include ':app', ':wendy'
-rootProject.name = 'wendy'
+//rootProject.name = 'wendy' // In a tutorial online, it said to add this. It caused issues for me.
