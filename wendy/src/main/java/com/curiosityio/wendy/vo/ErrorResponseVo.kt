@@ -2,17 +2,19 @@ package com.curiosityio.wendy.vo
 
 abstract class ErrorResponseVo {
 
-    abstract val errorArray: Array<String>?
+    abstract fun getErrorArray(): Array<String?>?
 
-    val errorMessageToDisplayToUser: String
-        get() {
-            val errors = errorArray
-
-            if (errors == null || errors.isEmpty()) {
-                return "Unknown error. Please try again."
-            } else {
-                return errors[0]
+    fun getErrorMessageToDisplayToUser(): String {
+        val errors = getErrorArray()
+        if (errors == null || errors.isEmpty()) {
+            return "Unknown error. Please try again."
+        } else {
+            errors.forEach {
+                if (it != null && it.isNotEmpty()) return it
             }
+
+            return "Unknown error"
         }
+    }
 
 }

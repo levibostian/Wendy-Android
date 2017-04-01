@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Wendy.iml" filepath="$PROJECT_DIR$/Wendy.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/wendy/wendy.iml" filepath="$PROJECT_DIR$/wendy/wendy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/wendy.iml" filepath="$PROJECT_DIR$/wendy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/wendy/wendy-wendy.iml" filepath="$PROJECT_DIR$/wendy/wendy-wendy.iml" />
     </modules>
   </component>
 </project>

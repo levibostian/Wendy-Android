@@ -24,7 +24,9 @@ class ApiNetworkingService {
                     call.toSingle().subscribe({ response ->
                         processApiResponse(response, errorVo).subscribe({ apiSuccessResponse ->
                             subscriber.onSuccess(apiSuccessResponse.response)
-                        }, { error -> subscriber.onError(error) })
+                        }, { error ->
+                            subscriber.onError(error)
+                        })
                     }, { error ->
                         if (error is NetworkOnMainThreadException) {
                             throw RuntimeException("Running network on main thread exception ")
@@ -61,7 +63,7 @@ class ApiNetworkingService {
                             subscriber.onError(UserUnauthorizedException("Unauthorized"))
                         } else {
                             try {
-                                val parsedErrorMessageFromAPI = Gson().fromJson(response.errorBody().charStream(), errorVo).errorMessageToDisplayToUser
+                                val parsedErrorMessageFromAPI = Gson().fromJson(response.errorBody().charStream(), errorVo).getErrorMessageToDisplayToUser()
                                 subscriber.onError(UserApiError(parsedErrorMessageFromAPI))
                             } catch (e: Exception) {
                                 WendyConfig.wendyErrorNotifier?.errorEncountered(e)
