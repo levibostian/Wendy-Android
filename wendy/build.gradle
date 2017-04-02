@@ -43,7 +43,7 @@ dependencies {
         exclude group: 'io.reactivex', module: 'rxjava'
     }
 
-    def androidRealmVersion = '3f7d127e23'
+    def androidRealmVersion = 'a241703f40'
     compile "com.github.curiosityio.AndroidRealm:android-realm-core:$androidRealmVersion"
     compile "com.github.curiosityio.AndroidRealm:android-realm-core-rx:$androidRealmVersion"
 

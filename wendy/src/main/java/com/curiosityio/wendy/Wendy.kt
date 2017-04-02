@@ -1,6 +1,7 @@
 package com.curiosityio.wendy
 
 import com.curiosityio.wendy.config.WendyConfig
+import com.curiosityio.wendy.model.PendingApiTask
 import com.curiosityio.wendy.runner.PendingApiTasksRunner
 import rx.subjects.BehaviorSubject
 
@@ -14,8 +15,6 @@ class Wendy {
             }, { error ->
                 WendyConfig.wendyTasksRunnerManager?.errorRunningTasks(false, error)
             })
-
-
         }
 
         fun runTempInstanceTasks() {
@@ -23,6 +22,14 @@ class Wendy {
                 WendyConfig.wendyTasksRunnerManager?.doneRunningTasks(true)
             }, { error ->
                 WendyConfig.wendyTasksRunnerManager?.errorRunningTasks(true, error)
+            })
+        }
+
+        fun runTask(pendingApiTask: PendingApiTask<Any>, useTempRealmInstance: Boolean = false) {
+            PendingApiTasksRunner.runSingleTask(pendingApiTask, useTempRealmInstance).subscribe({
+                WendyConfig.wendyTasksRunnerManager?.doneRunningSingleTask(pendingApiTask)
+            }, { error ->
+                WendyConfig.wendyTasksRunnerManager?.errorRunningSingleTask(pendingApiTask, error)
             })
         }
 

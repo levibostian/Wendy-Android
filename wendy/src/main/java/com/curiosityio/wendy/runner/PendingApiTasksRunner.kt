@@ -80,6 +80,23 @@ object PendingApiTasksRunner {
         return numberPendingTasks
     }
 
+    @Synchronized fun runSingleTask(pendingApiTask: PendingApiTask<Any>, useTempRealmInstance: Boolean = false): Completable {
+        return Completable.create { subscriber ->
+            var pendingApiTaskToRun = pendingApiTask
+            if ((pendingApiTask as RealmObject).isManaged) {
+                val realm: Realm = getRealmInstance(useTempRealmInstance)
+                pendingApiTaskToRun = realm.copyFromRealm(pendingApiTask as RealmObject) as PendingApiTask<Any>
+                realm.close()
+            }
+
+            runTask(pendingApiTaskToRun, useTempRealmInstance).subscribe({
+                subscriber.onCompleted()
+            }, { error ->
+                subscriber.onError(error)
+            })
+        }
+    }
+
     @Synchronized fun runPendingTasks(useTempRealmInstance: Boolean = false): Completable {
         if (currentlyRunningTasks || !(WendyConfig.wendyTasksRunnerManager?.shouldRunApiTasks() ?: true)) {
             return Completable.complete().subscribeOn(Schedulers.io())
@@ -98,7 +115,7 @@ object PendingApiTasksRunner {
                             getAllPendingApiTasksQuery = getAllPendingApiTasksQuery.greaterThan("created_at", lastFailedApiTaskCreatedAtTime)
                         }
 
-                        getAllPendingApiTasksQuery.findAllSorted("created_at", Sort.ASCENDING).let { allPendingApiTasks ->
+                        getAllPendingApiTasksQuery.equalTo("manually_run_task", false).findAllSorted("created_at", Sort.ASCENDING).let { allPendingApiTasks ->
                             allPendingApiTasks.forEach { apiTask ->
                                 if ((apiTask as PendingApiTask<Any>).canRunTask(realm)) {
                                     return apiTask
@@ -147,7 +164,6 @@ object PendingApiTasksRunner {
 
     private fun runTask(pendingApiTaskController: PendingApiTask<Any>, useTempRealmInstance: Boolean): Completable {
         return Completable.create { subscriber ->
-
             var apiCall: Observable<Response<Any>>? = null
             val realm: Realm = getRealmInstance(useTempRealmInstance)
             realm.executeTransaction { realm ->
