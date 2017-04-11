@@ -127,10 +127,10 @@ object PendingApiTasksRunner {
                 }
 
                 fun runNextPendingApiTask() {
-                    fun stopRunningApiTasks(error: Throwable? = null) {
+                    fun stopRunningApiTasks() {
                         lastFailedApiTaskCreatedAtTime = null
                         currentlyRunningTasks = false
-                        if (error != null) subscriber.onError(error) else subscriber.onCompleted()
+                        subscriber.onCompleted()
                     }
 
                     val realm: Realm = getRealmInstance(useTempRealmInstance)
@@ -146,8 +146,10 @@ object PendingApiTasksRunner {
                         runTask(apiSyncController, useTempRealmInstance).subscribe({
                             runNextPendingApiTask()
                         }, { error ->
+                            WendyConfig.wendyTasksRunnerManager?.errorRunningTasks(useTempRealmInstance, error)
+
                             if (error is NoInternetConnectionException || error is APIDownException) {
-                                stopRunningApiTasks(error)
+                                stopRunningApiTasks()
                             } else {
                                 // If API comes back with error, we don't want to block *all* API tasks. Skip this parent and all it's children and move onto the next.
                                 lastFailedApiTaskCreatedAtTime = apiSyncController.created_at
