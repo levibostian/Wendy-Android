@@ -1,5 +1,13 @@
 # Wendy
 
+Wendy is an Android library designed to help you build offline-first mobile apps. Building offline compatible mobile apps is pretty tough. There is a lot of code to write to get it working. There are services such as Firebase that give you offline capabilities but that is *only* if you use Firebase services. 
+
+Wendy is to help build offline capable mobile apps fast and flexible. Send Wendy data from your API or from a user generated task and it takes care of performing the task for you in the background. 
+
+*Note: Wendy is in alpha stage at the moment. [I am](http://levibostian.com) running it in production apps at the moment with it working great, but the API will change and bugs will be fixed. Enjoy, contribute, open issues.*
+
+Uses the power of [Realm](https://realm.io/), [Retrofit](https://github.com/square/retrofit), [Kotlin](https://kotlinlang.org/), and [Android Job](https://github.com/evernote/android-job) to be fast and efficient. 
+
 # Install
 
 Add this to your root build.gradle at the end of repositories:
@@ -185,6 +193,12 @@ class PendingApiTaskJob : Job() {
 
 }
 ```
+
+## Author 
+
+* Levi Bostian - [GitHub](https://github.com/levibostian), [Twitter](https://twitter.com/levibostian), [Website/blog](http://levibostian.com)
+
+![Levi Bostian image](https://gravatar.com/avatar/22355580305146b21508c74ff6b44bc5?s=250)
 
 ### Where did the name come from?
 
