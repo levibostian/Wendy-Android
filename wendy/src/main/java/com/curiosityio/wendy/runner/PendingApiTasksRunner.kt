@@ -177,7 +177,7 @@ object PendingApiTasksRunner {
             }
 
             // We save this to compare later on. If created_at times dont line up, then the model has been edited since API call triggered.
-            SharedPreferencesManager.edit(context).setLong(context.getString(R.string.preferences_current_api_sync_task_created_at), pendingApiTaskController.created_at.time).commit()
+            SharedPreferencesManager.edit(context).setLong(context.getString(R.string.preferences_current_api_sync_task_created_at), pendingApiTaskController.created_at.time).commitChangesNow()
 
             ApiNetworkingService.executeApiCall(context, apiCall!!, pendingApiTaskController.getApiErrorVo()).subscribe({ response ->
                 realm.executeTransaction { realm ->

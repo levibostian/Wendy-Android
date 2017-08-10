@@ -49,7 +49,7 @@ dependencies {
 
     compile 'com.github.curiosityio:AndroidRx:6600816a13'
 
-    compile 'com.github.curiosityio:AndroidBoilerplate:0f3af4a76b'
+    compile 'com.github.curiosityio:AndroidBoilerplate:2b8b8db04e'
 
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }

@@ -51,7 +51,7 @@ abstract class BaseWendyDataManager(val context: Context) {
 
         val nextAvailableTempModelId = lastUsedId - 1
 
-        if (SharedPreferencesManager.edit(context).setLong(context.getString(R.string.preferences_last_used_temp_model_id), nextAvailableTempModelId).commit()) {
+        if (SharedPreferencesManager.edit(context).setLong(context.getString(R.string.preferences_last_used_temp_model_id), nextAvailableTempModelId).commitChangesNow()) {
             return nextAvailableTempModelId
         } else {
             throw RuntimeException("Error saving to device.")
