@@ -43,10 +43,10 @@ class ApiNetworkingService {
         fun <RESPONSE> processApiResponse(response: Response<RESPONSE>, errorVo: Class<out ErrorResponseVo>): Single<ApiResponse<RESPONSE>> {
             return Single.create { subscriber ->
                 if (response.isSuccessful) {
-                    WendyConfig.wendyProcessApiResponse?.success(response.body() as Any, response.headers())
+                    WendyConfig.wendyProcessApiResponse?.success(response as Response<Any>, response.body() as Any, response.headers())
                     subscriber.onSuccess(ApiResponse(response.body(), response.headers()))
                 } else {
-                    val userProcessedError = WendyConfig.wendyProcessApiResponse?.apiResponseError(response.code(), response.errorBody(), response.headers())
+                    val userProcessedError = WendyConfig.wendyProcessApiResponse?.apiResponseError(response.code(), response as Response<Any>, response.headers(), errorVo)
 
                     if (userProcessedError != null) {
                         subscriber.onError(userProcessedError)
