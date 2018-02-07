@@ -22,30 +22,16 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:1.10.19'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:2.10.0'
 
-    def retrofitVersion = '2.1.0'
-    compile "com.squareup.retrofit2:retrofit:$retrofitVersion"
-    compile "com.squareup.retrofit2:converter-gson:$retrofitVersion"
-    compile "com.squareup.retrofit2:converter-scalars:$retrofitVersion"
-    compile("com.squareup.retrofit2:adapter-rxjava:$retrofitVersion") {
-        exclude group: 'io.reactivex', module: 'rxjava'
-    }
-
-    def androidRealmVersion = 'a241703f40'
-    compile "com.github.curiosityio.AndroidRealm:android-realm-core:$androidRealmVersion"
-    compile "com.github.curiosityio.AndroidRealm:android-realm-core-rx:$androidRealmVersion"
-
-    compile 'com.github.curiosityio:AndroidRx:6600816a13'
-
-    compile 'com.github.curiosityio:AndroidBoilerplate:2b8b8db04e'
-
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'com.evernote:android-job:1.2.2'
+    implementation "org.jetbrains.anko:anko-sqlite:0.10.4"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 repositories {
     mavenCentral()

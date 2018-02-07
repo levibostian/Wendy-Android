@@ -1,4 +1,32 @@
+[![Release](https://jitpack.io/v/levibostian/Wendy-Android.svg)](https://jitpack.io/#levibostian/Wendy-Android)
+
 # Wendy
+
+Remove the difficulty in making offline-first Android apps.
+
+![](misc/wendy_logo.jpg)
+
+## What is Wendy?
+
+Wendy is an Android library designed to help you make your app offline-first. Use Wendy to define sync tasks, then Wendy will run those tasks at the best time periodically to keep your app's offline data in sync with it's online storage.
+
+Essentially, Wendy is a step up from the Android job runner API. It is used in production today in apps created by [Levi Bostian](https://levibostian.com).
+
+## Why use Wendy?
+
+When creating offline-first mobile apps there are 2 parts. 1. Persisting data to the user's Android device storage and 2. Sync that Android device's local storage with an online storage service.
+
+Wendy helps you with item `#2`. You define how the local storage is supposed to sync with the remote storage and Wendy takes care of running those tasks for you periodically when the time is right.
+
+Wendy is a FIFO task runner. You give it tasks, one by one, it persists those tasks to storage, then when Wendy has determined it's a good time for your task to run, it will call your task's sync function to perform a sync. If your user's device is online and has a good amount of battery, Wendy goes through all of the tasks available one by one until they all succeed or the network connection goes away where it will then try again later.
+
+Wendy currently has the following functionality:
+
+* Wendy uses the Android Job scheduler API to run tasks every 15 minutes when the device is online to keep data in sync without using the user's battery too much.
+* Wendy is not opinionated. You may use whatever method you choose to sync data with it's remote storage and whatever method you choose to store data locally on the device. Wendy works with your workflow you already have.
+* Dynamically allow and disallow tasks to sync at runtime. Wendy works in a FIFO style with it's tasks. When Wendy is about to run a certain task, it always asks the task if it is able to run.
+* Mark tasks to manually run instead of automatically from Wendy. This allows you to use the same Wendy API to define all of your sync tasks, but Wendy will simply not attempt to run these tasks periodically automatically.
+* Group tasks together to say, "if one of these tasks fails, skip all the future tasks in this group".
 
 # Install
 
@@ -16,178 +44,80 @@ allprojects {
 Then, install the Wendy module:
 
 ```
-compile 'com.github.curiosityio:wendy:03ac99c8d8' # make sure to change 03ac99c8d8 to the commit or tag you wish.
+compile 'com.github.levibostian:wendy-android:0.1.0'
 ```
 
+The latest release version at this time is: [![Release](https://jitpack.io/v/levibostian/Wendy-Android.svg)](https://jitpack.io/#levibostian/Wendy-Android)
+
 # Configure
+
+Create a `PendingTasksFactory` instance that stores all of your app's Wendy `PendingTask`s. ([I plan to remove this requirement in the future](https://github.com/levibostian/Wendy-Android/issues/17). PRs welcome 😄)
+
+```
+class WendyExamplePendingTasksFactory : PendingTasksFactory {
+
+    override fun getTask(tag: String, task: PendingTask): PendingTask {
+        return when (tag) {
+            FooPendingTask::class.java.simpleName -> FooPendingTask.blank().fromSqlObject(task)
+            else -> throw RuntimeException("No idea what task that is... tag: $tag")
+        }
+    }
+
+}
+```
 
 Add the following code to your Application `onCreate()`:
 
 ```
-AndroidRealmConfig.overrideRealmInstanceConfig(AndroidRealmInstanceConfig())
-AndroidRealmConfig.setRealmMigrationManager(AndroidRealmMigrationManager())
-WendyConfig.Builder().setErrorNotifier(ErrorNotifier())
-                    .setProcessApiResponse(WendyProcessApiResponse())
-                    .setTasksRunnerManager(WendyTasksRunnerManager())
-                    .build(this)
-
-Realm.init(this) // Initialize Realm.
+PendingTasks.init(this, WendyExamplePendingTasksFactory())
 ```
 
-*Note: Wendy depends on [AndroidRealm](https://github.com/curiosityio/AndroidRealm) library to work with saving the models to a database. Since you are using this lib, I am assuming you are also using Realm since you are creating the models. So, make sure to configure AndroidRealm as well as this lib.*
+Wendy is not configured. It's time to use it!
 
-# Run tasks
-
-After you create tasks, you probably want to run them. After I save a new `PendingApiTaskModel` to the Realm database, I run the task runner:
+To use Wendy to sync your local storage with remote storage, first define a `PendingTask`:
 
 ```
-Wendy.runTasks()
-
-// or...
-
-Wendy.runTempInstanceTasks()
-```
-
-You will get notified on the error or success of the pending API tasks via your WendyTasksRunnerManager instance.
-
-You can subscribe to the number of pending tasks available:
-
-```
-Wendy.subNumberPendingTasks().subscribe()
-
-// or...
-
-Wendy.subNumberTempPendingTasks().subscribe()
-```
-
-Then, I like to add a BroadcastReceiver for when WiFi state changes:
-
-```
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.net.NetworkInfo
-import android.net.wifi.WifiInfo
-import android.net.wifi.WifiManager
-import com.curiosityio.androidboilerplate.util.InternetConnectionUtil
-import com.curiosityio.androidboilerplate.util.LogUtil
-import rx.functions.Action1
-import rx.functions.Action0
-import rx.schedulers.Schedulers
-import javax.inject.Inject
-
-class WiFiStateReceiver : BroadcastReceiver() {
-
-    @Inject lateinit var pendingApiTasksRunner: PendingApiTasksRunner
-
-    override fun onReceive(context: Context?, intent: Intent?) {
-        if (intent == null) return
-
-        MainApplication.component.inject(this)
-
-        if (InternetConnectionUtil.isAnyInternetConnected(context!!)) {
-            Wendy.runTasks()
-        }
-    }
-
-}
-```
-
-*Note: Don't forget to add this BroadcastReceiver to your manifest file:*
-
-```
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.curiosityio.foo">
-
-    <application
-        ...
-        <receiver android:name=".receiver.WiFiStateReceiver">
-            <intent-filter android:priority="100">
-                <action android:name="android.net.wifi.STATE_CHANGE" />
-            </intent-filter>
-        </receiver>
-    </application>
-
-</manifest>
-```
-
-Then, I use the [android-job](https://github.com/evernote/android-job) library to run the runner periodically:
-
-```
-compile 'com.evernote:android-job:1.1.3'
-```
-
-In your Application's `onCreate()` add:
-
-```
-JobManager.create(this).addJobCreator(PendingApiTaskJobCreator())
-```
-
-Create `PendingApiTaskJobCreator`:
-
-```
-import com.evernote.android.job.Job
-import com.evernote.android.job.JobCreator
-import android.R.attr.tag
-
-class PendingApiTaskJobCreator : JobCreator {
-
-    override fun create(tag: String?): Job? {
-        when (tag) {
-            PendingApiTaskJob.TAG -> return PendingApiTaskJob()
-            else -> return null
-        }
-    }
-
-}
-```
-
-Create `PendingApiTaskJob`:
-
-```
-import com.evernote.android.job.Job
-import com.evernote.android.job.JobRequest
-import com.curiosityio.androidboilerplate.util.LogUtil
-import rx.schedulers.Schedulers
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
-import javax.inject.Inject
-
-class PendingApiTaskJob : Job() {
+class FooPendingTask : PendingTask() {
 
     companion object {
-        val TAG = "pendingApiTaskJob.tag"
-
-        fun scheduleJob() {
-            JobRequest.Builder(TAG)
-                    .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
-                    .setPeriodic(TimeUnit.MINUTES.toMillis(15), TimeUnit.MINUTES.toMillis(5))
-                    .setRequirementsEnforced(false)
-                    .setPersisted(true) // works across reboots.
-                    .setRequiresCharging(false)
-                    .setRequiresDeviceIdle(false)
-                    .setUpdateCurrent(true) // allows us to only have 1 of TAG jobs running at 1 time. Good for this recurring task.
-                    .build()
-                    .schedule()
-        }
+        fun blank(): FooPendingTask { return FooPendingTask() }
     }
 
-    override fun onRunJob(params: Params?): Result {
-        val countdownLatch = CountDownLatch(1)
-        Wendy.runTasks()
-        try {
-            countdownLatch.await()
-        } catch (e: InterruptedException) {
-            LogUtil.error(e)
-        }
-
-        return Result.SUCCESS
+    override fun runTask(complete: (successful: Boolean) -> Unit) {
+        // Here, instantiate your dependencies, talk to your DB, your API, etc. Run the task.
+        // After you are done (or failed), call `complete()` defining if the task was successful and does not need to be run again or it failed and it must be run in the future.
+        complete(true)
     }
 
 }
 ```
+
+Then, when your app user's perform a task in the app that needs to sync with remote storage, create an instance of your `FooPendingTask` and hand that to Wendy:
+
+```
+PendingTasks.sharedInstance().addTask(new FooPendingTask())
+```
+
+Wendy takes care of all the rest.
+
+## Author
+
+* Levi Bostian - [GitHub](https://github.com/levibostian), [Twitter](https://twitter.com/levibostian), [Website/blog](http://levibostian.com)
+
+![Levi Bostian image](https://gravatar.com/avatar/22355580305146b21508c74ff6b44bc5?s=250)
+
+## Contribute
+
+Wendy is open for pull requests. Before you decide to take a bunch of time and add functionality to the library, please, [create an issue](https://github.com/levibostian/Wendy-Android/issues/new) stating what you wish to add. This might save you some time in case your purpose does not fit well in the use cases of Wendy.
 
 ### Where did the name come from?
 
-User wants fast results. Doesn't want to wait for network calls --> Fast food. User doesn't want to wait for food. --> Wendy.
+User wants fast results. Apps without loading screens...
+
+Sometimes people want fast results with their food. Fast food....
+
+...Wendy
+
+# Credits
+
+Header photo by [Allef Vinicius](https://unsplash.com/photos/FPDGV38N2mo?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/search/photos/red-head?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)

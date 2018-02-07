@@ -5,11 +5,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.curiosityio.wendyexample.MainActivity">
+    tools:context="com.levibostian.wendyexample.MainActivity">
 
-    <TextView
+    <Button
+        android:id="@+id/activity_main_create_pending_task_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"/>
+        android:text="Create pending task"/>
 
 </LinearLayout>
