@@ -1,7 +1,5 @@
 package com.levibostian.wendy
 
-import com.levibostian.wendy.manager.PendingApiTasksManager
-import com.levibostian.wendy.model.PendingApiTask
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -18,11 +16,6 @@ class PendingApiTasksManagerTest {
     @Test
     @Throws(Exception::class)
     fun registeringPendingApiTasks_isCorrect() {
-        val apiTask = Mockito.mock(PendingApiTask::class.java)
-        PendingApiTasksManager.registerPendingApiTasks(apiTask::class.java)
-
-        assertEquals(1, PendingApiTasksManager.registeredPendingApiTasks.size)
-        assertEquals(apiTask::class.java, PendingApiTasksManager.registeredPendingApiTasks[0])
     }
 
 }
