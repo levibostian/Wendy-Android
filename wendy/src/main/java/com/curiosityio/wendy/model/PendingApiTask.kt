@@ -16,6 +16,7 @@ interface PendingApiTask<RESPONSE: Any> {
     fun canRunTask(realm: Realm): Boolean
 
     var created_at: Date
+    var manually_run_task: Boolean
 
     fun getOfflineModelTaskRepresents(realm: Realm): OfflineCapableModel
 

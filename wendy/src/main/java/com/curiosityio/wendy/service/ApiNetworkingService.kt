@@ -3,6 +3,7 @@ package com.curiosityio.wendy.service
 import android.content.Context
 import android.os.NetworkOnMainThreadException
 import com.curiosityio.androidboilerplate.util.InternetConnectionUtil
+import com.curiosityio.androidboilerplate.util.LogUtil
 import com.curiosityio.wendy.config.WendyConfig
 import com.curiosityio.wendy.error.*
 import com.curiosityio.wendy.vo.ErrorResponseVo
@@ -23,13 +24,15 @@ class ApiNetworkingService {
                     call.toSingle().subscribe({ response ->
                         processApiResponse(response, errorVo).subscribe({ apiSuccessResponse ->
                             subscriber.onSuccess(apiSuccessResponse.response)
-                        }, { error -> subscriber.onError(error) })
+                        }, { error ->
+                            subscriber.onError(error)
+                        })
                     }, { error ->
                         if (error is NetworkOnMainThreadException) {
                             throw RuntimeException("Running network on main thread exception ")
                         }
 
-                        subscriber.onError(error)
+                        subscriber.onError(WendyConfig.wendyProcessApiResponse?.networkFail(error) ?: NetworkException("Internet connection error. Please, try again."))
                     })
                 }
             }
@@ -40,10 +43,10 @@ class ApiNetworkingService {
         fun <RESPONSE> processApiResponse(response: Response<RESPONSE>, errorVo: Class<out ErrorResponseVo>): Single<ApiResponse<RESPONSE>> {
             return Single.create { subscriber ->
                 if (response.isSuccessful) {
-                    WendyConfig.wendyProcessApiResponse?.success(response.body() as Any, response.headers())
+                    WendyConfig.wendyProcessApiResponse?.success(response as Response<Any>, response.body() as Any, response.headers())
                     subscriber.onSuccess(ApiResponse(response.body(), response.headers()))
                 } else {
-                    val userProcessedError = WendyConfig.wendyProcessApiResponse?.error(response.code(), response.errorBody(), response.headers())
+                    val userProcessedError = WendyConfig.wendyProcessApiResponse?.apiResponseError(response.code(), response as Response<Any>, response.headers(), errorVo)
 
                     if (userProcessedError != null) {
                         subscriber.onError(userProcessedError)
@@ -60,7 +63,7 @@ class ApiNetworkingService {
                             subscriber.onError(UserUnauthorizedException("Unauthorized"))
                         } else {
                             try {
-                                val parsedErrorMessageFromAPI = Gson().fromJson(response.errorBody().charStream(), errorVo).errorMessageToDisplayToUser
+                                val parsedErrorMessageFromAPI = Gson().fromJson(response.errorBody().charStream(), errorVo).getErrorMessageToDisplayToUser()
                                 subscriber.onError(UserApiError(parsedErrorMessageFromAPI))
                             } catch (e: Exception) {
                                 WendyConfig.wendyErrorNotifier?.errorEncountered(e)

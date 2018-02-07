@@ -26,9 +26,10 @@ Add the following code to your Application `onCreate()`:
 ```
 AndroidRealmConfig.overrideRealmInstanceConfig(AndroidRealmInstanceConfig())
 AndroidRealmConfig.setRealmMigrationManager(AndroidRealmMigrationManager())
-WendyConfig.overrideProcessApiResponse(WendyProcessApiResponse())
-WendyConfig.setTasksRunnerManager(WendyTasksRunnerManager())
-WendyConfig.setErrorNotifier(ErrorNotifier())
+WendyConfig.Builder().setErrorNotifier(ErrorNotifier())
+                    .setProcessApiResponse(WendyProcessApiResponse())
+                    .setTasksRunnerManager(WendyTasksRunnerManager())
+                    .build(this)
 
 Realm.init(this) // Initialize Realm.
 ```
@@ -40,9 +41,23 @@ Realm.init(this) // Initialize Realm.
 After you create tasks, you probably want to run them. After I save a new `PendingApiTaskModel` to the Realm database, I run the task runner:
 
 ```
-pendingApiTasksRunner.runPendingTasks()
-        .subscribe({
-        }, { error -> LogUtil.error(error) })
+Wendy.runTasks()
+
+// or...
+
+Wendy.runTempInstanceTasks()
+```
+
+You will get notified on the error or success of the pending API tasks via your WendyTasksRunnerManager instance.
+
+You can subscribe to the number of pending tasks available:
+
+```
+Wendy.subNumberPendingTasks().subscribe()
+
+// or...
+
+Wendy.subNumberTempPendingTasks().subscribe()
 ```
 
 Then, I like to add a BroadcastReceiver for when WiFi state changes:
@@ -71,9 +86,7 @@ class WiFiStateReceiver : BroadcastReceiver() {
         MainApplication.component.inject(this)
 
         if (InternetConnectionUtil.isAnyInternetConnected(context!!)) {
-            pendingApiTasksRunner.runPendingTasks()
-                    .subscribe({
-                    }, { error -> LogUtil.error(error) })
+            Wendy.runTasks()
         }
     }
 
@@ -143,8 +156,6 @@ import javax.inject.Inject
 
 class PendingApiTaskJob : Job() {
 
-    @Inject lateinit var pendingApiTasksRunner: PendingApiTasksRunner
-
     companion object {
         val TAG = "pendingApiTaskJob.tag"
 
@@ -163,17 +174,8 @@ class PendingApiTaskJob : Job() {
     }
 
     override fun onRunJob(params: Params?): Result {
-        MainApplication.component.inject(this)
-
         val countdownLatch = CountDownLatch(1)
-        pendingApiTasksRunner.runPendingTasks()
-                .subscribeOn(Schedulers.io())
-                .subscribe({
-                    countdownLatch.countDown()
-                }, { error ->
-                    countdownLatch.countDown()
-                })
-
+        Wendy.runTasks()
         try {
             countdownLatch.await()
         } catch (e: InterruptedException) {

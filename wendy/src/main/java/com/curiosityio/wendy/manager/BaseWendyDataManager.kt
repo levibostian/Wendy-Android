@@ -4,7 +4,9 @@ import android.content.Context
 import com.curiosityio.androidboilerplate.manager.SharedPreferencesManager
 import com.curiosityio.androidboilerplate.util.ThreadUtil
 import com.curiosityio.androidrealm.extensions.findFirstOrNull
+import com.curiosityio.androidrealm.manager.RealmInstanceManager
 import com.curiosityio.wendy.R
+import com.curiosityio.wendy.config.WendyConfig
 import com.curiosityio.wendy.model.OfflineCapableModel
 import com.curiosityio.wendy.model.PendingApiTask
 import io.realm.Realm
@@ -14,21 +16,29 @@ import rx.schedulers.Schedulers
 
 abstract class BaseWendyDataManager(val context: Context) {
 
+    lateinit var uiRealm: Realm
+
     @Throws(RuntimeException::class)
-    protected fun performRealmTransaction(changeData: Realm.Transaction, realm: Realm = Realm.getDefaultInstance()) {
+    protected fun performRealmTransaction(changeData: Realm.Transaction, tempRealmInstance: Boolean = false) {
         if (ThreadUtil.isOnMainThread()) {
             throw RuntimeException("Cannot perform transaction from UI thread.")
         }
+        val realm: Realm = getRealmInstance(tempRealmInstance)
         realm.executeTransaction(changeData)
         if (!realm.isClosed) realm.close()
     }
 
+    private fun getRealmInstance(tempInstance: Boolean): Realm {
+        return if (tempInstance) RealmInstanceManager.getTempInstance() else RealmInstanceManager.getInstance()
+    }
+
     @Throws(RuntimeException::class)
-    protected fun performRealmTransactionCompletable(changeData: Realm.Transaction, realm: Realm = Realm.getDefaultInstance()): Completable {
+    protected fun performRealmTransactionCompletable(changeData: Realm.Transaction, tempRealmInstance: Boolean = false): Completable {
         return Completable.create { subscriber ->
             if (ThreadUtil.isOnMainThread()) {
                 throw RuntimeException("Cannot perform transaction from UI thread.")
             }
+            val realm: Realm = getRealmInstance(tempRealmInstance)
             realm.executeTransaction(changeData)
             if (!realm.isClosed) realm.close()
 
@@ -41,7 +51,7 @@ abstract class BaseWendyDataManager(val context: Context) {
 
         val nextAvailableTempModelId = lastUsedId - 1
 
-        if (SharedPreferencesManager.edit(context).setLong(context.getString(R.string.preferences_last_used_temp_model_id), nextAvailableTempModelId).commit()) {
+        if (SharedPreferencesManager.edit(context).setLong(context.getString(R.string.preferences_last_used_temp_model_id), nextAvailableTempModelId).commitChangesNow()) {
             return nextAvailableTempModelId
         } else {
             throw RuntimeException("Error saving to device.")
