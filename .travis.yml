@@ -1,0 +1,44 @@
+# To verify this file, call `travis lint .travis.yml` with travis-cli gem installed. To install, call `bundle install` in this directory.
+# To make life easier, I made a git commit hook to run this after each commit for reference. Create a file: `.git/hooks/pre-commit` and put inside (without the '#' before the line):
+# echo "----linting .travis.yml----"
+# travis lint .travis.yml
+# exit 0
+
+sudo: false
+language: android
+jdk:
+  - oraclejdk8
+
+install:
+  - bundle install --path vendor/bundle
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  bundler: true
+  directories:
+    # Android SDK
+    - $HOME/android-sdk-dl
+    - $HOME/android-sdk
+
+    # Gradle dependencies
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+    # Android build cache (see http://tools.android.com/tech-docs/build-cache)
+    - $HOME/.android/build-cache
+env:
+  - ANDROID_HOME=$HOME/android-sdk
+
+jobs:
+  include:
+    - stage: danger
+      script: bundle exec danger --fail-on-errors=true
+    - stage: pr
+      script: ./bin/install_android_sdk.sh && ./gradlew androidDependencies && ./bin/pr-tasks.sh
+
+stages:
+  - name: danger
+    if: type IN (pull_request)
+  - name: pr
+    if: type IN (pull_request)
