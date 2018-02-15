@@ -1,6 +1,7 @@
 package com.levibostian.wendyexample
 
 import android.app.Application
+import com.curiosityio.wendyexample.BuildConfig
 import com.levibostian.wendy.service.PendingTasks
 
 class MainApplication : Application() {
@@ -9,6 +10,7 @@ class MainApplication : Application() {
         super.onCreate()
 
         PendingTasks.init(this, WendyExamplePendingTasksFactory())
+                .debug(BuildConfig.DEBUG)
     }
 
 }

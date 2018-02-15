@@ -10,7 +10,7 @@ open class PendingTask(internal var id: Long = 0,  // auto increments
                        open var data_id: String? = null,
                        internal var tag: String = "") {
 
-    internal fun getManuallyRun(): Long {
+    internal fun getManuallyRun(): Int {
         return if (manually_run) MANUALLY_RUN else NOT_MANUALLY_RUN
     }
 
@@ -23,12 +23,14 @@ open class PendingTask(internal var id: Long = 0,  // auto increments
         internal const val COLUMN_DATA_ID = "data_id"
         internal const val COLUMN_TAG = "tag"
 
-        internal const val MANUALLY_RUN: Long = 1
-        internal const val NOT_MANUALLY_RUN: Long = 0
+        internal const val MANUALLY_RUN: Int = 1
+        internal const val NOT_MANUALLY_RUN: Int = 0
     }
 
     /**
      * Must override this to run the actual task.
+     *
+     * Note: This method is run on a background thread for you already.
      */
     open fun runTask(complete: (successful: Boolean) -> Unit) {
         throw RuntimeException("Override me.")
@@ -51,6 +53,10 @@ open class PendingTask(internal var id: Long = 0,  // auto increments
         this.tag = pendingTask.tag
 
         return this
+    }
+
+    override fun toString(): String {
+        return "id: $id, created at: $created_at, manually run: $manually_run, group id: ${group_id ?: "none"}, data id: ${data_id ?: "none"}, tag: $tag"
     }
 
 }
