@@ -1,14 +1,15 @@
 package com.levibostian.wendy.service
 
+import java.text.SimpleDateFormat
 import java.util.*
 
 // Not making abstract because we need to save it in the sqlite db and it cannot be abstract to do that.
-open class PendingTask(internal var id: Long = 0,  // auto increments
-                       internal var created_at: Long = Date().time,
+open class PendingTask(open var id: Long = 0,  // auto increments
+                       open var created_at: Long = Date().time,
                        open var manually_run: Boolean = false,
                        open var group_id: String? = null,
                        open var data_id: String? = null,
-                       internal var tag: String = "") {
+                       open var tag: String = "") {
 
     internal fun getManuallyRun(): Int {
         return if (manually_run) MANUALLY_RUN else NOT_MANUALLY_RUN
@@ -56,7 +57,9 @@ open class PendingTask(internal var id: Long = 0,  // auto increments
     }
 
     override fun toString(): String {
-        return "id: $id, created at: $created_at, manually run: $manually_run, group id: ${group_id ?: "none"}, data id: ${data_id ?: "none"}, tag: $tag"
+        val dateFormatter = SimpleDateFormat("yyyy.MM.dd G 'at' HH:mm:ss z", Locale.ENGLISH)
+
+        return "id: $id, created at: ${dateFormatter.format(created_at)}, manually run: $manually_run, group id: ${group_id ?: "none"}, data id: ${data_id ?: "none"}, tag: $tag"
     }
 
 }

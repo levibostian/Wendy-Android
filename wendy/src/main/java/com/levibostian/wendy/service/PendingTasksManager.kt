@@ -34,6 +34,26 @@ internal class PendingTasksManager(context: Context) {
         }
     }
 
+    fun getAllTasks(): List<PendingTask> {
+        val tasksFactory = PendingTasks.sharedInstance().tasksFactory
+        return db.use {
+            select(PendingTask.TABLE_NAME)
+                    .exec { parseList(classParser<PendingTask>()).map { tasksFactory.getTask(it.tag, it) } }
+        }
+    }
+
+    fun getTaskForId(id: Long): PendingTask? {
+        val tasksFactory = PendingTasks.sharedInstance().tasksFactory
+        return db.use {
+            select(PendingTask.TABLE_NAME)
+                    .whereArgs("${PendingTask.COLUMN_ID} = $id")
+                    .exec {
+                        val task = parseOpt(classParser<PendingTask>())
+                        if (task == null) null else tasksFactory.getTask(task.tag, task)
+                    }
+        }
+    }
+
     fun getNextTask(afterTaskId: Long = 0, notInvolvingGroups: List<String>? = null): PendingTask? {
         val tasksFactory = PendingTasks.sharedInstance().tasksFactory
 

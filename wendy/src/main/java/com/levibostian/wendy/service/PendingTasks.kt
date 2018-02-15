@@ -2,10 +2,13 @@ package com.levibostian.wendy.service
 
 import android.content.Context
 import android.os.Handler
+import android.os.Looper
 import com.evernote.android.job.JobManager
 import com.levibostian.wendy.WendyConfig
 import com.levibostian.wendy.job.PendingTaskJobCreator
 import com.levibostian.wendy.job.PendingTasksJob
+import com.levibostian.wendy.listeners.PendingTaskStatusListener
+import java.lang.ref.WeakReference
 
 open class PendingTasks private constructor(context: Context, val tasksFactory: PendingTasksFactory) {
 
@@ -52,6 +55,11 @@ open class PendingTasks private constructor(context: Context, val tasksFactory: 
      */
     open fun addTask(pendingTask: PendingTask): Long {
         val id = tasksManager.addTask(pendingTask)
+        Handler(Looper.getMainLooper()).post({
+            WendyConfig.getTaskRunnerListeners().forEach {
+                it.newTaskAdded(id)
+            }
+        })
 
         runTasks() // Run tasks right now in case this newly added task can run right away.
 
@@ -62,11 +70,30 @@ open class PendingTasks private constructor(context: Context, val tasksFactory: 
      * Manually run all pending tasks. Wendy takes care of running this periodically for you, but you can manually run tasks here.
      */
     open fun runTasks() {
-        PendingTasksRunner.PendingTasksRunnerAsyncTask(runner, tasksManager).execute(null)
+        PendingTasksRunner.PendingTasksRunnerAllTasksAsyncTask(runner, tasksManager).execute(null)
+    }
+
+    open fun runTask(id: Long) {
+        PendingTasksRunner.PendingTasksRunnerGivenSetTasksAsyncTask(runner).execute(id)
     }
 
     open fun resetTasks() {
         tasksManager.deleteAllTasks()
+
+        Handler(Looper.getMainLooper()).post({
+            WendyConfig.getTaskRunnerListeners().forEach {
+                it.allTasksReset()
+            }
+        })
+    }
+
+    open fun getAllTasks(): List<PendingTask> {
+        return tasksManager.getAllTasks()
+    }
+
+    open fun addTaskStatusListener(taskId: Long, listener: PendingTaskStatusListener) {
+        WendyConfig.addTaskStatusListenerForTask(taskId, listener)
+        if (runner.currentlyRunningTaskId == taskId) listener.running(taskId)
     }
 
 }

@@ -19,7 +19,7 @@ internal class PendingTasksJob(context: Context, tasksManager: PendingTasksManag
     }
 
     private fun runTheJob() {
-        jobRunner.runPendingTasks()
+        jobRunner.runAllTasks()
     }
 
     companion object {
