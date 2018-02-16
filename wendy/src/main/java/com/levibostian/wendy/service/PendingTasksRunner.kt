@@ -55,7 +55,7 @@ internal class PendingTasksRunner(val context: Context,
     }
 
     @Synchronized fun runTask(id: Long, complete: (skipped: ReasonPendingTaskSkipped?, successful: Boolean) -> Unit) {
-        val taskToRun = pendingTasksManager.getTaskForId(id) ?: throw RuntimeException("Pending task with id: $id not found.")
+        val taskToRun = pendingTasksManager.getTaskForId(id) ?: return
 
         if (!taskToRun.canRunTask()) {
             val reasonForSkip = ReasonPendingTaskSkipped.NOT_READY_TO_RUN
@@ -112,7 +112,7 @@ internal class PendingTasksRunner(val context: Context,
         currentlyRunningTaskId = null
     }
 
-    class PendingTasksRunnerAllTasksAsyncTask(val runner: PendingTasksRunner, val pendingTasksManager: PendingTasksManager) : AsyncTask<Unit, Int, Int>() {
+    internal class PendingTasksRunnerAllTasksAsyncTask(val runner: PendingTasksRunner, val pendingTasksManager: PendingTasksManager) : AsyncTask<Unit, Int, Int>() {
 
         @Suppress("UNCHECKED_CAST")
         override fun doInBackground(vararg params: Unit): Int {
@@ -126,7 +126,7 @@ internal class PendingTasksRunner(val context: Context,
 
     }
 
-    class PendingTasksRunnerGivenSetTasksAsyncTask(val runner: PendingTasksRunner) : AsyncTask<Long?, Int, Int>() {
+    internal class PendingTasksRunnerGivenSetTasksAsyncTask(val runner: PendingTasksRunner) : AsyncTask<Long?, Int, Int>() {
 
         @Suppress("UNCHECKED_CAST")
         override fun doInBackground(vararg params: Long?): Int {

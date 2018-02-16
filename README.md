@@ -2,28 +2,30 @@
 
 # Wendy
 
-Remove the difficulty in making offline-first Android apps.
+Remove the difficulty in making offline-first Android apps. Sync your offline device storage with remote cloud storage easily.
 
-![](misc/wendy_logo.jpg)
+![project logo](misc/wendy_logo.jpg)
 
 ## What is Wendy?
 
-Wendy is an Android library designed to help you make your app offline-first. Use Wendy to define sync tasks, then Wendy will run those tasks at the best time periodically to keep your app's offline data in sync with it's online storage.
+Wendy is an Android library designed to help you make your app offline-first. Use Wendy to define sync tasks, then Wendy will run those tasks periodically to keep your app's device offline data in sync with it's online remote storage.
 
-Essentially, Wendy is a step up from the Android job runner API. It is used in production today in apps created by [Levi Bostian](https://levibostian.com).
+Essentially, Wendy is a step up from the Android job runner API.
+
+Wendy is a FIFO task runner. You give it tasks, one by one, it persists those tasks to storage, then when Wendy has determined it's a good time for your task to run, it will call your task's sync function to perform a sync. If your user's device is online and has a good amount of battery, Wendy goes through all of the tasks available one by one running them to succeed or fail and try again.
+
+*Note: Wendy is currently in an alpha stage. The API most definitely could change, but it is used in production apps today. Use the latest release of Wendy as you wish but be prepared for having to update your code base in future releases.*
 
 ## Why use Wendy?
 
 When creating offline-first mobile apps there are 2 parts. 1. Persisting data to the user's Android device storage and 2. Sync that Android device's local storage with an online storage service.
 
-Wendy helps you with item `#2`. You define how the local storage is supposed to sync with the remote storage and Wendy takes care of running those tasks for you periodically when the time is right.
-
-Wendy is a FIFO task runner. You give it tasks, one by one, it persists those tasks to storage, then when Wendy has determined it's a good time for your task to run, it will call your task's sync function to perform a sync. If your user's device is online and has a good amount of battery, Wendy goes through all of the tasks available one by one until they all succeed or the network connection goes away where it will then try again later.
+Wendy helps you with item #2. You define how the local storage is supposed to sync with the remote storage and Wendy takes care of running those tasks for you periodically when the time is right.
 
 Wendy currently has the following functionality:
 
 * Wendy uses the Android Job scheduler API to run tasks every 15 minutes when the device is online to keep data in sync without using the user's battery too much.
-* Wendy is not opinionated. You may use whatever method you choose to sync data with it's remote storage and whatever method you choose to store data locally on the device. Wendy works with your workflow you already have.
+* Wendy is not opinionated. You may use whatever method you choose to sync data with it's remote storage and whatever method you choose to store data locally on the device. Wendy works with your workflow you already have. Store user data in Sqlite locally and a Rails API for the cloud storage. Store user data in Realm locally and a Parse server for the cloud storage. Whatever you want.
 * Dynamically allow and disallow tasks to sync at runtime. Wendy works in a FIFO style with it's tasks. When Wendy is about to run a certain task, it always asks the task if it is able to run.
 * Mark tasks to manually run instead of automatically from Wendy. This allows you to use the same Wendy API to define all of your sync tasks, but Wendy will simply not attempt to run these tasks periodically automatically.
 * Group tasks together to say, "if one of these tasks fails, skip all the future tasks in this group".
@@ -49,16 +51,17 @@ compile 'com.github.levibostian:wendy-android:0.1.0'
 
 The latest release version at this time is: [![Release](https://jitpack.io/v/levibostian/Wendy-Android.svg)](https://jitpack.io/#levibostian/Wendy-Android)
 
-# Configure
+# Getting started
 
-Create a `PendingTasksFactory` instance that stores all of your app's Wendy `PendingTask`s. ([I plan to remove this requirement in the future](https://github.com/levibostian/Wendy-Android/issues/17). PRs welcome 😄)
+For this getting started guide, lets work through an example for you to follow along with. Let's say you are building a grocery list app. We will call it, `Grocery List`.
+
+First, create a `PendingTasksFactory` subclass that stores all of your app's Wendy `PendingTask`s. It's pretty blank to start but we will add more to it later. ([I plan to remove this requirement in the future](https://github.com/levibostian/Wendy-Android/issues/17). PRs welcome 😄)
 
 ```
-class WendyExamplePendingTasksFactory : PendingTasksFactory {
+class GroceryListPendingTasksFactory : PendingTasksFactory {
 
     override fun getTask(tag: String, task: PendingTask): PendingTask {
         return when (tag) {
-            FooPendingTask::class.java.simpleName -> FooPendingTask.blank().fromSqlObject(task)
             else -> throw RuntimeException("No idea what task that is... tag: $tag")
         }
     }
@@ -69,36 +72,117 @@ class WendyExamplePendingTasksFactory : PendingTasksFactory {
 Add the following code to your Application `onCreate()`:
 
 ```
-PendingTasks.init(this, WendyExamplePendingTasksFactory())
+PendingTasks.init(this, GroceryListPendingTasksFactory())
 ```
 
-Wendy is not configured. It's time to use it!
+Wendy is now configured. It's time to use it!
 
-To use Wendy to sync your local storage with remote storage, first define a `PendingTask`:
+For each separate task that you need to sync local storage with remote cloud storage, you define a `PendingTask` subclass.
+
+In our `Grocery List` app, we want to allow users to create new grocery items. Every time that a user creates a new grocery list item, we don't want to show them a progress bar saying, "Saving grocery list item..." while we perform an API call! We want to be able to *instantly* save that grocery list item and sync it with the cloud storage later.
+
+Let's create our first `PendingTask` subclass for creating new grocery items.
 
 ```
-class FooPendingTask : PendingTask() {
+class CreateGroceryListItemPendingTask(groceryStoreItemId: Long) : PendingTask(tag = CreateGroceryListItemPendingTask::class.java.simpleName) {
+
+    init {
+        data_id = groceryStoreItemId.toString()
+    }
 
     companion object {
-        fun blank(): FooPendingTask { return FooPendingTask() }
+        fun blank(): CreateGroceryListItemPendingTask { return CreateGroceryListItemPendingTask() }
     }
 
     override fun runTask(complete: (successful: Boolean) -> Unit) {
         // Here, instantiate your dependencies, talk to your DB, your API, etc. Run the task.
-        // After you are done (or failed), call `complete()` defining if the task was successful and does not need to be run again or it failed and it must be run in the future.
-        complete(true)
+        // After you are done (or failed), call `complete()`.
+
+        val groceryStoreItem = localDatabase.queryGroceryStoreItem(data_id)
+
+        performApiCall(groceryStoreItem, { successful, error ->
+            if (error != null || !successful) {
+                complete(false) // Our API call failed. We tell Wendy the task is complete but not successful so it will be scheduled to try again later.
+            } else {
+                complete(true) // Our API call was successful. We tell Wendy the task is complete and successful and it will delete the task from the device database and will not run it again.
+            }
+        })
     }
 
 }
 ```
 
-Then, when your app user's perform a task in the app that needs to sync with remote storage, create an instance of your `FooPendingTask` and hand that to Wendy:
+Each time that you create a new subclass of `PendingTask`, you need to add that to the `PendingTasksFactory` you created. Your `GroceryListPendingTasksFactory` should look like this now:
 
 ```
-PendingTasks.sharedInstance().addTask(new FooPendingTask())
+class GroceryListPendingTasksFactory : PendingTasksFactory {
+
+    override fun getTask(tag: String, task: PendingTask): PendingTask {
+        return when (tag) {
+            CreateGroceryListItemPendingTask::class.java.simpleName -> CreateGroceryListItem.blank().fromSqlObject(task)
+            else -> throw RuntimeException("No idea what task that is... tag: $tag")
+        }
+    }
+
+}
 ```
 
-Wendy takes care of all the rest.
+Just about done.
+
+Let's take a look at the function that runs when the user creates a new grocery store list item in the app.
+
+```
+fun createNewGroceryStoreItem(itemName: String) {
+    // First thing you need to do to make a mobile app offline-first is to save it to the device's storage.
+    // Below, we are saving to a `localDatabase`. Whatever that is. It could be whatever you wish. Sqlite, Realm, shared preferences, whatever. After we save to the database, we get an ID back. You will need some sort of identifier whether that be the shared preferences key, the database row ID, it doesn't matter.
+    val id: Long = localDatabase.createNewGroceryStoreItem(itemName)
+
+    // We will now create a new `CreateGroceryListItemPendingTask` pending task instance and give it to Wendy.
+    PendingTasks.sharedInstance().addTask(CreateGroceryListItemPendingTask(id))
+}
+```
+
+Done! Wendy takes care of all the rest. Wendy will try to run your task right away but if you're offline or in a spotty Internet connection, Wendy will wait and try again later.
+
+## Example app
+
+This library comes with an example app.
+
+## Documentation
+
+There is a Javadoc (Kotlin doc, actually) for all of the public classes of Wendy. They are in the `docs/` directory. Check em out!
+
+## Advanced functionality
+
+* Register listeners to Wendy task runner.
+
+```
+WendyConfig.addTaskRunnerListener(listener)
+```
+
+* Register listeners to a specific Wendy `PendingTask`.
+
+```
+WendyConfig.addTaskStatusListenerForTask(pendingTaskId, listener)
+```
+
+* Have Wendy log debug statements as it's running during development.
+
+```
+WendyConfig.debug = true # default is false.
+```
+
+I recommend doing the following:
+
+```
+WendyConfig.debug = BuildConfig.DEBUG
+```
+
+You can change the Logcat tag as well:
+
+```
+WendyConfig.tag = "Wendy" # default is "WENDY"
+```
 
 ## Author
 
@@ -108,13 +192,15 @@ Wendy takes care of all the rest.
 
 ## Contribute
 
-Wendy is open for pull requests. Before you decide to take a bunch of time and add functionality to the library, please, [create an issue](https://github.com/levibostian/Wendy-Android/issues/new) stating what you wish to add. This might save you some time in case your purpose does not fit well in the use cases of Wendy.
+Wendy is open for pull requests. Check out the [list of issues](https://github.com/levibostian/wendy-android/issues) for tasks I am planning on working on. Check them out if you wish to contribute in that way.
+
+**Want to add features to Wendy?** Before you decide to take a bunch of time and add functionality to the library, please, [create an issue](https://github.com/levibostian/Wendy-Android/issues/new) stating what you wish to add. This might save you some time in case your purpose does not fit well in the use cases of Wendy.
 
 ### Where did the name come from?
 
-User wants fast results. Apps without loading screens...
+Users wants fast results in their mobile app. They don't to wait for loading screens.
 
-Sometimes people want fast results with their food. Fast food....
+Sometimes people want fast results with their food, too. They want fast food...
 
 ...Wendy
 

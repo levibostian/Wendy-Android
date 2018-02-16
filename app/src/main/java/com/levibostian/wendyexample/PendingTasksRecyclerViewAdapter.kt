@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import com.curiosityio.wendyexample.R
+import com.levibostian.wendy.WendyConfig
 import com.levibostian.wendy.listeners.PendingTaskStatusListener
 import com.levibostian.wendy.service.PendingTask
 import com.levibostian.wendy.service.PendingTasks
@@ -47,7 +48,7 @@ class PendingTasksRecyclerViewAdapter(val data: List<PendingTask>) : RecyclerVie
         holder.createdAtTextView.text = String.format("Created: %s", SimpleDateFormat("yyyy.MM.dd G 'at' HH:mm:ss z", Locale.ENGLISH).format(adapterItem.created_at))
 
         holder.statusTextView.text = "not running"
-        PendingTasks.sharedInstance().addTaskStatusListener(adapterItem.id, holder.statusTextView)
+        WendyConfig.addTaskStatusListenerForTask(adapterItem.id, holder.statusTextView)
 
         holder.runTaskButton.setOnClickListener {
             listener?.manuallyRunPressed(adapterItem)

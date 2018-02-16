@@ -1,5 +1,6 @@
 package com.levibostian.wendy.service
 
+import android.app.Application
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
@@ -15,6 +16,11 @@ open class PendingTasks private constructor(context: Context, val tasksFactory: 
     companion object {
         private var instance: PendingTasks? = null
 
+        /**
+         * Initialize Wendy. It's recommended to do this in your [Application] class of your app.
+         *
+         * This function essentially just creates a singleton instance of [PendingTasks] for your application to share. Future calls to this function will be ignored. The instance is only initialized once.
+         */
         @JvmStatic fun init(context: Context, tasksFactory: PendingTasksFactory): PendingTasks {
             if (instance == null) {
                 instance = PendingTasks(context, tasksFactory)
@@ -24,6 +30,11 @@ open class PendingTasks private constructor(context: Context, val tasksFactory: 
             return instance!!
         }
 
+        /**
+         * Get singleton instance of [PendingTasks].
+         *
+         * @throws RuntimeException If you have not called [PendingTasks.init] yet to initialize singleton instance.
+         */
         @JvmStatic fun sharedInstance(): PendingTasks {
             if (instance == null) throw RuntimeException("Sorry, you must initialize the instance first.")
             return instance!!
@@ -47,13 +58,17 @@ open class PendingTasks private constructor(context: Context, val tasksFactory: 
         PendingTasksJob.scheduleJob()
     }
 
-    private var tasksManager: PendingTasksManager = PendingTasksManager(context)
-    private var runner: PendingTasksRunner = PendingTasksRunner(context, tasksManager)
+    internal var tasksManager: PendingTasksManager = PendingTasksManager(context)
+    internal var runner: PendingTasksRunner = PendingTasksRunner(context, tasksManager)
 
     /**
      * Call when you have a new PendingTask that you would like to register to Wendy to run.
+     *
+     * Wendy works in a FIFO order. Your task gets added to the end of the queue of tasks to run.
+     *
+     * @param pendingTask Task you want to add to Wendy.
      */
-    open fun addTask(pendingTask: PendingTask): Long {
+    fun addTask(pendingTask: PendingTask): Long {
         val id = tasksManager.addTask(pendingTask)
         Handler(Looper.getMainLooper()).post({
             WendyConfig.getTaskRunnerListeners().forEach {
@@ -69,15 +84,25 @@ open class PendingTasks private constructor(context: Context, val tasksFactory: 
     /**
      * Manually run all pending tasks. Wendy takes care of running this periodically for you, but you can manually run tasks here.
      */
-    open fun runTasks() {
+    fun runTasks() {
         PendingTasksRunner.PendingTasksRunnerAllTasksAsyncTask(runner, tasksManager).execute(null)
     }
 
-    open fun runTask(id: Long) {
+    /**
+     * Use this function along with manually run tasks to have Wendy run it for you. If it is successful, Wendy will take care of deleting it for you.
+     *
+     * @param id ID of [PendingTask] you wish to run. If there is not a [PendingTask] with this ID, the task runner simply ignores your request and moves on.
+     *
+     * @see [WendyConfig.addTaskStatusListenerForTask] to learn how to listen to the status of a task that you have set to run.
+     */
+    fun runTask(id: Long) {
         PendingTasksRunner.PendingTasksRunnerGivenSetTasksAsyncTask(runner).execute(id)
     }
 
-    open fun resetTasks() {
+    /**
+     * Delete *all* pending tasks that were added to Wendy. This is *all* tasks. Doesn't matter if it's manually run or not manually run tasks, failed tasks, whatever. They all get deleted here.
+     */
+    fun resetTasks() {
         tasksManager.deleteAllTasks()
 
         Handler(Looper.getMainLooper()).post({
@@ -87,13 +112,11 @@ open class PendingTasks private constructor(context: Context, val tasksFactory: 
         })
     }
 
+    /**
+     * If you, for some reason, wish to receive a copy of all the [PendingTask] instances that still need to run successfully by Wendy, here is how you get them.
+     */
     open fun getAllTasks(): List<PendingTask> {
         return tasksManager.getAllTasks()
-    }
-
-    open fun addTaskStatusListener(taskId: Long, listener: PendingTaskStatusListener) {
-        WendyConfig.addTaskStatusListenerForTask(taskId, listener)
-        if (runner.currentlyRunningTaskId == taskId) listener.running(taskId)
     }
 
 }

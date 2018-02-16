@@ -1,0 +1,27 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>PendingTasksFactory - wendy</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">wendy</a>&nbsp;/&nbsp;<a href="../index.html">com.levibostian.wendy.service</a>&nbsp;/&nbsp;<a href=".">PendingTasksFactory</a><br/>
+<br/>
+<h1>PendingTasksFactory</h1>
+<code><span class="keyword">interface </span><span class="identifier">PendingTasksFactory</span></code>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="get-task.html">getTask</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getTask</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.service.PendingTasksFactory$getTask(kotlin.String, com.levibostian.wendy.service.PendingTask)/tag">tag</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.service.PendingTasksFactory$getTask(kotlin.String, com.levibostian.wendy.service.PendingTask)/task">task</span><span class="symbol">:</span>&nbsp;<a href="../-pending-task/index.html"><span class="identifier">PendingTask</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-pending-task/index.html"><span class="identifier">PendingTask</span></a></code>
+<p>This exists because I could not figure out how to save a generic class that overrides <a href="../-pending-task/index.html">PendingTask</a> in the sqlite database and instantiate it after querying it. So, instead I get the instance here via the tag after I query it.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

@@ -1,0 +1,104 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>PendingTasks - wendy</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">wendy</a>&nbsp;/&nbsp;<a href="../index.html">com.levibostian.wendy.service</a>&nbsp;/&nbsp;<a href=".">PendingTasks</a><br/>
+<br/>
+<h1>PendingTasks</h1>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">PendingTasks</span></code>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="tasks-factory.html">tasksFactory</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">tasksFactory</span><span class="symbol">: </span><a href="../-pending-tasks-factory/index.html"><span class="identifier">PendingTasksFactory</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="add-task.html">addTask</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addTask</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks$addTask(com.levibostian.wendy.service.PendingTask)/pendingTask">pendingTask</span><span class="symbol">:</span>&nbsp;<a href="../-pending-task/index.html"><span class="identifier">PendingTask</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code>
+<p>Call when you have a new PendingTask that you would like to register to Wendy to run.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="add-task-status-listener.html">addTaskStatusListener</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addTaskStatusListener</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks$addTaskStatusListener(kotlin.Long, com.levibostian.wendy.listeners.PendingTaskStatusListener)/taskId">taskId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks$addTaskStatusListener(kotlin.Long, com.levibostian.wendy.listeners.PendingTaskStatusListener)/listener">listener</span><span class="symbol">:</span>&nbsp;<a href="../../com.levibostian.wendy.listeners/-pending-task-status-listener/index.html"><span class="identifier">PendingTaskStatusListener</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="debug.html">debug</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">debug</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks$debug(kotlin.Boolean)/enableDebug">enableDebug</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">PendingTasks</span></code>
+<p>Turn on and off debug log messages from Wendy.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-all-tasks.html">getAllTasks</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getAllTasks</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-pending-task/index.html"><span class="identifier">PendingTask</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="reset-tasks.html">resetTasks</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">resetTasks</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="run-task.html">runTask</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">runTask</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks$runTask(kotlin.Long)/id">id</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="run-tasks.html">runTasks</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">runTasks</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Manually run all pending tasks. Wendy takes care of running this periodically for you, but you can manually run tasks here.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="init.html">init</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">init</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks.Companion$init(android.content.Context, com.levibostian.wendy.service.PendingTasksFactory)/context">context</span><span class="symbol">:</span>&nbsp;<a href="https://developer.android.com/reference/android/content/Context.html"><span class="identifier">Context</span></a><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks.Companion$init(android.content.Context, com.levibostian.wendy.service.PendingTasksFactory)/tasksFactory">tasksFactory</span><span class="symbol">:</span>&nbsp;<a href="../-pending-tasks-factory/index.html"><span class="identifier">PendingTasksFactory</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">PendingTasks</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="shared-instance.html">sharedInstance</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">sharedInstance</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">PendingTasks</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

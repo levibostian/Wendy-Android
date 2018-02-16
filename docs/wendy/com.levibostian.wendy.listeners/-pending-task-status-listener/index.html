@@ -1,0 +1,39 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>PendingTaskStatusListener - wendy</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">wendy</a>&nbsp;/&nbsp;<a href="../index.html">com.levibostian.wendy.listeners</a>&nbsp;/&nbsp;<a href=".">PendingTaskStatusListener</a><br/>
+<br/>
+<h1>PendingTaskStatusListener</h1>
+<code><span class="keyword">interface </span><span class="identifier">PendingTaskStatusListener</span></code>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="complete.html">complete</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">complete</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.listeners.PendingTaskStatusListener$complete(kotlin.Long, kotlin.Boolean)/taskId">taskId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.listeners.PendingTaskStatusListener$complete(kotlin.Long, kotlin.Boolean)/successful">successful</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="running.html">running</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">running</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.listeners.PendingTaskStatusListener$running(kotlin.Long)/taskId">taskId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="skipped.html">skipped</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">skipped</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.listeners.PendingTaskStatusListener$skipped(kotlin.Long, com.levibostian.wendy.types.ReasonPendingTaskSkipped)/taskId">taskId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.listeners.PendingTaskStatusListener$skipped(kotlin.Long, com.levibostian.wendy.types.ReasonPendingTaskSkipped)/reason">reason</span><span class="symbol">:</span>&nbsp;<a href="../../com.levibostian.wendy.types/-reason-pending-task-skipped/index.html"><span class="identifier">ReasonPendingTaskSkipped</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>
