@@ -53,7 +53,7 @@ open class PendingTasks private constructor(context: Context, val tasksFactory: 
 
     private fun init(context: Context) {
         val jobManager = JobManager.create(context)
-        jobManager.addJobCreator(PendingTaskJobCreator(context, tasksManager))
+        jobManager.addJobCreator(PendingTaskJobCreator())
 
         PendingTasksJob.scheduleJob()
     }
@@ -76,7 +76,7 @@ open class PendingTasks private constructor(context: Context, val tasksFactory: 
             }
         })
 
-        runTasks() // Run tasks right now in case this newly added task can run right away.
+        runTask(id) // Run task right now in case this newly added task can run right away.
 
         return id
     }

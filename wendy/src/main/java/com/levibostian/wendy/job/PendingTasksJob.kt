@@ -4,13 +4,12 @@ import android.content.Context
 import com.evernote.android.job.JobRequest
 import com.evernote.android.job.Job.Params
 import com.evernote.android.job.Job
+import com.levibostian.wendy.service.PendingTasks
 import com.levibostian.wendy.service.PendingTasksManager
 import com.levibostian.wendy.service.PendingTasksRunner
 import java.util.concurrent.TimeUnit
 
-internal class PendingTasksJob(context: Context, tasksManager: PendingTasksManager) : Job() {
-
-    private val jobRunner: PendingTasksRunner = PendingTasksRunner(context, tasksManager)
+internal class PendingTasksJob : Job() {
 
     override fun onRunJob(params: Params): Job.Result {
         runTheJob()
@@ -19,7 +18,7 @@ internal class PendingTasksJob(context: Context, tasksManager: PendingTasksManag
     }
 
     private fun runTheJob() {
-        jobRunner.runAllTasks()
+        PendingTasks.sharedInstance().runTasks()
     }
 
     companion object {

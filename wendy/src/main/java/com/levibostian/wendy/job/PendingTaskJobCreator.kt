@@ -5,11 +5,11 @@ import com.evernote.android.job.Job
 import com.evernote.android.job.JobCreator
 import com.levibostian.wendy.service.PendingTasksManager
 
-internal class PendingTaskJobCreator(private val context: Context, private val tasksManager: PendingTasksManager) : JobCreator {
+internal class PendingTaskJobCreator : JobCreator {
 
     override fun create(tag: String): Job? {
         return when (tag) {
-            PendingTasksJob.TAG -> PendingTasksJob(context, tasksManager)
+            PendingTasksJob.TAG -> PendingTasksJob()
             else -> null
         }
     }

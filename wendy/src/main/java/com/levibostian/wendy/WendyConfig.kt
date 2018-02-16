@@ -6,6 +6,7 @@ import com.levibostian.wendy.listeners.TaskRunnerListener
 import com.levibostian.wendy.service.PendingTask
 import com.levibostian.wendy.service.PendingTasks
 import com.levibostian.wendy.service.PendingTasksManager
+import com.levibostian.wendy.service.PendingTasksRunner
 import java.lang.ref.WeakReference
 
 open class WendyConfig {
@@ -57,9 +58,11 @@ open class WendyConfig {
             taskStatusListeners.add(TaskStatusListener(id, WeakReference(listener)))
 
             val tasksManager: PendingTasksManager = PendingTasks.sharedInstance().tasksManager
+            val tasksRunner: PendingTasksRunner = PendingTasks.sharedInstance().runner
             val pendingTask: PendingTask? = tasksManager.getTaskForId(id)
 
             listener.initialTaskStatus(pendingTask != null)
+            if (tasksRunner.currentlyRunningTaskId?.equals(id) != null && tasksRunner.currentlyRunningTaskId == id) listener.running(id)
         }
     }
 
