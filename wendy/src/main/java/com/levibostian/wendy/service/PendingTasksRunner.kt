@@ -28,6 +28,11 @@ internal class PendingTasksRunner(val context: Context,
         }
 
     @Synchronized fun runAllTasks() {
+        if (!WendyConfig.automaticallyRunTasks) {
+            LogUtil.d("Wendy configured to not automatically run all tasks. Skipping execution.")
+            return
+        }
+
         LogUtil.d("Getting next task to run.")
         val nextTaskToRun = pendingTasksManager.getNextTask(lastSuccessfulOrFailedTaskId, failedTasksGroups)
 

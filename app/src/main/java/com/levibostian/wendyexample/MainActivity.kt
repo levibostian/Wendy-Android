@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import android.widget.CompoundButton
 
 import com.curiosityio.wendyexample.R
 import com.levibostian.wendy.WendyConfig
@@ -34,6 +35,11 @@ class MainActivity : AppCompatActivity(), TaskRunnerListener {
                 closeKeyboard()
             }
         }
+        
+        activity_main_automatically_run_tasks_checkbox.setOnCheckedChangeListener { _, isChecked ->
+            WendyConfig.automaticallyRunTasks = isChecked
+        }
+        WendyConfig.automaticallyRunTasks = activity_main_automatically_run_tasks_checkbox.isChecked
 
         activity_main_tasks_recyclerview.layoutManager = LinearLayoutManager(this)
         refreshListOfTasks()

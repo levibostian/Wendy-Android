@@ -13,6 +13,10 @@ open class WendyConfig {
 
     companion object {
         /**
+         * Turn on and off the ability for Wendy to automatically run all of the [PendingTask]s set to not manually run for you.
+         */
+        var automaticallyRunTasks: Boolean = true
+        /**
          * Turn on and off debug mode. This turns on and off Wendy sending messages to the logcat.
          */
         var debug: Boolean = false
