@@ -1,5 +1,6 @@
 package com.levibostian.wendy.service
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.AsyncTask
 import android.os.Handler
@@ -8,15 +9,23 @@ import com.levibostian.wendy.types.ReasonPendingTaskSkipped
 import com.levibostian.wendy.util.LogUtil
 import kotlin.collections.ArrayList
 import android.os.Looper
-import android.util.Log
+import android.preference.PreferenceManager
 
 
 internal class PendingTasksRunner(val context: Context,
                                   private val pendingTasksManager: PendingTasksManager) {
 
+    private val rerunCurrentlyRunningTaskKey = "rerunCurrentlyRunningTaskKey"
+
     internal var lastSuccessfulOrFailedTaskId: Long = 0
     internal var failedTasksGroups: ArrayList<String> = arrayListOf()
-    internal var currentlyRunningTaskId: Long? = null
+    internal var currentlyRunningTask: PendingTask? = null
+    internal var rerunCurrentlyRunningTask: Boolean
+        get() = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(rerunCurrentlyRunningTaskKey, false)
+        @SuppressLint("ApplySharedPref")
+        set(value) {
+            PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(rerunCurrentlyRunningTaskKey, value).commit()
+        }
 
     @Synchronized fun runAllTasks() {
         LogUtil.d("Getting next task to run.")
@@ -72,7 +81,7 @@ internal class PendingTasksRunner(val context: Context,
             LogUtil.d("Task: $taskToRun is not ready to run. Skipping it.")
             complete(reasonForSkip, false)
         } else {
-            currentlyRunningTaskId = taskToRun.id
+            currentlyRunningTask = taskToRun
             Handler(Looper.getMainLooper()).post({
                 WendyConfig.getTaskStatusListenerForTask(taskToRun.id).forEach {
                     it.running(taskToRun.id)
@@ -83,7 +92,20 @@ internal class PendingTasksRunner(val context: Context,
             })
 
             taskToRun.runTask({ successful ->
-                currentlyRunningTaskId = null
+                currentlyRunningTask = null
+
+                if (successful) {
+                    LogUtil.d("Task: $taskToRun ran successful.")
+                    if (!rerunCurrentlyRunningTask) {
+                        LogUtil.d("Deleting task: $taskToRun.")
+                        pendingTasksManager.deleteTask(taskToRun.id)
+                    } else {
+                        LogUtil.d("Not deleting task: $taskToRun. It is set to rerun again.")
+                    }
+                    rerunCurrentlyRunningTask = false
+                } else {
+                    LogUtil.d("Task: $taskToRun failed. Skipping it.")
+                }
 
                 Handler(Looper.getMainLooper()).post({
                     WendyConfig.getTaskStatusListenerForTask(taskToRun.id).forEach {
@@ -94,13 +116,6 @@ internal class PendingTasksRunner(val context: Context,
                     }
                 })
 
-                if (successful) {
-                    LogUtil.d("Task: $taskToRun ran successful. Deleting it.")
-                    pendingTasksManager.deleteTask(taskToRun)
-                } else {
-                    LogUtil.d("Task: $taskToRun failed. Skipping it.")
-                }
-
                 complete(null, successful)
             })
         }
@@ -109,7 +124,8 @@ internal class PendingTasksRunner(val context: Context,
     private fun resetRunner() {
         lastSuccessfulOrFailedTaskId = 0
         failedTasksGroups = arrayListOf()
-        currentlyRunningTaskId = null
+        currentlyRunningTask = null
+        rerunCurrentlyRunningTask = false
     }
 
     internal class PendingTasksRunnerAllTasksAsyncTask(val runner: PendingTasksRunner, val pendingTasksManager: PendingTasksManager) : AsyncTask<Unit, Int, Int>() {

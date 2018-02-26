@@ -15,6 +15,7 @@ import java.util.*
  * @property data_id This field is used to help you identify what offline device data needs to be synced with online remote storage. Example: You have a sqlite database table named Employees. Your user creates a new Employee in your app. First, you will create a new Employee table row for this new employee and then create a new CreateEmployeePendingTask instance to sync this new Employees sqlite row with your online remote storage. Set [data_id] to the newly created Employee table row id. So then when your CreateEmployeePendingTask instance is run by Wendy, you can query your database and sync that data with your remote storage.
  * @property tag This is annoying, I know. I hope to remove it soon. This identifies your subclass with Wendy so when Wendy queries your [PendingTask] in the sqlite DB, it knows to run your subclass. It's recommended to set the tag to: `NameOfYourSubclass::class.java.simpleName`.
  *
+ * *Note:* The [tag] and [data_id] are the 2 properties that determine a unique instance of [PendingTask]. Wendy is configured to mark [tag] and [data_id] as unique constraints in the Wendy task database. So, even if the [group_id], [manually_run] is defined differently between 2 [PendingTask] instances, Wendy will write and run the most recently added [PendingTask].
  */
 open class PendingTask(open var id: Long = 0, // auto increments
                        open var created_at: Long = Date().time,
@@ -38,6 +39,9 @@ open class PendingTask(open var id: Long = 0, // auto increments
 
         internal const val MANUALLY_RUN: Int = 1
         internal const val NOT_MANUALLY_RUN: Int = 0
+
+        // If you are to update this, make sure to update equals() and hashCode() functions.
+        internal val UNIQUE_CONSTRAINT_COLUMNS = listOf(COLUMN_DATA_ID, COLUMN_TAG)
     }
 
     /**
@@ -72,6 +76,18 @@ open class PendingTask(open var id: Long = 0, // auto increments
         val dateFormatter = SimpleDateFormat("yyyy.MM.dd G 'at' HH:mm:ss z", Locale.ENGLISH)
 
         return "id: $id, created at: ${dateFormatter.format(created_at)}, manually run: $manually_run, group id: ${group_id ?: "none"}, data id: ${data_id ?: "none"}, tag: $tag"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return other is PendingTask &&
+                other.data_id == this.data_id &&
+                other.tag == this.tag
+    }
+
+    override fun hashCode(): Int {
+        var result = data_id?.hashCode() ?: 0
+        result = 31 * result + tag.hashCode()
+        return result
     }
 
 }

@@ -55,14 +55,11 @@ open class WendyConfig {
          * @see PendingTaskStatusListener to learn more about what callbacks to expect.
          */
         fun addTaskStatusListenerForTask(id: Long, listener: PendingTaskStatusListener) {
+            val tasksRunner: PendingTasksRunner = PendingTasks.sharedInstance().runner
+
             taskStatusListeners.add(TaskStatusListener(id, WeakReference(listener)))
 
-            val tasksManager: PendingTasksManager = PendingTasks.sharedInstance().tasksManager
-            val tasksRunner: PendingTasksRunner = PendingTasks.sharedInstance().runner
-            val pendingTask: PendingTask? = tasksManager.getTaskForId(id)
-
-            listener.initialTaskStatus(pendingTask != null)
-            if (tasksRunner.currentlyRunningTaskId?.equals(id) != null && tasksRunner.currentlyRunningTaskId == id) listener.running(id)
+            if (tasksRunner.currentlyRunningTask?.id?.equals(id) == true) listener.running(id)
         }
     }
 

@@ -138,11 +138,18 @@ fun createNewGroceryStoreItem(itemName: String) {
     val id: Long = localDatabase.createNewGroceryStoreItem(itemName)
 
     // We will now create a new `CreateGroceryListItemPendingTask` pending task instance and give it to Wendy.
-    PendingTasks.sharedInstance().addTask(CreateGroceryListItemPendingTask(id))
+    val pendingTaskId: Long = PendingTasks.sharedInstance().addTask(CreateGroceryListItemPendingTask(id))
+
+    // When you add a task to Wendy, you get back an ID for that new `PendingTask`. It's your responsibility to save that ID (or ignore it). It's best practice to save that ID with the data that this `PendingTask` links to. In our example here, the grocery store item in our localDatabase is where we should save the ID.
+    localDatabase.queryGroceryStoreItem(id).pending_task_id = pendingTaskId
+
+    // The reason you may want to save the ID of the `PendingTask` is to assert that it runs successfully. Also, you can show in the UI of your app the syncing status of that data to the user. This is all optional, but recommended for the best user experience.
 }
 ```
 
 Done! Wendy takes care of all the rest. Wendy will try to run your task right away but if you're offline or in a spotty Internet connection, Wendy will wait and try again later.
+
+There is a document on [best practices when using Wendy](BEST_PRACTICES.md). Check that out to answer your questions you have about why Wendy works the way that it does.
 
 ## Example app
 
@@ -203,6 +210,8 @@ Users wants fast results in their mobile app. They don't to wait for loading scr
 Sometimes people want fast results with their food, too. They want fast food...
 
 ...Wendy
+
+Get it?
 
 # Credits
 

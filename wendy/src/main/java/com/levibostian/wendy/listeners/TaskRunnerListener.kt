@@ -12,6 +12,7 @@ import com.levibostian.wendy.types.ReasonPendingTaskSkipped
  * @see WendyConfig.addTaskRunnerListener for how to register a listener.
  */
 interface TaskRunnerListener {
+
     /**
      * New task added to Wendy to be run.
      *
@@ -47,10 +48,4 @@ interface TaskRunnerListener {
      */
     fun allTasksComplete()
 
-    /**
-     * All tasks have been reset in Wendy.
-     *
-     * @see [PendingTasks.resetTasks] to learn more about resetting tasks.
-     */
-    fun allTasksReset()
 }

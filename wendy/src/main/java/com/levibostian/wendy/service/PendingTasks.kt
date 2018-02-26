@@ -8,8 +8,6 @@ import com.evernote.android.job.JobManager
 import com.levibostian.wendy.WendyConfig
 import com.levibostian.wendy.job.PendingTaskJobCreator
 import com.levibostian.wendy.job.PendingTasksJob
-import com.levibostian.wendy.listeners.PendingTaskStatusListener
-import java.lang.ref.WeakReference
 
 open class PendingTasks private constructor(context: Context, val tasksFactory: PendingTasksFactory) {
 
@@ -69,6 +67,8 @@ open class PendingTasks private constructor(context: Context, val tasksFactory: 
      * @param pendingTask Task you want to add to Wendy.
      */
     fun addTask(pendingTask: PendingTask): Long {
+        if (runner.currentlyRunningTask == pendingTask) runner.rerunCurrentlyRunningTask = true
+
         val id = tasksManager.addTask(pendingTask)
         Handler(Looper.getMainLooper()).post({
             WendyConfig.getTaskRunnerListeners().forEach {
@@ -97,19 +97,6 @@ open class PendingTasks private constructor(context: Context, val tasksFactory: 
      */
     fun runTask(id: Long) {
         PendingTasksRunner.PendingTasksRunnerGivenSetTasksAsyncTask(runner).execute(id)
-    }
-
-    /**
-     * Delete *all* pending tasks that were added to Wendy. This is *all* tasks. Doesn't matter if it's manually run or not manually run tasks, failed tasks, whatever. They all get deleted here.
-     */
-    fun resetTasks() {
-        tasksManager.deleteAllTasks()
-
-        Handler(Looper.getMainLooper()).post({
-            WendyConfig.getTaskRunnerListeners().forEach {
-                it.allTasksReset()
-            }
-        })
     }
 
     /**

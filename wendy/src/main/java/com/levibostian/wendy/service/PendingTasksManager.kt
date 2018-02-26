@@ -7,7 +7,7 @@ import org.jetbrains.anko.db.*
 
 internal class PendingTasksManager(context: Context) {
 
-    val db = PendingTasksDatabaseHelper.sharedInstance(context)
+    private val db = PendingTasksDatabaseHelper.sharedInstance(context)
 
     fun addTask(pendingTask: PendingTask): Long {
         if (pendingTask.tag.isBlank()) throw RuntimeException("You need to set a unique tag for ${PendingTask::class.java.simpleName} instances.")
@@ -24,13 +24,6 @@ internal class PendingTasksManager(context: Context) {
             LogUtil.d("Successfully added task to Wendy. Task: $pendingTask")
 
             id
-        }
-    }
-
-    fun deleteAllTasks() {
-        return db.use {
-            delete(PendingTask.TABLE_NAME)
-            LogUtil.d("Deleted all pending tasks.")
         }
     }
 
@@ -83,9 +76,9 @@ internal class PendingTasksManager(context: Context) {
         }
     }
 
-    fun deleteTask(pendingTask: PendingTask) {
+    fun deleteTask(taskId: Long) {
         db.use {
-            delete(PendingTask.TABLE_NAME, "${PendingTask.COLUMN_ID} = ${pendingTask.id}")
+            delete(PendingTask.TABLE_NAME, "${PendingTask.COLUMN_ID} = $taskId")
         }
     }
 

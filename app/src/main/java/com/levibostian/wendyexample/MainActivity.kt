@@ -35,11 +35,6 @@ class MainActivity : AppCompatActivity(), TaskRunnerListener {
             }
         }
 
-        activity_main_reset_tasks_button.setOnClickListener {
-            PendingTasks.sharedInstance().resetTasks()
-            closeKeyboard()
-        }
-
         activity_main_tasks_recyclerview.layoutManager = LinearLayoutManager(this)
         refreshListOfTasks()
 
@@ -69,9 +64,6 @@ class MainActivity : AppCompatActivity(), TaskRunnerListener {
         }, 1000)
     }
     override fun allTasksComplete() {
-    }
-    override fun allTasksReset() {
-        refreshListOfTasks()
     }
 
 }

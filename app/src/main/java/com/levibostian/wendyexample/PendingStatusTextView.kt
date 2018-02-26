@@ -27,9 +27,6 @@ class PendingStatusTextView : TextView, PendingTaskStatusListener {
         mContext = context
     }
 
-    override fun initialTaskStatus(stillToRun: Boolean) {
-    }
-
     override fun skipped(taskId: Long, reason: ReasonPendingTaskSkipped) {
         text = reason.accept(object : ReasonPendingTaskSkipped.Visitor<String> {
             override fun visitNotReadyToRun(): String {

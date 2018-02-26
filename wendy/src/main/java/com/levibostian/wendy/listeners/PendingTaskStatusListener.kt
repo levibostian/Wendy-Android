@@ -2,6 +2,7 @@ package com.levibostian.wendy.listeners
 
 import com.levibostian.wendy.WendyConfig
 import com.levibostian.wendy.service.PendingTask
+import com.levibostian.wendy.service.PendingTasks
 import com.levibostian.wendy.types.ReasonPendingTaskSkipped
 
 /**
@@ -13,15 +14,6 @@ import com.levibostian.wendy.types.ReasonPendingTaskSkipped
  * @see WendyConfig.addTaskStatusListenerForTask for how to register a listener of this interface.
  */
 interface PendingTaskStatusListener {
-
-    /**
-     * When you first register a [PendingTaskStatusListener] to Wendy, Wendy will check to see the status of the [PendingTask] you registered for and gives you a status update immediately on it.
-     *
-     * *Note:* This will only be called once. Immediately after you register your listener.
-     *
-     * @param stillToRun Indicates if the [PendingTask] you registered to is registered to Wendy and still needs to be run successfully.
-     */
-    fun initialTaskStatus(stillToRun: Boolean)
 
     /**
      * The task runner is running this exact [PendingTask].
