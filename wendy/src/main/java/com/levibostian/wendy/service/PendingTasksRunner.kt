@@ -11,7 +11,6 @@ import kotlin.collections.ArrayList
 import android.os.Looper
 import android.preference.PreferenceManager
 
-
 internal class PendingTasksRunner(val context: Context,
                                   private val pendingTasksManager: PendingTasksManager) {
 

@@ -17,14 +17,14 @@ internal class PendingTasksDatabaseHelper(applicationContext: Context, databaseN
     }
 
     override fun onCreate(database: SQLiteDatabase) {
-        database.createTable(PendingTask.TABLE_NAME, true,
-                PendingTask.UNIQUE_CONSTRAINT_COLUMNS,
-                PendingTask.COLUMN_ID to INTEGER + PRIMARY_KEY, // autoincrementing by default.
-                PendingTask.COLUMN_CREATED_AT to INTEGER + NOT_NULL, // storing Date to INTEGER as date.time
-                PendingTask.COLUMN_MANUALLY_RUN to INTEGER + NOT_NULL, // 0 == false, 1 == true
-                PendingTask.COLUMN_GROUP_ID to TEXT,
-                PendingTask.COLUMN_DATA_ID to TEXT,
-                PendingTask.COLUMN_TAG to TEXT + NOT_NULL)
+        database.createTable(PersistedPendingTask.TABLE_NAME, true,
+                PersistedPendingTask.UNIQUE_CONSTRAINT_COLUMNS,
+                PersistedPendingTask.COLUMN_ID to INTEGER + PRIMARY_KEY, // autoincrementing by default.
+                PersistedPendingTask.COLUMN_CREATED_AT to INTEGER + NOT_NULL, // storing Date to INTEGER as date.time
+                PersistedPendingTask.COLUMN_MANUALLY_RUN to INTEGER + NOT_NULL, // 0 == false, 1 == true
+                PersistedPendingTask.COLUMN_GROUP_ID to TEXT,
+                PersistedPendingTask.COLUMN_DATA_ID to TEXT,
+                PersistedPendingTask.COLUMN_TAG to TEXT + NOT_NULL)
     }
 
     override fun onUpgrade(database: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -35,7 +35,7 @@ internal class PendingTasksDatabaseHelper(applicationContext: Context, databaseN
 fun SQLiteDatabase.createTable(tableName: String, ifNotExists: Boolean = false, unique: List<String>, vararg columns: Pair<String, SqlType>) {
     val escapedTableName = tableName.replace("`", "``")
     val ifNotExistsText = if (ifNotExists) "IF NOT EXISTS" else ""
-    val uniqueQuery = if (unique.isNotEmpty()) "UNIQUE (${unique.joinToString()}) ON CONFLICT REPLACE" else ""
+    val uniqueQuery = if (unique.isNotEmpty()) ", UNIQUE (${unique.joinToString()}) ON CONFLICT REPLACE" else ""
     execSQL(
             columns.map { col ->
                 "${col.first} ${col.second.render()}"

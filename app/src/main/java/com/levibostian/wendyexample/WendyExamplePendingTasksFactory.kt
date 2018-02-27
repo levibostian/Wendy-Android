@@ -6,9 +6,9 @@ import com.levibostian.wendy.service.PendingTasksFactory
 
 class WendyExamplePendingTasksFactory : PendingTasksFactory {
 
-    override fun getTask(tag: String, task: PendingTask): PendingTask {
+    override fun getTask(tag: String): PendingTask {
         return when (tag) {
-            FooPendingTask::class.java.simpleName -> FooPendingTask.blank().fromSqlObject(task)
+            FooPendingTask::class.java.simpleName -> FooPendingTask.blank()
             else -> throw RuntimeException("No idea what task that is... tag: $tag")
         }
     }

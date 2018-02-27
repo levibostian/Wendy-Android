@@ -7,13 +7,7 @@ import java.util.*
 
 class FooPendingTask(manuallyRun: Boolean,
                      groupId: String?,
-                     data: String) : PendingTask(tag = FooPendingTask::class.java.simpleName) {
-
-    init {
-        manually_run = manuallyRun
-        group_id = groupId
-        data_id = data
-    }
+                     data: String) : PendingTask(manuallyRun, data, groupId, FooPendingTask::class.java.simpleName) {
 
     companion object {
         fun blank(): FooPendingTask { return FooPendingTask(false, null, "") }

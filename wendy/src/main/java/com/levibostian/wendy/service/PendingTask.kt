@@ -1,5 +1,7 @@
 package com.levibostian.wendy.service
 
+import com.levibostian.wendy.db.PendingTaskFields
+import com.levibostian.wendy.db.PersistedPendingTask
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -17,41 +19,20 @@ import java.util.*
  *
  * *Note:* The [tag] and [data_id] are the 2 properties that determine a unique instance of [PendingTask]. Wendy is configured to mark [tag] and [data_id] as unique constraints in the Wendy task database. So, even if the [group_id], [manually_run] is defined differently between 2 [PendingTask] instances, Wendy will write and run the most recently added [PendingTask].
  */
-open class PendingTask(open var id: Long = 0, // auto increments
-                       open var created_at: Long = Date().time,
-                       open var manually_run: Boolean = false,
-                       open var group_id: String? = null,
-                       open var data_id: String? = null,
-                       open var tag: String = "") {
+abstract class PendingTask(override var manually_run: Boolean,
+                           override var data_id: String?,
+                           override var group_id: String?,
+                           override var tag: String): PendingTaskFields {
 
-    internal fun getManuallyRun(): Int {
-        return if (manually_run) MANUALLY_RUN else NOT_MANUALLY_RUN
-    }
-
-    companion object {
-        internal const val TABLE_NAME = "PendingTask"
-        internal const val COLUMN_ID = "id"
-        internal const val COLUMN_CREATED_AT = "created_at"
-        internal const val COLUMN_MANUALLY_RUN = "manually_run" // 0 == false, 1 == true
-        internal const val COLUMN_GROUP_ID = "group_id"
-        internal const val COLUMN_DATA_ID = "data_id"
-        internal const val COLUMN_TAG = "tag"
-
-        internal const val MANUALLY_RUN: Int = 1
-        internal const val NOT_MANUALLY_RUN: Int = 0
-
-        // If you are to update this, make sure to update equals() and hashCode() functions.
-        internal val UNIQUE_CONSTRAINT_COLUMNS = listOf(COLUMN_DATA_ID, COLUMN_TAG)
-    }
+    override var id: Long = 0 // auto increments
+    override var created_at: Long = Date().time
 
     /**
-     * Must override this to run the actual task.
+     * The method Wendy calls when it's time for your task to run. When complete, use the [complete] property to tell Wendy if the task ran successfully (Wendy will delete the task and not run again) or it failed (Wendy will run it again in the future).
      *
      * Note: This method is run on a background thread for you already.
      */
-    open fun runTask(complete: (successful: Boolean) -> Unit) {
-        throw RuntimeException("Override me.")
-    }
+    abstract fun runTask(complete: (successful: Boolean) -> Unit)
 
     /**
      * Override this to dynamically set if this task is ready to run or not.
@@ -59,9 +40,9 @@ open class PendingTask(open var id: Long = 0, // auto increments
     open fun canRunTask(): Boolean = true
 
     /**
-     * I hope to remove this in the future. Use inside of your [PendingTasksFactory] instance to instantiate objects.
+     * Use to go from [PersistedPendingTask] to [PendingTask] after running a SQLite query.
      */
-    open fun fromSqlObject(pendingTask: PendingTask): PendingTask {
+    internal fun fromSqlObject(pendingTask: PersistedPendingTask): PendingTask {
         this.id = pendingTask.id
         this.created_at = pendingTask.created_at
         this.manually_run = pendingTask.manually_run
@@ -78,13 +59,13 @@ open class PendingTask(open var id: Long = 0, // auto increments
         return "id: $id, created at: ${dateFormatter.format(created_at)}, manually run: $manually_run, group id: ${group_id ?: "none"}, data id: ${data_id ?: "none"}, tag: $tag"
     }
 
-    override fun equals(other: Any?): Boolean {
+    final override fun equals(other: Any?): Boolean {
         return other is PendingTask &&
                 other.data_id == this.data_id &&
                 other.tag == this.tag
     }
 
-    override fun hashCode(): Int {
+    final override fun hashCode(): Int {
         var result = data_id?.hashCode() ?: 0
         result = 31 * result + tag.hashCode()
         return result

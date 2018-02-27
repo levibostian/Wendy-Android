@@ -22,7 +22,7 @@ internal class PendingTasksJob : Job() {
     }
 
     companion object {
-        val TAG = "WendyPendingTasksJob"
+        const val TAG = "WendyPendingTasksJob"
 
         fun scheduleJob() {
             JobRequest.Builder(PendingTasksJob.TAG)

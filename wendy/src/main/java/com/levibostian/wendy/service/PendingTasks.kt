@@ -60,13 +60,21 @@ open class PendingTasks private constructor(context: Context, val tasksFactory: 
     internal var runner: PendingTasksRunner = PendingTasksRunner(context, tasksManager)
 
     /**
-     * Call when you have a new PendingTask that you would like to register to Wendy to run.
+     * Call when you have a new [PendingTask] that you would like to register to Wendy to run.
      *
      * Wendy works in a FIFO order. Your task gets added to the end of the queue of tasks to run.
      *
      * @param pendingTask Task you want to add to Wendy.
+     *
+     * @throws IllegalArgumentException Wendy will check to make sure that you have remembered to add your argument's [PendingTask] subclass to your instance of [PendingTasksFactory] when you call this method. If your [PendingTasksFactory] throws an exception (which probably means that you forgot to include a [PendingTask]) then an [IllegalArgumentException] will be thrown.
      */
     fun addTask(pendingTask: PendingTask): Long {
+        try {
+            tasksFactory.getTask(pendingTask.tag)
+        } catch (t: Throwable) {
+            throw IllegalArgumentException("Exception thrown while calling ${tasksFactory::class.java.simpleName}'s getTask(). Did you forgot to add ${pendingTask::class.java.simpleName} to your instance of ${tasksFactory::class.java.simpleName}?")
+        }
+
         if (runner.currentlyRunningTask == pendingTask) runner.rerunCurrentlyRunningTask = true
 
         val id = tasksManager.addTask(pendingTask)
