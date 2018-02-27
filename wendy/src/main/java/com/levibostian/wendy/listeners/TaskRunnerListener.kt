@@ -1,5 +1,6 @@
 package com.levibostian.wendy.listeners
 
+import android.support.annotation.UiThread
 import com.levibostian.wendy.WendyConfig
 import com.levibostian.wendy.service.PendingTask
 import com.levibostian.wendy.service.PendingTasks
@@ -16,16 +17,16 @@ interface TaskRunnerListener {
     /**
      * New task added to Wendy to be run.
      *
-     * @param id The ID of the [PendingTask] added to Wendy.
+     * @param task The [PendingTask] newly added to Wendy.
      */
-    fun newTaskAdded(id: Long)
+    @UiThread fun newTaskAdded(task: PendingTask)
 
     /**
      * The task runner is now running this given task.
      *
      * @param task The [PendingTask] being run by the task runner.
      */
-    fun runningTask(task: PendingTask)
+    @UiThread fun runningTask(task: PendingTask)
 
     /**
      * If the task runner decides to skip the given [PendingTask] for some reason.
@@ -33,19 +34,20 @@ interface TaskRunnerListener {
      * @param reason The reason why the task was skipped.
      * @param task The [PendingTask] the was skipped.
      */
-    fun taskSkipped(reason: ReasonPendingTaskSkipped, task: PendingTask)
+    @UiThread fun taskSkipped(reason: ReasonPendingTaskSkipped, task: PendingTask)
 
     /**
      * Task has either successfully run or failed it's run by the task runner.
      *
      * @param success Indicates if the task that was run by the task runner was run successfully or not.
      * @param task The [PendingTask] that was run.
+     * @param rescheduled If the task failed but should run again, the task is rescheduled to run again in the future.
      */
-    fun taskComplete(success: Boolean, task: PendingTask)
+    @UiThread fun taskComplete(success: Boolean, task: PendingTask, rescheduled: Boolean)
 
     /**
      * The task runner has completed running all of it's tasks.
      */
-    fun allTasksComplete()
+    @UiThread fun allTasksComplete()
 
 }

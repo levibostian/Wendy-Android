@@ -1,7 +1,9 @@
 package com.levibostian.wendy.service
 
+import android.support.annotation.WorkerThread
 import com.levibostian.wendy.db.PendingTaskFields
 import com.levibostian.wendy.db.PersistedPendingTask
+import com.levibostian.wendy.types.PendingTaskResult
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -28,11 +30,15 @@ abstract class PendingTask(override var manually_run: Boolean,
     override var created_at: Long = Date().time
 
     /**
-     * The method Wendy calls when it's time for your task to run. When complete, use the [complete] property to tell Wendy if the task ran successfully (Wendy will delete the task and not run again) or it failed (Wendy will run it again in the future).
+     * The method Wendy calls when it's time for your task to run. This is where you will perform database operations on the device, perform API calls, etc.
      *
-     * Note: This method is run on a background thread for you already.
+     * When you are done performing the task, return if the task was run successfully or not. You have 3 options as outlined in [PendingTaskResult].
+     *
+     * This method is run on a background thread for you already. Make sure to run all of your code in a synchronous style. If you would like to run async code, check this: https://github.com/evernote/android-job/wiki/FAQ#how-can-i-run-async-operations-in-a-job
+     *
+     * @see PendingTaskResult to learn about the different results you may return after the task runs.
      */
-    abstract fun runTask(complete: (successful: Boolean) -> Unit)
+    @WorkerThread abstract fun runTask(): PendingTaskResult
 
     /**
      * Override this to dynamically set if this task is ready to run or not.

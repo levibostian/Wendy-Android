@@ -4,10 +4,12 @@ import android.app.Application
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import android.support.annotation.WorkerThread
 import com.evernote.android.job.JobManager
 import com.levibostian.wendy.WendyConfig
 import com.levibostian.wendy.job.PendingTaskJobCreator
 import com.levibostian.wendy.job.PendingTasksJob
+import com.levibostian.wendy.logNewTaskAdded
 
 open class PendingTasks private constructor(context: Context, val tasksFactory: PendingTasksFactory) {
 
@@ -75,14 +77,8 @@ open class PendingTasks private constructor(context: Context, val tasksFactory: 
             throw IllegalArgumentException("Exception thrown while calling ${tasksFactory::class.java.simpleName}'s getTask(). Did you forgot to add ${pendingTask::class.java.simpleName} to your instance of ${tasksFactory::class.java.simpleName}?")
         }
 
-        if (runner.currentlyRunningTask == pendingTask) runner.rerunCurrentlyRunningTask = true
-
         val id = tasksManager.addTask(pendingTask)
-        Handler(Looper.getMainLooper()).post({
-            WendyConfig.getTaskRunnerListeners().forEach {
-                it.newTaskAdded(id)
-            }
-        })
+        WendyConfig.logNewTaskAdded(tasksManager.getTaskForId(id)!!)
 
         runTask(id) // Run task right now in case this newly added task can run right away.
 

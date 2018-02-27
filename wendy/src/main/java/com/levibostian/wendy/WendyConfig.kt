@@ -1,12 +1,13 @@
 package com.levibostian.wendy
 
+import android.os.Handler
 import android.os.Looper
 import com.levibostian.wendy.listeners.PendingTaskStatusListener
 import com.levibostian.wendy.listeners.TaskRunnerListener
 import com.levibostian.wendy.service.PendingTask
 import com.levibostian.wendy.service.PendingTasks
-import com.levibostian.wendy.service.PendingTasksManager
 import com.levibostian.wendy.service.PendingTasksRunner
+import com.levibostian.wendy.types.ReasonPendingTaskSkipped
 import java.lang.ref.WeakReference
 
 open class WendyConfig {
@@ -69,4 +70,53 @@ open class WendyConfig {
 
     internal class TaskStatusListener(val taskId: Long, val listener: WeakReference<PendingTaskStatusListener>)
 
+}
+
+internal fun WendyConfig.Companion.logTaskSkipped(task: PendingTask, reasonForSkip: ReasonPendingTaskSkipped) {
+    Handler(Looper.getMainLooper()).post({
+        WendyConfig.getTaskStatusListenerForTask(task.id).forEach {
+            it.skipped(task.id, reasonForSkip)
+        }
+        WendyConfig.getTaskRunnerListeners().forEach {
+            it.taskSkipped(reasonForSkip, task)
+        }
+    })
+}
+
+internal fun WendyConfig.Companion.logTaskRunning(task: PendingTask) {
+    Handler(Looper.getMainLooper()).post({
+        WendyConfig.getTaskStatusListenerForTask(task.id).forEach {
+            it.running(task.id)
+        }
+        WendyConfig.getTaskRunnerListeners().forEach {
+            it.runningTask(task)
+        }
+    })
+}
+
+internal fun WendyConfig.Companion.logTaskComplete(task: PendingTask, successful: Boolean, rescheduled: Boolean) {
+    Handler(Looper.getMainLooper()).post({
+        WendyConfig.getTaskStatusListenerForTask(task.id).forEach {
+            it.complete(task.id, successful, rescheduled)
+        }
+        WendyConfig.getTaskRunnerListeners().forEach {
+            it.taskComplete(successful, task, rescheduled)
+        }
+    })
+}
+
+internal fun WendyConfig.Companion.logAllTasksComplete() {
+    Handler(Looper.getMainLooper()).post({
+        WendyConfig.getTaskRunnerListeners().forEach {
+            it.allTasksComplete()
+        }
+    })
+}
+
+internal fun WendyConfig.Companion.logNewTaskAdded(task: PendingTask) {
+    Handler(Looper.getMainLooper()).post({
+        WendyConfig.getTaskRunnerListeners().forEach {
+            it.newTaskAdded(task)
+        }
+    })
 }

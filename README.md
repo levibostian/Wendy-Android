@@ -216,3 +216,5 @@ Get it?
 # Credits
 
 Header photo by [Allef Vinicius](https://unsplash.com/photos/FPDGV38N2mo?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/search/photos/red-head?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)
+
+Thank you to [evernote/android-job](https://github.com/evernote/android-job) for providing an awesome job scheduling library that Wendy uses to run tasks periodically, but also for inspiration while building this library. When I had questions about best practices and how to design the API, android-job gave me great wisdom.

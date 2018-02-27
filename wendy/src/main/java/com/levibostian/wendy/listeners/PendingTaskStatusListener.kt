@@ -1,8 +1,10 @@
 package com.levibostian.wendy.listeners
 
+import android.support.annotation.UiThread
 import com.levibostian.wendy.WendyConfig
 import com.levibostian.wendy.service.PendingTask
 import com.levibostian.wendy.service.PendingTasks
+import com.levibostian.wendy.types.PendingTaskResult
 import com.levibostian.wendy.types.ReasonPendingTaskSkipped
 
 /**
@@ -20,15 +22,16 @@ interface PendingTaskStatusListener {
      *
      * @param taskId The ID of the [PendingTask] being run.
      */
-    fun running(taskId: Long)
+    @UiThread fun running(taskId: Long)
 
     /**
      * The task runner is done running the [PendingTask]. The task was either successful or not.
      *
      * @param taskId The ID of the [PendingTask] that just ran.
      * @param successful Indicates if the running of the [PendingTask] was successful or not.
+     * @param rescheduled If the task failed but should run again, the task is rescheduled to run again in the future.
      */
-    fun complete(taskId: Long, successful: Boolean)
+    @UiThread fun complete(taskId: Long, successful: Boolean, rescheduled: Boolean)
 
     /**
      * The task runner skipped running the [PendingTask] for some reason.
@@ -38,5 +41,5 @@ interface PendingTaskStatusListener {
      *
      * @see ReasonPendingTaskSkipped for all available reasons why a [PendingTask] was skipped.
      */
-    fun skipped(taskId: Long, reason: ReasonPendingTaskSkipped) // Currently, the only reason a pending task is skipped is if the task `canRunTask()` returns false. There is currently no way to determine if it's because of a group id skip.
+    @UiThread fun skipped(taskId: Long, reason: ReasonPendingTaskSkipped) // Currently, the only reason a pending task is skipped is if the task `canRunTask()` returns false. There is currently no way to determine if it's because of a group id skip.
 }

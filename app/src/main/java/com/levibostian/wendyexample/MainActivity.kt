@@ -57,14 +57,14 @@ class MainActivity : AppCompatActivity(), TaskRunnerListener {
         activity_main_tasks_recyclerview.adapter = recyclerViewAdapter
     }
 
-    override fun newTaskAdded(id: Long) {
+    override fun newTaskAdded(task: PendingTask) {
         refreshListOfTasks()
     }
     override fun runningTask(task: PendingTask) {
     }
     override fun taskSkipped(reason: ReasonPendingTaskSkipped, task: PendingTask) {
     }
-    override fun taskComplete(success: Boolean, task: PendingTask) {
+    override fun taskComplete(success: Boolean, task: PendingTask, rescheduled: Boolean) {
         Handler().postDelayed({
             refreshListOfTasks()
         }, 1000)

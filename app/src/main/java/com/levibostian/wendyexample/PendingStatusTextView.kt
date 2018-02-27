@@ -4,9 +4,7 @@ import android.annotation.TargetApi
 import android.content.Context
 import android.os.Build.VERSION_CODES.LOLLIPOP
 import android.util.AttributeSet
-import android.view.LayoutInflater
 import android.widget.TextView
-import com.curiosityio.wendyexample.R
 import com.levibostian.wendy.listeners.PendingTaskStatusListener
 import com.levibostian.wendy.types.ReasonPendingTaskSkipped
 
@@ -16,14 +14,14 @@ class PendingStatusTextView : TextView, PendingTaskStatusListener {
 
     constructor(context: Context, attrs: AttributeSet) : this(context, attrs, 0)
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int): super(context, attrs, defStyleAttr) {
-        initialize(context, attrs, defStyleAttr)
+        initialize(context)
     }
     @TargetApi(LOLLIPOP)
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int): super(context, attrs, defStyleAttr, defStyleRes) {
-        initialize(context, attrs, defStyleAttr)
+        initialize(context)
     }
 
-    private fun initialize(context: Context, attrs: AttributeSet, defStyleAttr: Int) {
+    private fun initialize(context: Context) {
         mContext = context
     }
 
@@ -37,7 +35,8 @@ class PendingStatusTextView : TextView, PendingTaskStatusListener {
     override fun running(taskId: Long) {
         text = "Running"
     }
-    override fun complete(taskId: Long, successful: Boolean) {
+
+    override fun complete(taskId: Long, successful: Boolean, rescheduled: Boolean) {
         text = if (successful) "Success!" else "Failed!"
     }
 
