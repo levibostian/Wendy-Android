@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="../../style.css">
 </HEAD>
 <BODY>
-<a href="../index.html">wendy</a>&nbsp;/&nbsp;<a href=".">com.levibostian.wendy.service</a><br/>
+<a href="../index.html">wendy</a>&nbsp;/&nbsp;<a href="./index.html">com.levibostian.wendy.service</a><br/>
 <br/>
 <h2>Package com.levibostian.wendy.service</h2>
 <h3>Types</h3>
@@ -16,14 +16,18 @@
 <p><a href="-pending-task/index.html">PendingTask</a></p>
 </td>
 <td>
-<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">PendingTask</span></code></td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">PendingTask</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">PendingTaskFields</span></code>
+<p>Represents a single task to perform. Usually used to sync offline data stored on the device with online remote storage.</p>
+</td>
 </tr>
 <tr>
 <td>
 <p><a href="-pending-tasks/index.html">PendingTasks</a></p>
 </td>
 <td>
-<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">PendingTasks</span></code></td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">PendingTasks</span></code>
+<p>How you interact with Wendy with <a href="-pending-task/index.html">PendingTask</a> instances you create. Add tasks to Wendy to run, get a list of all the <a href="-pending-task/index.html">PendingTask</a>s registered to Wendy, etc.</p>
+</td>
 </tr>
 <tr>
 <td>

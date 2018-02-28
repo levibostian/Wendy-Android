@@ -1,35 +1,28 @@
 package com.levibostian.wendy.service
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.AsyncTask
-import android.os.Handler
 import com.levibostian.wendy.types.ReasonPendingTaskSkipped
 import com.levibostian.wendy.util.LogUtil
 import kotlin.collections.ArrayList
-import android.os.Looper
-import android.preference.PreferenceManager
 import android.support.annotation.WorkerThread
 import com.levibostian.wendy.*
+import com.levibostian.wendy.db.PendingTasksManager
 import com.levibostian.wendy.types.PendingTaskResult
 
 internal class PendingTasksRunner(val context: Context,
                                   private val pendingTasksManager: PendingTasksManager) {
 
-    internal var lastSuccessfulOrFailedTaskId: Long = 0
-    internal var failedTasksGroups: ArrayList<String> = arrayListOf()
+    private var lastSuccessfulOrFailedTaskId: Long = 0
+    private var failedTasksGroups: ArrayList<String> = arrayListOf()
+
     internal var currentlyRunningTask: PendingTask? = null
 
     @Synchronized
     @WorkerThread
     fun runAllTasks() {
-        if (!WendyConfig.automaticallyRunTasks) {
-            LogUtil.d("Wendy configured to not automatically run all tasks. Skipping execution.")
-            return
-        }
-
         LogUtil.d("Getting next task to run.")
-        val nextTaskToRun = pendingTasksManager.getNextTask(lastSuccessfulOrFailedTaskId, failedTasksGroups)
+        val nextTaskToRun = pendingTasksManager.getNextTaskToRun(lastSuccessfulOrFailedTaskId)
 
         if (nextTaskToRun == null) {
             LogUtil.d("All done running tasks.")
@@ -39,9 +32,15 @@ internal class PendingTasksRunner(val context: Context,
             return
         }
 
-        lastSuccessfulOrFailedTaskId = nextTaskToRun.id
+        lastSuccessfulOrFailedTaskId = nextTaskToRun.task_id
+        if (nextTaskToRun.group_id != null && failedTasksGroups.contains(nextTaskToRun.group_id!!)) {
+            WendyConfig.logTaskSkipped(nextTaskToRun, ReasonPendingTaskSkipped.PART_OF_FAILED_GROUP)
+            LogUtil.d("Task: $nextTaskToRun belongs to a failing group of tasks. Skipping it.")
+            runAllTasks()
+            return
+        }
 
-        val jobRunResult = runTask(nextTaskToRun.id)
+        val jobRunResult = runTask(nextTaskToRun.task_id)
         jobRunResult.accept(object : PendingTasksRunnerJobRunResult.Visitor<Unit?> {
             override fun visitSuccessful(): Unit? {
                 runAllTasks()
@@ -67,8 +66,9 @@ internal class PendingTasksRunner(val context: Context,
 
     @Synchronized
     @WorkerThread
-    fun runTask(id: Long): PendingTasksRunnerJobRunResult {
-        val taskToRun = pendingTasksManager.getTaskForId(id) ?: return PendingTasksRunnerJobRunResult.SKIPPED_TASK_DOESNT_EXIST
+    fun runTask(taskId: Long): PendingTasksRunnerJobRunResult {
+        val persistedPendingTaskId: Long = pendingTasksManager.getTaskByTaskId(taskId)?.id ?: return PendingTasksRunnerJobRunResult.SKIPPED_TASK_DOESNT_EXIST
+        val taskToRun: PendingTask = pendingTasksManager.getPendingTaskTaskById(taskId)!!
 
         if (!taskToRun.canRunTask()) {
             WendyConfig.logTaskSkipped(taskToRun, ReasonPendingTaskSkipped.NOT_READY_TO_RUN)
@@ -86,7 +86,7 @@ internal class PendingTasksRunner(val context: Context,
             when (result) {
                 PendingTaskResult.SUCCESSFUL -> {
                     LogUtil.d("Task: $taskToRun ran successful. Deleting it.")
-                    pendingTasksManager.deleteTask(taskToRun.id)
+                    pendingTasksManager.deleteTask(persistedPendingTaskId)
                     runJobResult = PendingTasksRunnerJobRunResult.SUCCESSFUL
                     WendyConfig.logTaskComplete(taskToRun, true, false)
                 }
@@ -97,7 +97,7 @@ internal class PendingTasksRunner(val context: Context,
                 }
                 PendingTaskResult.FAILED_DO_NOT_RESCHEDULE -> {
                     LogUtil.d("Task: $taskToRun failed and will *not* reschedule. Deleting it.")
-                    pendingTasksManager.deleteTask(taskToRun.id)
+                    pendingTasksManager.deleteTask(persistedPendingTaskId)
                     runJobResult = PendingTasksRunnerJobRunResult.NOT_SUCCESSFUL
                     WendyConfig.logTaskComplete(taskToRun, false, false)
                 }

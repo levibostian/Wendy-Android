@@ -14,12 +14,19 @@ enum class ReasonPendingTaskSkipped {
      */
     NOT_READY_TO_RUN {
         override fun <E> accept(visitor: Visitor<E>): E = visitor.visitNotReadyToRun()
+    },
+    /**
+     * If a [PendingTask] runs that has a non-null [PendingTask.group_id] and it fails running, then *all* of the other [PendingTask]s that belongs to the group that have yet to run will all be skipped and rescheduled to run again.
+     */
+    PART_OF_FAILED_GROUP {
+        override fun <E> accept(visitor: Visitor<E>): E = visitor.visitPartOfFailedGroup()
     };
 
     abstract fun <E> accept(visitor: Visitor<E>): E
 
     interface Visitor<out E> {
         fun visitNotReadyToRun(): E
+        fun visitPartOfFailedGroup(): E
     }
 
 }

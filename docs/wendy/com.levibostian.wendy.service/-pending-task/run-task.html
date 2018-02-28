@@ -5,12 +5,16 @@
 <link rel="stylesheet" href="../../../style.css">
 </HEAD>
 <BODY>
-<a href="../../index.html">wendy</a>&nbsp;/&nbsp;<a href="../index.html">com.levibostian.wendy.service</a>&nbsp;/&nbsp;<a href="index.html">PendingTask</a>&nbsp;/&nbsp;<a href=".">runTask</a><br/>
+<a href="../../index.html">wendy</a>&nbsp;/&nbsp;<a href="../index.html">com.levibostian.wendy.service</a>&nbsp;/&nbsp;<a href="index.html">PendingTask</a>&nbsp;/&nbsp;<a href="./run-task.html">runTask</a><br/>
 <br/>
 <h1>runTask</h1>
-<a name="com.levibostian.wendy.service.PendingTask$runTask(kotlin.Function1((kotlin.Boolean, kotlin.Unit)))"></a>
-<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">runTask</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.service.PendingTask$runTask(kotlin.Function1((kotlin.Boolean, kotlin.Unit)))/complete">complete</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="identifier">successful</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
-<p>Must override this to run the actual task.</p>
-<p>Note: This method is run on a background thread for you already.</p>
+<a name="com.levibostian.wendy.service.PendingTask$runTask()"></a>
+<code><span class="identifier">@WorkerThread</span> <span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">runTask</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.levibostian.wendy.types/-pending-task-result/index.html"><span class="identifier">PendingTaskResult</span></a></code>
+<p>The method Wendy calls when it's time for your task to run. This is where you will perform database operations on the device, perform API calls, etc.</p>
+<p>When you are done performing the task, return if the task was run successfully or not. You have 3 options as outlined in <a href="../../com.levibostian.wendy.types/-pending-task-result/index.html">PendingTaskResult</a>.</p>
+<p>This method is run on a background thread for you already. Make sure to run all of your code in a synchronous style. If you would like to run async code, check this: https://github.com/evernote/android-job/wiki/FAQ#how-can-i-run-async-operations-in-a-job</p>
+<p><strong>See Also</strong><br/>
+<p><a href="../../com.levibostian.wendy.types/-pending-task-result/index.html">PendingTaskResult</a></p>
+</p>
 </BODY>
 </HTML>

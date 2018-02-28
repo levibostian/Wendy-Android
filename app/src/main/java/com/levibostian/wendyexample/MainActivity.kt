@@ -41,6 +41,10 @@ class MainActivity : AppCompatActivity(), TaskRunnerListener {
         }
         WendyConfig.automaticallyRunTasks = activity_main_automatically_run_tasks_checkbox.isChecked
 
+        activity_main_run_all_tasks_button.setOnClickListener {
+            PendingTasks.sharedInstance().runTasks()
+        }
+
         activity_main_tasks_recyclerview.layoutManager = LinearLayoutManager(this)
         refreshListOfTasks()
 
@@ -51,7 +55,7 @@ class MainActivity : AppCompatActivity(), TaskRunnerListener {
         val recyclerViewAdapter = PendingTasksRecyclerViewAdapter(PendingTasks.sharedInstance().getAllTasks())
         recyclerViewAdapter.listener = object : PendingTasksRecyclerViewAdapter.Listener {
             override fun manuallyRunPressed(task: PendingTask) {
-                PendingTasks.sharedInstance().runTask(task.id)
+                PendingTasks.sharedInstance().runTask(task.task_id)
             }
         }
         activity_main_tasks_recyclerview.adapter = recyclerViewAdapter

@@ -5,22 +5,11 @@
 <link rel="stylesheet" href="../../../style.css">
 </HEAD>
 <BODY>
-<a href="../../index.html">wendy</a>&nbsp;/&nbsp;<a href="../index.html">com.levibostian.wendy</a>&nbsp;/&nbsp;<a href=".">WendyConfig</a><br/>
+<a href="../../index.html">wendy</a>&nbsp;/&nbsp;<a href="../index.html">com.levibostian.wendy</a>&nbsp;/&nbsp;<a href="./index.html">WendyConfig</a><br/>
 <br/>
 <h1>WendyConfig</h1>
 <code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">WendyConfig</span></code>
-<h3>Types</h3>
-<table>
-<tbody>
-<tr>
-<td>
-<p><a href="-task-status-listener/index.html">TaskStatusListener</a></p>
-</td>
-<td>
-<code><span class="keyword">class </span><span class="identifier">TaskStatusListener</span></code></td>
-</tr>
-</tbody>
-</table>
+<p>Configure Wendy and how it operates.</p>
 <h3>Constructors</h3>
 <table>
 <tbody>
@@ -29,7 +18,9 @@
 <p><a href="-init-.html">&lt;init&gt;</a></p>
 </td>
 <td>
-<code><span class="identifier">WendyConfig</span><span class="symbol">(</span><span class="symbol">)</span></code></td>
+<code><span class="identifier">WendyConfig</span><span class="symbol">(</span><span class="symbol">)</span></code>
+<p>Configure Wendy and how it operates.</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -38,17 +29,31 @@
 <tbody>
 <tr>
 <td>
+<p><a href="automatically-run-tasks.html">automaticallyRunTasks</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">automaticallyRunTasks</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Turn on and off the ability for Wendy to automatically run all of the <a href="../../com.levibostian.wendy.service/-pending-task/index.html">PendingTask</a>s set to not manually run for you.
+This takes place when you:</p>
+</td>
+</tr>
+<tr>
+<td>
 <p><a href="debug.html">debug</a></p>
 </td>
 <td>
-<code><span class="keyword">var </span><span class="identifier">debug</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+<code><span class="keyword">var </span><span class="identifier">debug</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Turn on and off debug mode. This turns on and off Wendy sending messages to the logcat.</p>
+</td>
 </tr>
 <tr>
 <td>
 <p><a href="log-tag.html">logTag</a></p>
 </td>
 <td>
-<code><span class="keyword">var </span><span class="identifier">logTag</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+<code><span class="keyword">var </span><span class="identifier">logTag</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code>
+<p>The tag used when Wendy sends debug messages to the logcat.</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -61,15 +66,17 @@
 </td>
 <td>
 <code><span class="keyword">fun </span><span class="identifier">addTaskRunnerListener</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.WendyConfig.Companion$addTaskRunnerListener(com.levibostian.wendy.listeners.TaskRunnerListener)/listener">listener</span><span class="symbol">:</span>&nbsp;<a href="../../com.levibostian.wendy.listeners/-task-runner-listener/index.html"><span class="identifier">TaskRunnerListener</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
-<p>Note: Wendy keeps a weak reference to your listener. Make sure that <em>you</em> keep a strong reference to the listener you give!</p>
+<p>Listen to updates about the Wendy task runner. Get updates about when tasks get executed, when the task runner is done running all the tasks, etc.</p>
 </td>
 </tr>
 <tr>
 <td>
-<p><a href="get-task-runner-listeners.html">getTaskRunnerListeners</a></p>
+<p><a href="add-task-status-listener-for-task.html">addTaskStatusListenerForTask</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="identifier">getTaskRunnerListeners</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.levibostian.wendy.listeners/-task-runner-listener/index.html"><span class="identifier">TaskRunnerListener</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">fun </span><span class="identifier">addTaskStatusListenerForTask</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.WendyConfig.Companion$addTaskStatusListenerForTask(kotlin.Long, com.levibostian.wendy.listeners.PendingTaskStatusListener)/taskId">taskId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.WendyConfig.Companion$addTaskStatusListenerForTask(kotlin.Long, com.levibostian.wendy.listeners.PendingTaskStatusListener)/listener">listener</span><span class="symbol">:</span>&nbsp;<a href="../../com.levibostian.wendy.listeners/-pending-task-status-listener/index.html"><span class="identifier">PendingTaskStatusListener</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Listen to updates about a specific task and how it is going. Get updated when this specific task gets run by the task runner, then if it fails/succeeds/gets skipped.</p>
+</td>
 </tr>
 </tbody>
 </table>

@@ -2,15 +2,17 @@ package com.levibostian.wendy.service
 
 import android.app.Application
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
-import android.support.annotation.WorkerThread
 import com.evernote.android.job.JobManager
 import com.levibostian.wendy.WendyConfig
+import com.levibostian.wendy.db.PendingTasksManager
 import com.levibostian.wendy.job.PendingTaskJobCreator
 import com.levibostian.wendy.job.PendingTasksJob
 import com.levibostian.wendy.logNewTaskAdded
+import com.levibostian.wendy.util.LogUtil
 
+/**
+ * How you interact with Wendy with [PendingTask] instances you create. Add tasks to Wendy to run, get a list of all the [PendingTask]s registered to Wendy, etc.
+ */
 open class PendingTasks private constructor(context: Context, val tasksFactory: PendingTasksFactory) {
 
     companion object {
@@ -77,16 +79,21 @@ open class PendingTasks private constructor(context: Context, val tasksFactory: 
             throw IllegalArgumentException("Exception thrown while calling ${tasksFactory::class.java.simpleName}'s getTask(). Did you forgot to add ${pendingTask::class.java.simpleName} to your instance of ${tasksFactory::class.java.simpleName}?")
         }
 
-        val id = tasksManager.addTask(pendingTask)
-        WendyConfig.logNewTaskAdded(tasksManager.getTaskForId(id)!!)
+        val addedTask = tasksManager.addTask(pendingTask)
+        WendyConfig.logNewTaskAdded(addedTask)
 
-        runTask(id) // Run task right now in case this newly added task can run right away.
+        if (WendyConfig.automaticallyRunTasks && !addedTask.manually_run) {
+            LogUtil.d("Wendy is configured to automatically run tasks. Wendy will now attempt to run newly added task: $addedTask")
+            runTask(addedTask.task_id) // Run task right now in case this newly added task can run right away.
+        } else LogUtil.d("Wendy configured to not automatically run tasks. Skipping execution of newly added task: $addedTask")
 
-        return id
+        return addedTask.task_id
     }
 
     /**
      * Manually run all pending tasks. Wendy takes care of running this periodically for you, but you can manually run tasks here.
+     *
+     * *Note:* This will run all tasks even if you use [WendyConfig.automaticallyRunTasks] to enable/disable running of all the [PendingTask]s.
      */
     fun runTasks() {
         PendingTasksRunner.PendingTasksRunnerAllTasksAsyncTask(runner, tasksManager).execute(null)
@@ -95,12 +102,12 @@ open class PendingTasks private constructor(context: Context, val tasksFactory: 
     /**
      * Use this function along with manually run tasks to have Wendy run it for you. If it is successful, Wendy will take care of deleting it for you.
      *
-     * @param id ID of [PendingTask] you wish to run. If there is not a [PendingTask] with this ID, the task runner simply ignores your request and moves on.
+     * @param taskId The [PendingTask.task_id] of [PendingTask] you wish to run. If there is not a [PendingTask] with this ID, the task runner simply ignores your request and moves on.
      *
      * @see [WendyConfig.addTaskStatusListenerForTask] to learn how to listen to the status of a task that you have set to run.
      */
-    fun runTask(id: Long) {
-        PendingTasksRunner.PendingTasksRunnerGivenSetTasksAsyncTask(runner).execute(id)
+    fun runTask(taskId: Long) {
+        PendingTasksRunner.PendingTasksRunnerGivenSetTasksAsyncTask(runner).execute(taskId)
     }
 
     /**

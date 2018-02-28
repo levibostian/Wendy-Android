@@ -3,6 +3,9 @@ package com.levibostian.wendy.types
 import com.levibostian.wendy.service.PendingTask
 import com.levibostian.wendy.service.PendingTasks
 
+/**
+ * When one of your [PendingTask] subclasses executes [PendingTask.runTask], Wendy requires that it returns a result. You are required to return one of the following results.
+ */
 enum class PendingTaskResult {
 
     /**

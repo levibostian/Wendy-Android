@@ -5,11 +5,18 @@
 <link rel="stylesheet" href="../../../style.css">
 </HEAD>
 <BODY>
-<a href="../../index.html">wendy</a>&nbsp;/&nbsp;<a href="../index.html">com.levibostian.wendy.service</a>&nbsp;/&nbsp;<a href="index.html">PendingTasks</a>&nbsp;/&nbsp;<a href=".">addTask</a><br/>
+<a href="../../index.html">wendy</a>&nbsp;/&nbsp;<a href="../index.html">com.levibostian.wendy.service</a>&nbsp;/&nbsp;<a href="index.html">PendingTasks</a>&nbsp;/&nbsp;<a href="./add-task.html">addTask</a><br/>
 <br/>
 <h1>addTask</h1>
 <a name="com.levibostian.wendy.service.PendingTasks$addTask(com.levibostian.wendy.service.PendingTask)"></a>
-<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addTask</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks$addTask(com.levibostian.wendy.service.PendingTask)/pendingTask">pendingTask</span><span class="symbol">:</span>&nbsp;<a href="../-pending-task/index.html"><span class="identifier">PendingTask</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code>
-<p>Call when you have a new PendingTask that you would like to register to Wendy to run.</p>
+<code><span class="keyword">fun </span><span class="identifier">addTask</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks$addTask(com.levibostian.wendy.service.PendingTask)/pendingTask">pendingTask</span><span class="symbol">:</span>&nbsp;<a href="../-pending-task/index.html"><span class="identifier">PendingTask</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code>
+<p>Call when you have a new <a href="../-pending-task/index.html">PendingTask</a> that you would like to register to Wendy to run.</p>
+<p>Wendy works in a FIFO order. Your task gets added to the end of the queue of tasks to run.</p>
+<h3>Parameters</h3>
+<p><a name="pendingTask"></a>
+<code>pendingTask</code> - Task you want to add to Wendy.</p>
+<h3>Exceptions</h3>
+<p><a name="IllegalArgumentException"></a>
+<code>IllegalArgumentException</code> - Wendy will check to make sure that you have remembered to add your argument's <a href="../-pending-task/index.html">PendingTask</a> subclass to your instance of <a href="../-pending-tasks-factory/index.html">PendingTasksFactory</a> when you call this method. If your <a href="../-pending-tasks-factory/index.html">PendingTasksFactory</a> throws an exception (which probably means that you forgot to include a <a href="../-pending-task/index.html">PendingTask</a>) then an <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-illegal-argument-exception/index.html">IllegalArgumentException</a> will be thrown.</p>
 </BODY>
 </HTML>

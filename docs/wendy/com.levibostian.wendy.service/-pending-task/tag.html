@@ -5,10 +5,20 @@
 <link rel="stylesheet" href="../../../style.css">
 </HEAD>
 <BODY>
-<a href="../../index.html">wendy</a>&nbsp;/&nbsp;<a href="../index.html">com.levibostian.wendy.service</a>&nbsp;/&nbsp;<a href="index.html">PendingTask</a>&nbsp;/&nbsp;<a href=".">tag</a><br/>
+<a href="../../index.html">wendy</a>&nbsp;/&nbsp;<a href="../index.html">com.levibostian.wendy.service</a>&nbsp;/&nbsp;<a href="index.html">PendingTask</a>&nbsp;/&nbsp;<a href="./tag.html">tag</a><br/>
 <br/>
 <h1>tag</h1>
 <a name="com.levibostian.wendy.service.PendingTask$tag"></a>
 <code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">tag</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code>
+<p>This is annoying, I know. I hope to remove it soon. This identifies your subclass with Wendy so when Wendy queries your <a href="index.html">PendingTask</a> in the sqlite DB, it knows to run your subclass. It's recommended to set the tag to: <code>NameOfYourSubclass::class.java.simpleName</code>.</p>
+<p><em>Note:</em> The <a href="./tag.html">tag</a> and <a href="data_id.html">data_id</a> are the 2 properties that determine a unique instance of <a href="index.html">PendingTask</a>. Wendy is configured to mark <a href="./tag.html">tag</a> and <a href="data_id.html">data_id</a> as unique constraints in the Wendy task database. So, even if the <a href="group_id.html">group_id</a>, <a href="manually_run.html">manually_run</a> is defined differently between 2 <a href="index.html">PendingTask</a> instances, Wendy will write and run the most recently added <a href="index.html">PendingTask</a>.</p>
+<h3>Property</h3>
+<p><a name="tag"></a>
+<code>tag</code> - 
+<p>This is annoying, I know. I hope to remove it soon. This identifies your subclass with Wendy so when Wendy queries your <a href="index.html">PendingTask</a> in the sqlite DB, it knows to run your subclass. It's recommended to set the tag to: <code>NameOfYourSubclass::class.java.simpleName</code>.</p>
+
+
+<p><em>Note:</em> The <a href="./tag.html">tag</a> and <a href="data_id.html">data_id</a> are the 2 properties that determine a unique instance of <a href="index.html">PendingTask</a>. Wendy is configured to mark <a href="./tag.html">tag</a> and <a href="data_id.html">data_id</a> as unique constraints in the Wendy task database. So, even if the <a href="group_id.html">group_id</a>, <a href="manually_run.html">manually_run</a> is defined differently between 2 <a href="index.html">PendingTask</a> instances, Wendy will write and run the most recently added <a href="index.html">PendingTask</a>.</p>
+</p>
 </BODY>
 </HTML>

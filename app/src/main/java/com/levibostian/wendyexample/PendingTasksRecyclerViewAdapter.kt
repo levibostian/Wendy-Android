@@ -40,7 +40,7 @@ class PendingTasksRecyclerViewAdapter(val data: List<PendingTask>) : RecyclerVie
     override fun onBindViewHolder(holder: PendingTasksRecyclerViewAdapter.ViewHolder?, position: Int) {
         val adapterItem: PendingTask = data[position]
 
-        holder!!.idTextView.text = String.format("id: %d", adapterItem.id)
+        holder!!.idTextView.text = String.format("task id: %d", adapterItem.task_id)
         holder.dataIdTextView.text = String.format("data id: %s", adapterItem.data_id)
         holder.groupIdTextView.text = String.format("group id: %s", adapterItem.group_id)
         holder.manuallyRunTextView.text = String.format("manually run: %s", adapterItem.manually_run.toString())
@@ -48,7 +48,7 @@ class PendingTasksRecyclerViewAdapter(val data: List<PendingTask>) : RecyclerVie
         holder.createdAtTextView.text = String.format("Created: %s", SimpleDateFormat("yyyy.MM.dd G 'at' HH:mm:ss z", Locale.ENGLISH).format(adapterItem.created_at))
 
         holder.statusTextView.text = "not running"
-        WendyConfig.addTaskStatusListenerForTask(adapterItem.id, holder.statusTextView)
+        WendyConfig.addTaskStatusListenerForTask(adapterItem.task_id, holder.statusTextView)
 
         holder.runTaskButton.setOnClickListener {
             listener?.manuallyRunPressed(adapterItem)

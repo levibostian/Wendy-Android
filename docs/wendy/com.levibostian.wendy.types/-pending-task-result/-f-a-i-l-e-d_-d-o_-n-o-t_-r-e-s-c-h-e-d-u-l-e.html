@@ -1,0 +1,17 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>PendingTaskResult.FAILED_DO_NOT_RESCHEDULE - wendy</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">wendy</a>&nbsp;/&nbsp;<a href="../index.html">com.levibostian.wendy.types</a>&nbsp;/&nbsp;<a href="index.html">PendingTaskResult</a>&nbsp;/&nbsp;<a href="./-f-a-i-l-e-d_-d-o_-n-o-t_-r-e-s-c-h-e-d-u-l-e.html">FAILED_DO_NOT_RESCHEDULE</a><br/>
+<br/>
+<h1>FAILED_DO_NOT_RESCHEDULE</h1>
+<a name="com.levibostian.wendy.types.PendingTaskResult.FAILED_DO_NOT_RESCHEDULE"></a>
+<code><span class="identifier">FAILED_DO_NOT_RESCHEDULE</span></code>
+<p>Indicates the task failed, and Wendy should not run it again the next time that Wendy runs tasks.</p>
+<p>This will delete the <a href="../../com.levibostian.wendy.service/-pending-task/index.html">PendingTask</a> instance from the Wendy database to not run again. If you wish to run this task again at some point in the future, you must add it to Wendy again via <a href="../../com.levibostian.wendy.service/-pending-tasks/add-task.html">PendingTasks.addTask</a>.</p>
+<p>This result is usually used if the task failed to run and you need the user to perform an action in order to fix it.</p>
+</BODY>
+</HTML>

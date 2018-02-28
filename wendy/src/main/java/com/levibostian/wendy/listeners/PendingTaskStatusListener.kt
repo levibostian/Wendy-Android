@@ -20,14 +20,14 @@ interface PendingTaskStatusListener {
     /**
      * The task runner is running this exact [PendingTask].
      *
-     * @param taskId The ID of the [PendingTask] being run.
+     * @param taskId The task_id of the [PendingTask] being run.
      */
     @UiThread fun running(taskId: Long)
 
     /**
      * The task runner is done running the [PendingTask]. The task was either successful or not.
      *
-     * @param taskId The ID of the [PendingTask] that just ran.
+     * @param taskId The task_id of the [PendingTask] that just ran.
      * @param successful Indicates if the running of the [PendingTask] was successful or not.
      * @param rescheduled If the task failed but should run again, the task is rescheduled to run again in the future.
      */
@@ -36,7 +36,7 @@ interface PendingTaskStatusListener {
     /**
      * The task runner skipped running the [PendingTask] for some reason.
      *
-     * @param taskId The ID of the [PendingTask] that was skipped.
+     * @param taskId The task_id of the [PendingTask] that was skipped.
      * @param reason The reason that the [PendingTask] was skipped.
      *
      * @see ReasonPendingTaskSkipped for all available reasons why a [PendingTask] was skipped.

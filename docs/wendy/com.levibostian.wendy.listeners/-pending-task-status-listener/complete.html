@@ -5,10 +5,18 @@
 <link rel="stylesheet" href="../../../style.css">
 </HEAD>
 <BODY>
-<a href="../../index.html">wendy</a>&nbsp;/&nbsp;<a href="../index.html">com.levibostian.wendy.listeners</a>&nbsp;/&nbsp;<a href="index.html">PendingTaskStatusListener</a>&nbsp;/&nbsp;<a href=".">complete</a><br/>
+<a href="../../index.html">wendy</a>&nbsp;/&nbsp;<a href="../index.html">com.levibostian.wendy.listeners</a>&nbsp;/&nbsp;<a href="index.html">PendingTaskStatusListener</a>&nbsp;/&nbsp;<a href="./complete.html">complete</a><br/>
 <br/>
 <h1>complete</h1>
-<a name="com.levibostian.wendy.listeners.PendingTaskStatusListener$complete(kotlin.Long, kotlin.Boolean)"></a>
-<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">complete</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.listeners.PendingTaskStatusListener$complete(kotlin.Long, kotlin.Boolean)/taskId">taskId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.listeners.PendingTaskStatusListener$complete(kotlin.Long, kotlin.Boolean)/successful">successful</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<a name="com.levibostian.wendy.listeners.PendingTaskStatusListener$complete(kotlin.Long, kotlin.Boolean, kotlin.Boolean)"></a>
+<code><span class="identifier">@UiThread</span> <span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">complete</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.listeners.PendingTaskStatusListener$complete(kotlin.Long, kotlin.Boolean, kotlin.Boolean)/taskId">taskId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.listeners.PendingTaskStatusListener$complete(kotlin.Long, kotlin.Boolean, kotlin.Boolean)/successful">successful</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.listeners.PendingTaskStatusListener$complete(kotlin.Long, kotlin.Boolean, kotlin.Boolean)/rescheduled">rescheduled</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>The task runner is done running the <a href="../../com.levibostian.wendy.service/-pending-task/index.html">PendingTask</a>. The task was either successful or not.</p>
+<h3>Parameters</h3>
+<p><a name="taskId"></a>
+<code>taskId</code> - The task_id of the <a href="../../com.levibostian.wendy.service/-pending-task/index.html">PendingTask</a> that just ran.</p>
+<p><a name="successful"></a>
+<code>successful</code> - Indicates if the running of the <a href="../../com.levibostian.wendy.service/-pending-task/index.html">PendingTask</a> was successful or not.</p>
+<p><a name="rescheduled"></a>
+<code>rescheduled</code> - If the task failed but should run again, the task is rescheduled to run again in the future.</p>
 </BODY>
 </HTML>

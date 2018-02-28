@@ -5,10 +5,14 @@
 <link rel="stylesheet" href="../../../style.css">
 </HEAD>
 <BODY>
-<a href="../../index.html">wendy</a>&nbsp;/&nbsp;<a href="../index.html">com.levibostian.wendy.listeners</a>&nbsp;/&nbsp;<a href="index.html">TaskRunnerListener</a>&nbsp;/&nbsp;<a href=".">runningTask</a><br/>
+<a href="../../index.html">wendy</a>&nbsp;/&nbsp;<a href="../index.html">com.levibostian.wendy.listeners</a>&nbsp;/&nbsp;<a href="index.html">TaskRunnerListener</a>&nbsp;/&nbsp;<a href="./running-task.html">runningTask</a><br/>
 <br/>
 <h1>runningTask</h1>
 <a name="com.levibostian.wendy.listeners.TaskRunnerListener$runningTask(com.levibostian.wendy.service.PendingTask)"></a>
-<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">runningTask</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.listeners.TaskRunnerListener$runningTask(com.levibostian.wendy.service.PendingTask)/task">task</span><span class="symbol">:</span>&nbsp;<a href="../../com.levibostian.wendy.service/-pending-task/index.html"><span class="identifier">PendingTask</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<code><span class="identifier">@UiThread</span> <span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">runningTask</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.listeners.TaskRunnerListener$runningTask(com.levibostian.wendy.service.PendingTask)/task">task</span><span class="symbol">:</span>&nbsp;<a href="../../com.levibostian.wendy.service/-pending-task/index.html"><span class="identifier">PendingTask</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>The task runner is now running this given task.</p>
+<h3>Parameters</h3>
+<p><a name="task"></a>
+<code>task</code> - The <a href="../../com.levibostian.wendy.service/-pending-task/index.html">PendingTask</a> being run by the task runner.</p>
 </BODY>
 </HTML>

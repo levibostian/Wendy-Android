@@ -27,6 +27,9 @@ class PendingStatusTextView : TextView, PendingTaskStatusListener {
 
     override fun skipped(taskId: Long, reason: ReasonPendingTaskSkipped) {
         text = reason.accept(object : ReasonPendingTaskSkipped.Visitor<String> {
+            override fun visitPartOfFailedGroup(): String {
+                return "Skipped: part of failing group"
+            }
             override fun visitNotReadyToRun(): String {
                 return "Skipped: not ready to run"
             }

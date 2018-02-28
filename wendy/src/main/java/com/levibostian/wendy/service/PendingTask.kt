@@ -12,7 +12,7 @@ import java.util.*
  *
  * To use this class, create a subclass of it. It is not marked as abstract because these files are saved into a sqlite database and in order to do that, this file cannot be abstract.
  *
- * @property id Auto incrementing id. You know, your typical id field in a SQL database. After you have used [PendingTasks.addTask] to add this task to Wendy, this property will become populated. It is then up to *you* to hang onto this ID if you want to reference it later on.
+ * @property task_id ID of the [PendingTask]. After you have used [PendingTasks.addTask] to add this task to Wendy, this property will become populated and available to you. It is then up to *you* to hang onto this ID if you want to reference it later on.
  * @property created_at The date/time that the task was created.
  * @property manually_run Sometimes you may want your user to be in charge of when a task is run. Setting [manually_run] to true will assert that this task does not get run automatically by the Wendy [PendingTasksRunner].
  * @property group_id If this task needs to be run after a set of previous tasks before it were all successfully run then mark this property with an identifier for the group. Wendy will run through all the tasks of this group until one of them fails. When one fails, Wendy will then skip all the other tasks belonging to this group and move on.
@@ -26,7 +26,7 @@ abstract class PendingTask(override var manually_run: Boolean,
                            override var group_id: String?,
                            override var tag: String): PendingTaskFields {
 
-    override var id: Long = 0 // auto increments
+    override var task_id: Long = 0
     override var created_at: Long = Date().time
 
     /**
@@ -49,7 +49,7 @@ abstract class PendingTask(override var manually_run: Boolean,
      * Use to go from [PersistedPendingTask] to [PendingTask] after running a SQLite query.
      */
     internal fun fromSqlObject(pendingTask: PersistedPendingTask): PendingTask {
-        this.id = pendingTask.id
+        this.task_id = pendingTask.task_id
         this.created_at = pendingTask.created_at
         this.manually_run = pendingTask.manually_run
         this.group_id = pendingTask.group_id
@@ -59,18 +59,32 @@ abstract class PendingTask(override var manually_run: Boolean,
         return this
     }
 
+    /**
+     * Print contents of [PendingTask].
+     */
     override fun toString(): String {
         val dateFormatter = SimpleDateFormat("yyyy.MM.dd G 'at' HH:mm:ss z", Locale.ENGLISH)
 
-        return "id: $id, created at: ${dateFormatter.format(created_at)}, manually run: $manually_run, group id: ${group_id ?: "none"}, data id: ${data_id ?: "none"}, tag: $tag"
+        return "task_id: $task_id, created at: ${dateFormatter.format(created_at)}, manually run: $manually_run, group id: ${group_id ?: "none"}, data id: ${data_id ?: "none"}, tag: $tag"
     }
 
+    /**
+     * Run comparisons between two instances of [PendingTask].
+     */
     final override fun equals(other: Any?): Boolean {
-        return other is PendingTask &&
-                other.data_id == this.data_id &&
+        if (other !is PendingTask) return false
+
+        // If the tasks have the same task id, we can assume they are the same already.
+        if (other.task_id == this.task_id) return true
+
+        // If they have the same data_id and tag, then they are the same in SQL unique terms.
+        return other.data_id == this.data_id &&
                 other.tag == this.tag
     }
 
+    /**
+     * Your typical Java hashCode() function to match [equals].
+     */
     final override fun hashCode(): Int {
         var result = data_id?.hashCode() ?: 0
         result = 31 * result + tag.hashCode()

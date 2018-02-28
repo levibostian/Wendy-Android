@@ -60,7 +60,7 @@ First, create a `PendingTasksFactory` subclass that stores all of your app's Wen
 ```
 class GroceryListPendingTasksFactory : PendingTasksFactory {
 
-    override fun getTask(tag: String, task: PendingTask): PendingTask {
+    override fun getTask(tag: String): PendingTask {
         return when (tag) {
             else -> throw RuntimeException("No idea what task that is... tag: $tag")
         }
@@ -84,29 +84,33 @@ In our `Grocery List` app, we want to allow users to create new grocery items. E
 Let's create our first `PendingTask` subclass for creating new grocery items.
 
 ```
-class CreateGroceryListItemPendingTask(groceryStoreItemId: Long) : PendingTask(tag = CreateGroceryListItemPendingTask::class.java.simpleName) {
-
-    init {
-        data_id = groceryStoreItemId.toString()
-    }
+class CreateGroceryListItemPendingTask(groceryStoreItemId: Long) : PendingTask(
+    manually_run = false,
+    data_id = groceryStoreItemId.toString(),
+    group_id = null,
+    tag = CreateGroceryListItemPendingTask::class.java.simpleName) {
 
     companion object {
-        fun blank(): CreateGroceryListItemPendingTask { return CreateGroceryListItemPendingTask() }
+        fun blank(): CreateGroceryListItemPendingTask { return CreateGroceryListItemPendingTask(0) }
     }
 
-    override fun runTask(complete: (successful: Boolean) -> Unit) {
+    override fun runTask() {
         // Here, instantiate your dependencies, talk to your DB, your API, etc. Run the task.
-        // After you are done (or failed), call `complete()`.
+        // After you are done (or failed), return to Wendy the result.
 
         val groceryStoreItem = localDatabase.queryGroceryStoreItem(data_id)
 
-        performApiCall(groceryStoreItem, { successful, error ->
-            if (error != null || !successful) {
-                complete(false) // Our API call failed. We tell Wendy the task is complete but not successful so it will be scheduled to try again later.
-            } else {
-                complete(true) // Our API call was successful. We tell Wendy the task is complete and successful and it will delete the task from the device database and will not run it again.
-            }
-        })
+        // Your SQL queries, API calls, etc. in `runTask()` need to be synchronous. Don't worry, you are running on a background thread already so it's all good.
+        // If you still feel you want to run asynchronous code, [check out this code sample](https://github.com/evernote/android-job/wiki/FAQ#how-can-i-run-async-operations-in-a-job).
+        val apiCallResult = performApiCall(groceryStoreItem)
+
+        if (apiCallResult.error != null) {
+             // There was an error. Parse the error and decide what to do from here.
+             // If it's an error that deserves the attention of your user to fix, return a result to not reschedule the task, have the user fix the error, then you can create a new `CreateGroceryListItemPendingTask` to try again.
+             return PendingTaskResult.FAILED_DO_NOT_RESCHEDULE
+        }
+
+        return if (apiCallResult.successful) PendingTaskResult.SUCCESSFUL else PendingTaskResult.FAILED_RESCHEDULE
     }
 
 }
@@ -117,9 +121,9 @@ Each time that you create a new subclass of `PendingTask`, you need to add that 
 ```
 class GroceryListPendingTasksFactory : PendingTasksFactory {
 
-    override fun getTask(tag: String, task: PendingTask): PendingTask {
+    override fun getTask(tag: String): PendingTask {
         return when (tag) {
-            CreateGroceryListItemPendingTask::class.java.simpleName -> CreateGroceryListItem.blank().fromSqlObject(task)
+            CreateGroceryListItemPendingTask::class.java.simpleName -> CreateGroceryListItem.blank()
             else -> throw RuntimeException("No idea what task that is... tag: $tag")
         }
     }
@@ -144,6 +148,22 @@ fun createNewGroceryStoreItem(itemName: String) {
     localDatabase.queryGroceryStoreItem(id).pending_task_id = pendingTaskId
 
     // The reason you may want to save the ID of the `PendingTask` is to assert that it runs successfully. Also, you can show in the UI of your app the syncing status of that data to the user. This is all optional, but recommended for the best user experience.
+    WendyConfig.addTaskStatusListenerForTask(pendingTaskId, object : PendingTaskStatusListener {
+        override fun skipped(taskId: Long, reason: ReasonPendingTaskSkipped) {
+            // The task was skipped to run. You may use the Visitor design pattern, like below, or create a conditional around the enum to find out the reason why it was skipped.
+            reason.accept(object : ReasonPendingTaskSkipped.Visitor<String> {
+                override fun visitNotReadyToRun(): String {
+                    // The task was skipped because the PendingTask instance returned `false` for the function `canRunTask()`.
+                }
+            })
+        }
+        override fun running(taskId: Long) {
+            // The task is now running.
+        }
+        override fun complete(taskId: Long, successful: Boolean, rescheduled: Boolean) {
+            // The task was complete. It was either successful, or it failed and was rescheduled to run again or not.
+        }
+    })
 }
 ```
 
@@ -153,7 +173,7 @@ There is a document on [best practices when using Wendy](BEST_PRACTICES.md). Che
 
 ## Example app
 
-This library comes with an example app.
+This library comes with an example app. You may open it in Android Studio to test it out and see how the code works with the library.
 
 ## Documentation
 
@@ -183,12 +203,6 @@ I recommend doing the following:
 
 ```
 WendyConfig.debug = BuildConfig.DEBUG
-```
-
-You can change the Logcat tag as well:
-
-```
-WendyConfig.tag = "Wendy" # default is "WENDY"
 ```
 
 ## Author

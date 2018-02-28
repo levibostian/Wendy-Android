@@ -5,10 +5,19 @@
 <link rel="stylesheet" href="../../../style.css">
 </HEAD>
 <BODY>
-<a href="../../index.html">wendy</a>&nbsp;/&nbsp;<a href="../index.html">com.levibostian.wendy.listeners</a>&nbsp;/&nbsp;<a href="index.html">PendingTaskStatusListener</a>&nbsp;/&nbsp;<a href=".">skipped</a><br/>
+<a href="../../index.html">wendy</a>&nbsp;/&nbsp;<a href="../index.html">com.levibostian.wendy.listeners</a>&nbsp;/&nbsp;<a href="index.html">PendingTaskStatusListener</a>&nbsp;/&nbsp;<a href="./skipped.html">skipped</a><br/>
 <br/>
 <h1>skipped</h1>
 <a name="com.levibostian.wendy.listeners.PendingTaskStatusListener$skipped(kotlin.Long, com.levibostian.wendy.types.ReasonPendingTaskSkipped)"></a>
-<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">skipped</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.listeners.PendingTaskStatusListener$skipped(kotlin.Long, com.levibostian.wendy.types.ReasonPendingTaskSkipped)/taskId">taskId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.listeners.PendingTaskStatusListener$skipped(kotlin.Long, com.levibostian.wendy.types.ReasonPendingTaskSkipped)/reason">reason</span><span class="symbol">:</span>&nbsp;<a href="../../com.levibostian.wendy.types/-reason-pending-task-skipped/index.html"><span class="identifier">ReasonPendingTaskSkipped</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<code><span class="identifier">@UiThread</span> <span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">skipped</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.listeners.PendingTaskStatusListener$skipped(kotlin.Long, com.levibostian.wendy.types.ReasonPendingTaskSkipped)/taskId">taskId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.listeners.PendingTaskStatusListener$skipped(kotlin.Long, com.levibostian.wendy.types.ReasonPendingTaskSkipped)/reason">reason</span><span class="symbol">:</span>&nbsp;<a href="../../com.levibostian.wendy.types/-reason-pending-task-skipped/index.html"><span class="identifier">ReasonPendingTaskSkipped</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>The task runner skipped running the <a href="../../com.levibostian.wendy.service/-pending-task/index.html">PendingTask</a> for some reason.</p>
+<h3>Parameters</h3>
+<p><a name="taskId"></a>
+<code>taskId</code> - The task_id of the <a href="../../com.levibostian.wendy.service/-pending-task/index.html">PendingTask</a> that was skipped.</p>
+<p><a name="reason"></a>
+<code>reason</code> - The reason that the <a href="../../com.levibostian.wendy.service/-pending-task/index.html">PendingTask</a> was skipped.</p>
+<p><strong>See Also</strong><br/>
+<p><a href="../../com.levibostian.wendy.types/-reason-pending-task-skipped/index.html">ReasonPendingTaskSkipped</a></p>
+</p>
 </BODY>
 </HTML>

@@ -2,6 +2,7 @@ package com.levibostian.wendy.db
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import com.levibostian.wendy.extension.createTable
 import com.levibostian.wendy.service.PendingTask
 import org.jetbrains.anko.db.*
 
@@ -20,6 +21,7 @@ internal class PendingTasksDatabaseHelper(applicationContext: Context, databaseN
         database.createTable(PersistedPendingTask.TABLE_NAME, true,
                 PersistedPendingTask.UNIQUE_CONSTRAINT_COLUMNS,
                 PersistedPendingTask.COLUMN_ID to INTEGER + PRIMARY_KEY, // autoincrementing by default.
+                PersistedPendingTask.COLUMN_TASK_ID to INTEGER + NOT_NULL,
                 PersistedPendingTask.COLUMN_CREATED_AT to INTEGER + NOT_NULL, // storing Date to INTEGER as date.time
                 PersistedPendingTask.COLUMN_MANUALLY_RUN to INTEGER + NOT_NULL, // 0 == false, 1 == true
                 PersistedPendingTask.COLUMN_GROUP_ID to TEXT,
@@ -30,15 +32,4 @@ internal class PendingTasksDatabaseHelper(applicationContext: Context, databaseN
     override fun onUpgrade(database: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
     }
 
-}
-
-fun SQLiteDatabase.createTable(tableName: String, ifNotExists: Boolean = false, unique: List<String>, vararg columns: Pair<String, SqlType>) {
-    val escapedTableName = tableName.replace("`", "``")
-    val ifNotExistsText = if (ifNotExists) "IF NOT EXISTS" else ""
-    val uniqueQuery = if (unique.isNotEmpty()) ", UNIQUE (${unique.joinToString()}) ON CONFLICT REPLACE" else ""
-    execSQL(
-            columns.map { col ->
-                "${col.first} ${col.second.render()}"
-            }.joinToString(", ", prefix = "CREATE TABLE $ifNotExistsText `$escapedTableName`(", postfix = " $uniqueQuery);")
-    )
 }

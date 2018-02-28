@@ -5,10 +5,14 @@
 <link rel="stylesheet" href="../../../style.css">
 </HEAD>
 <BODY>
-<a href="../../index.html">wendy</a>&nbsp;/&nbsp;<a href="../index.html">com.levibostian.wendy.service</a>&nbsp;/&nbsp;<a href="index.html">PendingTask</a>&nbsp;/&nbsp;<a href=".">group_id</a><br/>
+<a href="../../index.html">wendy</a>&nbsp;/&nbsp;<a href="../index.html">com.levibostian.wendy.service</a>&nbsp;/&nbsp;<a href="index.html">PendingTask</a>&nbsp;/&nbsp;<a href="./group_id.html">group_id</a><br/>
 <br/>
 <h1>group_id</h1>
 <a name="com.levibostian.wendy.service.PendingTask$group_id"></a>
 <code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">group_id</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code>
+<p>If this task needs to be run after a set of previous tasks before it were all successfully run then mark this property with an identifier for the group. Wendy will run through all the tasks of this group until one of them fails. When one fails, Wendy will then skip all the other tasks belonging to this group and move on.</p>
+<h3>Property</h3>
+<p><a name="group_id"></a>
+<code>group_id</code> - If this task needs to be run after a set of previous tasks before it were all successfully run then mark this property with an identifier for the group. Wendy will run through all the tasks of this group until one of them fails. When one fails, Wendy will then skip all the other tasks belonging to this group and move on.</p>
 </BODY>
 </HTML>
