@@ -37,10 +37,10 @@ class PendingTasksRecyclerViewAdapter(val data: List<PendingTask>) : RecyclerVie
 
     override fun getItemCount(): Int = data.count()
 
-    override fun onBindViewHolder(holder: PendingTasksRecyclerViewAdapter.ViewHolder?, position: Int) {
+    override fun onBindViewHolder(holder: PendingTasksRecyclerViewAdapter.ViewHolder, position: Int) {
         val adapterItem: PendingTask = data[position]
 
-        holder!!.idTextView.text = String.format("task id: %d", adapterItem.task_id)
+        holder.idTextView.text = String.format("task id: %d", adapterItem.task_id)
         holder.dataIdTextView.text = String.format("data id: %s", adapterItem.data_id)
         holder.groupIdTextView.text = String.format("group id: %s", adapterItem.group_id)
         holder.manuallyRunTextView.text = String.format("manually run: %s", adapterItem.manually_run.toString())
@@ -55,8 +55,8 @@ class PendingTasksRecyclerViewAdapter(val data: List<PendingTask>) : RecyclerVie
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): PendingTasksRecyclerViewAdapter.ViewHolder {
-        return ViewHolder(LayoutInflater.from(parent!!.context).inflate(R.layout.adapter_pending_task_recyclerview, parent, false))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PendingTasksRecyclerViewAdapter.ViewHolder {
+        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.adapter_pending_task_recyclerview, parent, false))
     }
 
 }

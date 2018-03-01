@@ -3,6 +3,7 @@ package com.levibostian.wendyexample
 import android.annotation.TargetApi
 import android.content.Context
 import android.os.Build.VERSION_CODES.LOLLIPOP
+import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.widget.TextView
 import com.levibostian.wendy.listeners.PendingTaskStatusListener
@@ -37,10 +38,22 @@ class PendingStatusTextView : TextView, PendingTaskStatusListener {
     }
     override fun running(taskId: Long) {
         text = "Running"
+        setTextColor(ContextCompat.getColor(mContext, android.R.color.holo_blue_dark))
     }
 
     override fun complete(taskId: Long, successful: Boolean, rescheduled: Boolean) {
         text = if (successful) "Success!" else "Failed!"
+        setTextColor(ContextCompat.getColor(mContext, if (successful) android.R.color.holo_green_dark else android.R.color.holo_orange_dark))
+    }
+
+    override fun errorRecorded(taskId: Long, errorMessage: String?, errorId: String?) {
+        text = errorMessage
+        setTextColor(ContextCompat.getColor(mContext, android.R.color.holo_red_dark))
+    }
+
+    override fun errorResolved(taskId: Long) {
+        text = "Error gone!"
+        setTextColor(ContextCompat.getColor(mContext, android.R.color.holo_red_light))
     }
 
 }

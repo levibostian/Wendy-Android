@@ -36,6 +36,8 @@ interface PendingTaskStatusListener {
     /**
      * There was an error recorded to Wendy for this [PendingTask].
      *
+     * *Tip:* It's recommended that when [errorRecorded] gets called and if you decide to show something in the UI about a [PendingTask] having an error, keep that UI up until the user dismisses it. They touch it, swipe it, whatever. Why? Because other methods may get called after [errorRecorded] gets called and errors are a pretty important thing to fix.
+     *
      * @param taskId the task_id of the [PendingTask] that an error occurred to.
      * @param errorMessage The human readable error message recorded for the error.
      * @param errorId The error ID recorded to Wendy for the error.

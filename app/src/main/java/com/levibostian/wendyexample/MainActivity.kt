@@ -3,6 +3,8 @@ package com.levibostian.wendyexample
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.support.v4.app.NotificationCompat
+import android.support.v4.app.NotificationManagerCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.CompoundButton
@@ -75,6 +77,22 @@ class MainActivity : AppCompatActivity(), TaskRunnerListener {
         }, 1000)
     }
     override fun allTasksComplete() {
+    }
+    override fun errorRecorded(task: PendingTask, errorMessage: String?, errorId: String?) {
+        Handler().postDelayed({
+            refreshListOfTasks()
+        }, 1000)
+
+        val notificationManager = NotificationManagerCompat.from(this)
+        val notification = NotificationCompat.Builder(this, NotificationChannelUtil.ERROR_OCCURRED_CHANNEL_ID)
+                .setSmallIcon(android.R.drawable.ic_notification_clear_all)
+                .setContentTitle("Error occurred!")
+                .setContentText(errorMessage)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .build()
+        notificationManager.notify(0, notification)
+    }
+    override fun errorResolved(task: PendingTask) {
     }
 
 }

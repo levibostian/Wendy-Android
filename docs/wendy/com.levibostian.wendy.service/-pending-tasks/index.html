@@ -45,6 +45,15 @@
 </tr>
 <tr>
 <td>
+<p><a href="get-all-errors.html">getAllErrors</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getAllErrors</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.levibostian.wendy.db/-pending-task-error/index.html"><span class="identifier">PendingTaskError</span></a><span class="symbol">&gt;</span></code>
+<p>Get all errors that currently exist for <a href="../-pending-task/index.html">PendingTask</a>s.</p>
+</td>
+</tr>
+<tr>
+<td>
 <p><a href="get-all-tasks.html">getAllTasks</a></p>
 </td>
 <td>
@@ -75,7 +84,7 @@
 <p><a href="resolve-error.html">resolveError</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="identifier">resolveError</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks$resolveError(kotlin.Long)/taskId">taskId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<code><span class="keyword">fun </span><span class="identifier">resolveError</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks$resolveError(kotlin.Long)/taskId">taskId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
 <p>Mark a previously recorded error for a <a href="../-pending-task/index.html">PendingTask</a> as resolved.</p>
 </td>
 </tr>
@@ -95,6 +104,20 @@
 <td>
 <code><span class="keyword">fun </span><span class="identifier">runTasks</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
 <p>Manually run all pending tasks. Wendy takes care of running this periodically for you, but you can manually run tasks here.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="shared.html">shared</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">shared</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">PendingTasks</span></a></code>
+<p>Short hand version of calling <a href="shared-instance.html">sharedInstance</a>.</p>
 </td>
 </tr>
 </tbody>

@@ -134,15 +134,44 @@
 </tr>
 </tbody>
 </table>
-<h3>Inheritors</h3>
+<h3>Extension Functions</h3>
 <table>
 <tbody>
 <tr>
 <td>
-<p><a href="../../com.levibostian.wendy.extension/-create-grocery-store-item-pending-task/index.html">CreateGroceryStoreItemPendingTask</a></p>
+<p><a href="../../com.levibostian.wendy.extension/add-task-status-listener-for-task.html">addTaskStatusListenerForTask</a></p>
 </td>
 <td>
-<code><span class="keyword">class </span><span class="identifier">CreateGroceryStoreItemPendingTask</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">PendingTask</span></a></code></td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">PendingTask</span></a><span class="symbol">.</span><span class="identifier">addTaskStatusListenerForTask</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.extension$addTaskStatusListenerForTask(com.levibostian.wendy.service.PendingTask, com.levibostian.wendy.listeners.PendingTaskStatusListener)/listener">listener</span><span class="symbol">:</span>&nbsp;<a href="../../com.levibostian.wendy.listeners/-pending-task-status-listener/index.html"><span class="identifier">PendingTaskStatusListener</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Extension to <a href="../../com.levibostian.wendy/-wendy-config/add-task-status-listener-for-task.html">WendyConfig.addTaskStatusListenerForTask</a> easily from a <a href="./index.html">PendingTask</a> instance.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.levibostian.wendy.extension/get-latest-error.html">getLatestError</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">PendingTask</span></a><span class="symbol">.</span><span class="identifier">getLatestError</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.levibostian.wendy.db/-pending-task-error/index.html"><span class="identifier">PendingTaskError</span></a><span class="symbol">?</span></code>
+<p>Extension to <a href="../-pending-tasks/get-latest-error.html">PendingTasks.getLatestError</a> easily from a <a href="./index.html">PendingTask</a> instance.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.levibostian.wendy.extension/record-error.html">recordError</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">PendingTask</span></a><span class="symbol">.</span><span class="identifier">recordError</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.extension$recordError(com.levibostian.wendy.service.PendingTask, kotlin.String, kotlin.String)/humanReadableErrorMessage">humanReadableErrorMessage</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.extension$recordError(com.levibostian.wendy.service.PendingTask, kotlin.String, kotlin.String)/errorId">errorId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Extension to <a href="../-pending-tasks/record-error.html">PendingTasks.recordError</a> easily from a <a href="./index.html">PendingTask</a> instance.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.levibostian.wendy.extension/resolve-error.html">resolveError</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">PendingTask</span></a><span class="symbol">.</span><span class="identifier">resolveError</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Extension to <a href="../-pending-tasks/resolve-error.html">PendingTasks.resolveError</a> easily from a <a href="./index.html">PendingTask</a> instance.</p>
+</td>
 </tr>
 </tbody>
 </table>

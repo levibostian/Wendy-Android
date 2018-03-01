@@ -2,6 +2,7 @@ package com.levibostian.wendyexample
 
 import android.os.Handler
 import android.os.Looper
+import com.levibostian.wendy.extension.recordError
 import com.levibostian.wendy.service.PendingTask
 import com.levibostian.wendy.types.PendingTaskResult
 import java.util.*
@@ -12,6 +13,8 @@ class FooPendingTask(manuallyRun: Boolean,
 
     companion object {
         fun blank(): FooPendingTask { return FooPendingTask(false, null, "") }
+
+        const val RANDOMLY_GENERATED_ERROR_ERROR_ID = "randomlyGeneratedErrorErrorId"
     }
 
     override fun runTask(): PendingTaskResult {
@@ -21,7 +24,13 @@ class FooPendingTask(manuallyRun: Boolean,
 
         val rand = Random()
         val n = rand.nextInt(100) + 1 // random number between 1 and 100
-        val successful: Boolean = n <= 25 // fail 25% of the time.
+        val successful: Boolean = n <= 50 // fail 50% of the time.
+        if (!successful) {
+            if (rand.nextInt(100) <= 50) {
+                this.recordError("Random error....", RANDOMLY_GENERATED_ERROR_ERROR_ID)
+                return PendingTaskResult.FAILED_DO_NOT_RESCHEDULE
+            }
+        }
 
         return if (successful) PendingTaskResult.SUCCESSFUL else PendingTaskResult.FAILED_RESCHEDULE
     }

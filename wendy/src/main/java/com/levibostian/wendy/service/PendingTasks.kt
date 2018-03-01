@@ -46,6 +46,12 @@ open class PendingTasks private constructor(context: Context, val tasksFactory: 
             if (instance == null) throw RuntimeException("Sorry, you must initialize the instance first.")
             return instance!!
         }
+
+        /**
+         * Short hand version of calling [sharedInstance].
+         */
+        @JvmStatic val shared: PendingTasks by lazy { sharedInstance() }
+
     }
 
     /**
@@ -161,15 +167,18 @@ open class PendingTasks private constructor(context: Context, val tasksFactory: 
      * *Note:* If you attempt to resolve an error when an error does not exist in Wendy (because it has already been resolved or was never recorded) then the [TaskRunnerListener.errorResolved] and [PendingTaskStatusListener.errorResolved] will not be called.
      *
      * @param taskId The task_id of a [PendingTask] previously recorded an error for.
+     * @return If [PendingTask] had a previously recorded error and it has been marked as resolved now.
      *
      * @see recordError This is how to record an error.
      */
-    fun resolveError(taskId: Long) {
-        val pendingTask = tasksManager.getPendingTaskTaskById(taskId) ?: return
+    fun resolveError(taskId: Long): Boolean {
+        val pendingTask = tasksManager.getPendingTaskTaskById(taskId) ?: return false
 
         if (tasksManager.deletePendingTaskError(taskId)) { // Only log error as resolved if an error was even recorded in the first place.
             WendyConfig.logErrorResolved(pendingTask)
+            return true
         }
+        return false
     }
 
     /**
