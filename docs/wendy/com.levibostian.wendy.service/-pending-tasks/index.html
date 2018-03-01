@@ -48,8 +48,35 @@
 <p><a href="get-all-tasks.html">getAllTasks</a></p>
 </td>
 <td>
-<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getAllTasks</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-pending-task/index.html"><span class="identifier">PendingTask</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">fun </span><span class="identifier">getAllTasks</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-pending-task/index.html"><span class="identifier">PendingTask</span></a><span class="symbol">&gt;</span></code>
 <p>If you, for some reason, wish to receive a copy of all the <a href="../-pending-task/index.html">PendingTask</a> instances that still need to run successfully by Wendy, here is how you get them.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-latest-error.html">getLatestError</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getLatestError</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks$getLatestError(kotlin.Long)/taskId">taskId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.levibostian.wendy.db/-pending-task-error/index.html"><span class="identifier">PendingTaskError</span></a><span class="symbol">?</span></code>
+<p>How to check if an error has been recorded for a <a href="../-pending-task/index.html">PendingTask</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="record-error.html">recordError</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">recordError</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks$recordError(kotlin.Long, kotlin.String, kotlin.String)/taskId">taskId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks$recordError(kotlin.Long, kotlin.String, kotlin.String)/humanReadableErrorMessage">humanReadableErrorMessage</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks$recordError(kotlin.Long, kotlin.String, kotlin.String)/errorId">errorId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>If you encounter an error while executing <a href="../-pending-task/run-task.html">PendingTask.runTask</a> in one of your <a href="../-pending-task/index.html">PendingTask</a>s, you can record it here to handle later in your app. This is usually used when your <a href="../-pending-task/index.html">PendingTask</a> encounters an error that requires the app user to fix (example: A string sent up to your API is too long. The user must shorten it up).</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="resolve-error.html">resolveError</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">resolveError</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks$resolveError(kotlin.Long)/taskId">taskId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Mark a previously recorded error for a <a href="../-pending-task/index.html">PendingTask</a> as resolved.</p>
 </td>
 </tr>
 <tr>

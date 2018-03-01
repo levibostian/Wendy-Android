@@ -101,7 +101,7 @@ class CreateGroceryListItemPendingTask(groceryStoreItemId: Long) : PendingTask(
         val groceryStoreItem = localDatabase.queryGroceryStoreItem(data_id)
 
         // Your SQL queries, API calls, etc. in `runTask()` need to be synchronous. Don't worry, you are running on a background thread already so it's all good.
-        // If you still feel you want to run asynchronous code, [check out this code sample](https://github.com/evernote/android-job/wiki/FAQ#how-can-i-run-async-operations-in-a-job).
+        // If you still feel you want to run asynchronous code, [check out the Wendy best practices doc](BEST_PRACTICES.md) to learn how to do so.
         val apiCallResult = performApiCall(groceryStoreItem)
 
         if (apiCallResult.error != null) {

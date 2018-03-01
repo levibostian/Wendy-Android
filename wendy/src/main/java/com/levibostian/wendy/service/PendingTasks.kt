@@ -4,9 +4,14 @@ import android.app.Application
 import android.content.Context
 import com.evernote.android.job.JobManager
 import com.levibostian.wendy.WendyConfig
+import com.levibostian.wendy.db.PendingTaskError
 import com.levibostian.wendy.db.PendingTasksManager
 import com.levibostian.wendy.job.PendingTaskJobCreator
 import com.levibostian.wendy.job.PendingTasksJob
+import com.levibostian.wendy.listeners.PendingTaskStatusListener
+import com.levibostian.wendy.listeners.TaskRunnerListener
+import com.levibostian.wendy.logErrorRecorded
+import com.levibostian.wendy.logErrorResolved
 import com.levibostian.wendy.logNewTaskAdded
 import com.levibostian.wendy.util.LogUtil
 
@@ -79,7 +84,7 @@ open class PendingTasks private constructor(context: Context, val tasksFactory: 
             throw IllegalArgumentException("Exception thrown while calling ${tasksFactory::class.java.simpleName}'s getTask(). Did you forgot to add ${pendingTask::class.java.simpleName} to your instance of ${tasksFactory::class.java.simpleName}?")
         }
 
-        val addedTask = tasksManager.addTask(pendingTask)
+        val addedTask = tasksManager.insertPendingTask(pendingTask)
         WendyConfig.logNewTaskAdded(addedTask)
 
         if (WendyConfig.automaticallyRunTasks && !addedTask.manually_run) {
@@ -113,8 +118,65 @@ open class PendingTasks private constructor(context: Context, val tasksFactory: 
     /**
      * If you, for some reason, wish to receive a copy of all the [PendingTask] instances that still need to run successfully by Wendy, here is how you get them.
      */
-    open fun getAllTasks(): List<PendingTask> {
+    fun getAllTasks(): List<PendingTask> {
         return tasksManager.getAllTasks()
+    }
+
+    /**
+     * If you encounter an error while executing [PendingTask.runTask] in one of your [PendingTask]s, you can record it here to handle later in your app. This is usually used when your [PendingTask] encounters an error that requires the app user to fix (example: A string sent up to your API is too long. The user must shorten it up).
+     *
+     * *Note:* If you attempt to record an error using a [taskId] that does not exist, your request to record an error will be ignored.
+     *
+     * @param taskId The [PendingTask.task_id] for the [PendingTask] that encountered an error.
+     * @param humanReadableErrorMessage A human readable error message that you may choose to show in the UI of your app. This message describes the error to the end user. Make sure they can understand it so they can resolve their issue.
+     * @param errorId An ID identifying this error to Wendy. This exists for you, the developer. If and when the user of your app decides to fix the error, you can use this ID to determine what it was that was broken so you can show a UI to the user to fix the issue. Example: An `errorId` of "CreateGroceryItem" in your app could map to a UI in your app that shows the text of the entered grocery store item and the option for your user to edit it.
+     */
+    fun recordError(taskId: Long, humanReadableErrorMessage: String?, errorId: String?) {
+        val pendingTask = tasksManager.getPendingTaskTaskById(taskId) ?: return
+
+        tasksManager.insertPendingTaskError(PendingTaskError.init(taskId, humanReadableErrorMessage, errorId))
+
+        WendyConfig.logErrorRecorded(pendingTask, humanReadableErrorMessage, errorId)
+    }
+
+    /**
+     * How to check if an error has been recorded for a [PendingTask].
+     *
+     * @param taskId The task_id of a [PendingTask] you may or may not have recorded an error for.
+     */
+    fun getLatestError(taskId: Long): PendingTaskError? {
+        val pendingTask = tasksManager.getPendingTaskTaskById(taskId) ?: return null
+        val pendingTaskError = tasksManager.getLatestError(taskId)
+
+        pendingTaskError?.pending_task = pendingTask
+
+        return pendingTaskError
+    }
+
+    /**
+     * Mark a previously recorded error for a [PendingTask] as resolved.
+     *
+     * *Note:* If you attempt to resolve an error using a [taskId] that does not exist, your request to record an error will be ignored.
+     *
+     * *Note:* If you attempt to resolve an error when an error does not exist in Wendy (because it has already been resolved or was never recorded) then the [TaskRunnerListener.errorResolved] and [PendingTaskStatusListener.errorResolved] will not be called.
+     *
+     * @param taskId The task_id of a [PendingTask] previously recorded an error for.
+     *
+     * @see recordError This is how to record an error.
+     */
+    fun resolveError(taskId: Long) {
+        val pendingTask = tasksManager.getPendingTaskTaskById(taskId) ?: return
+
+        if (tasksManager.deletePendingTaskError(taskId)) { // Only log error as resolved if an error was even recorded in the first place.
+            WendyConfig.logErrorResolved(pendingTask)
+        }
+    }
+
+    /**
+     * Get all errors that currently exist for [PendingTask]s.
+     */
+    fun getAllErrors(): List<PendingTaskError> {
+        return tasksManager.getAllErrors()
     }
 
 }

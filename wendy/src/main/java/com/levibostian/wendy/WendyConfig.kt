@@ -113,6 +113,28 @@ internal fun WendyConfig.Companion.logTaskComplete(task: PendingTask, successful
     })
 }
 
+internal fun WendyConfig.Companion.logErrorRecorded(task: PendingTask, errorMessage: String?, errorId: String?) {
+    Handler(Looper.getMainLooper()).post({
+        WendyConfig.getTaskStatusListenerForTask(task.task_id).forEach {
+            it.errorRecorded(task.task_id, errorMessage, errorId)
+        }
+        WendyConfig.getTaskRunnerListeners().forEach {
+            it.errorRecorded(task, errorMessage, errorId)
+        }
+    })
+}
+
+internal fun WendyConfig.Companion.logErrorResolved(task: PendingTask) {
+    Handler(Looper.getMainLooper()).post({
+        WendyConfig.getTaskStatusListenerForTask(task.task_id).forEach {
+            it.errorResolved(task.task_id)
+        }
+        WendyConfig.getTaskRunnerListeners().forEach {
+            it.errorResolved(task)
+        }
+    })
+}
+
 internal fun WendyConfig.Companion.logAllTasksComplete() {
     Handler(Looper.getMainLooper()).post({
         WendyConfig.getTaskRunnerListeners().forEach {

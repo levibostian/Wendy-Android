@@ -1,0 +1,89 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>PendingTaskError - wendy</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">wendy</a>&nbsp;/&nbsp;<a href="../index.html">com.levibostian.wendy.db</a>&nbsp;/&nbsp;<a href="./index.html">PendingTaskError</a><br/>
+<br/>
+<h1>PendingTaskError</h1>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">PendingTaskError</span></code>
+<p>Use this class to save a <a href="../../com.levibostian.wendy.service/-pending-task/index.html">PendingTask</a> instance to a SQLite database. <a href="../../com.levibostian.wendy.service/-pending-task/index.html">PendingTask</a> is designed to be a developer facing object.</p>
+<p>Wendy used to use <a href="../../com.levibostian.wendy.service/-pending-task/index.html">PendingTask</a> to save to a SQLite database directly but there were limitions to what I could and could not do with the class once I decided to use it as a SQLite model (example: I could not even make it abstract). So, I decided to create another class to convert a <a href="../../com.levibostian.wendy.service/-pending-task/index.html">PendingTask</a> to and save that data to a SQLite database.</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">PendingTaskError</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.db.PendingTaskError$<init>(kotlin.Long, kotlin.Long, kotlin.Long, kotlin.String, kotlin.String)/id">id</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.db.PendingTaskError$<init>(kotlin.Long, kotlin.Long, kotlin.Long, kotlin.String, kotlin.String)/task_id">task_id</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.db.PendingTaskError$<init>(kotlin.Long, kotlin.Long, kotlin.Long, kotlin.String, kotlin.String)/created_at">created_at</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.db.PendingTaskError$<init>(kotlin.Long, kotlin.Long, kotlin.Long, kotlin.String, kotlin.String)/error_message">error_message</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.db.PendingTaskError$<init>(kotlin.Long, kotlin.Long, kotlin.Long, kotlin.String, kotlin.String)/error_id">error_id</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">)</span></code>
+<p>Use this class to save a <a href="../../com.levibostian.wendy.service/-pending-task/index.html">PendingTask</a> instance to a SQLite database. <a href="../../com.levibostian.wendy.service/-pending-task/index.html">PendingTask</a> is designed to be a developer facing object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="created_at.html">created_at</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">created_at</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code>
+<p>The Date your error was recorded in the Wendy database.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="error_id.html">error_id</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">error_id</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code>
+<p>The identifier you, the developer, use to determine what type of error was caused and how to fix it.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="error_message.html">error_message</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">error_message</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code>
+<p>The human readable error message you may use to show to the end user describing the error.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="pending_task.html">pending_task</a></p>
+</td>
+<td>
+<code><span class="keyword">lateinit</span> <span class="keyword">var </span><span class="identifier">pending_task</span><span class="symbol">: </span><a href="../../com.levibostian.wendy.service/-pending-task/index.html"><span class="identifier">PendingTask</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="task_id.html">task_id</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">task_id</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code>
+<p>The <a href="../../com.levibostian.wendy.service/-pending-task/task_id.html">PendingTask.task_id</a> you want to record an error for.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="to-string.html">toString</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">toString</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

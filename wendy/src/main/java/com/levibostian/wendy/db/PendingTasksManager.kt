@@ -5,13 +5,14 @@ import com.levibostian.wendy.service.PendingTask
 import com.levibostian.wendy.service.PendingTasks
 import com.levibostian.wendy.util.LogUtil
 import org.jetbrains.anko.db.*
+import java.util.*
 
 internal class PendingTasksManager(context: Context) {
 
     private val db = PendingTasksDatabaseHelper.sharedInstance(context)
 
     @Synchronized
-    internal fun addTask(pendingTaskToAdd: PendingTask): PendingTask {
+    internal fun insertPendingTask(pendingTaskToAdd: PendingTask): PendingTask {
         if (pendingTaskToAdd.tag.isBlank()) throw RuntimeException("You need to set a unique tag for ${PendingTask::class.java.simpleName} instances.")
 
         val similarPendingTask = getExistingTask(pendingTaskToAdd)
@@ -19,7 +20,10 @@ internal class PendingTasksManager(context: Context) {
         val persistedPendingTask = PersistedPendingTask.fromPendingTask(pendingTaskToAdd)
 
         return db.use {
-            insert(PersistedPendingTask.TABLE_NAME,
+            persistedPendingTask.created_at = Date().time
+            pendingTaskToAdd.created_at = persistedPendingTask.created_at
+
+            val id = insert(PersistedPendingTask.TABLE_NAME,
                     PersistedPendingTask.COLUMN_TASK_ID to persistedPendingTask.task_id,
                     PersistedPendingTask.COLUMN_CREATED_AT to persistedPendingTask.created_at,
                     PersistedPendingTask.COLUMN_MANUALLY_RUN to persistedPendingTask.getManuallyRun(),
@@ -27,9 +31,40 @@ internal class PendingTasksManager(context: Context) {
                     PersistedPendingTask.COLUMN_DATA_ID to persistedPendingTask.data_id,
                     PersistedPendingTask.COLUMN_TAG to persistedPendingTask.tag)
 
+            persistedPendingTask.id = id
             LogUtil.d("Successfully added task to Wendy. Task: $pendingTaskToAdd")
 
             pendingTaskToAdd
+        }
+    }
+
+    /**
+     * Note: It's assumed that you have checked if the PendingTaskError.task_id exists.
+     */
+    @Synchronized
+    internal fun insertPendingTaskError(pendingTaskError: PendingTaskError): PendingTaskError {
+        return db.use {
+            pendingTaskError.created_at = Date().time
+
+            val id = insert(PendingTaskError.TABLE_NAME,
+                    PendingTaskError.COLUMN_TASK_ID to pendingTaskError.task_id,
+                    PendingTaskError.COLUMN_CREATED_AT to Date().time,
+                    PendingTaskError.COLUMN_ERROR_MESSAGE to pendingTaskError.error_message,
+                    PendingTaskError.COLUMN_ERROR_ID to pendingTaskError.error_id)
+
+            pendingTaskError.id = id
+            LogUtil.d("Successfully recorded error to Wendy. Error: $pendingTaskError")
+
+            pendingTaskError
+        }
+    }
+
+    @Synchronized
+    internal fun getLatestError(pendingTaskId: Long): PendingTaskError? {
+        return db.use {
+            select(PendingTaskError.TABLE_NAME)
+                    .whereArgs("${PendingTaskError.COLUMN_TASK_ID} = '$pendingTaskId'")
+                    .exec { parseOpt(classParser()) }
         }
     }
 
@@ -80,6 +115,17 @@ internal class PendingTasksManager(context: Context) {
     }
 
     @Synchronized
+    internal fun getAllErrors(): List<PendingTaskError> {
+        return db.use {
+            select(PendingTaskError.TABLE_NAME)
+                    .exec { parseList(classParser<PendingTaskError>()).map {
+                        it.pending_task = getPendingTaskTaskById(it.task_id)!!
+                        it
+                    }}
+        }
+    }
+
+    @Synchronized
     internal fun getPendingTaskTaskById(taskId: Long): PendingTask? {
         val tasksFactory = PendingTasks.sharedInstance().tasksFactory
         return db.use {
@@ -121,6 +167,14 @@ internal class PendingTasksManager(context: Context) {
     internal fun deleteTask(id: Long) {
         db.use {
             delete(PersistedPendingTask.TABLE_NAME, "${PersistedPendingTask.COLUMN_ID} = $id")
+        }
+    }
+
+    @Synchronized
+    internal fun deletePendingTaskError(taskId: Long): Boolean {
+        return db.use {
+            val numberOfRowsEffected = delete(PendingTaskError.TABLE_NAME, "${PendingTaskError.COLUMN_TASK_ID} = $taskId")
+            numberOfRowsEffected > 0
         }
     }
 

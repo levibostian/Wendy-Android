@@ -34,6 +34,22 @@ interface PendingTaskStatusListener {
     @UiThread fun complete(taskId: Long, successful: Boolean, rescheduled: Boolean)
 
     /**
+     * There was an error recorded to Wendy for this [PendingTask].
+     *
+     * @param taskId the task_id of the [PendingTask] that an error occurred to.
+     * @param errorMessage The human readable error message recorded for the error.
+     * @param errorId The error ID recorded to Wendy for the error.
+     */
+    @UiThread fun errorRecorded(taskId: Long, errorMessage: String?, errorId: String?)
+
+    /**
+     * A previously recorded error for this [PendingTask] has been marked as resolved.
+     *
+     * @param taskId The task_id of the [PendingTask] that the error has been resolved for.
+     */
+    @UiThread fun errorResolved(taskId: Long)
+
+    /**
      * The task runner skipped running the [PendingTask] for some reason.
      *
      * @param taskId The task_id of the [PendingTask] that was skipped.

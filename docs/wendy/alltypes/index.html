@@ -10,6 +10,12 @@
 <tbody>
 <tr>
 <td>
+<a href="../com.levibostian.wendy.extension/-create-grocery-store-item-pending-task/index.html">com.levibostian.wendy.extension.CreateGroceryStoreItemPendingTask</a></td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
 <a href="../com.levibostian.wendy.service/-pending-task/index.html">com.levibostian.wendy.service.PendingTask</a></td>
 <td>
 <p>Represents a single task to perform. Usually used to sync offline data stored on the device with online remote storage.</p>
@@ -17,8 +23,16 @@
 </tr>
 <tr>
 <td>
+<a href="../com.levibostian.wendy.db/-pending-task-error/index.html">com.levibostian.wendy.db.PendingTaskError</a></td>
+<td>
+<p>Use this class to save a <a href="../com.levibostian.wendy.service/-pending-task/index.html">PendingTask</a> instance to a SQLite database. <a href="../com.levibostian.wendy.service/-pending-task/index.html">PendingTask</a> is designed to be a developer facing object.</p>
+</td>
+</tr>
+<tr>
+<td>
 <a href="../com.levibostian.wendy.types/-pending-task-result/index.html">com.levibostian.wendy.types.PendingTaskResult</a></td>
 <td>
+<p>When one of your <a href="../com.levibostian.wendy.service/-pending-task/index.html">PendingTask</a> subclasses executes <a href="../com.levibostian.wendy.service/-pending-task/run-task.html">PendingTask.runTask</a>, Wendy requires that it returns a result. You are required to return one of the following results.</p>
 </td>
 </tr>
 <tr>
@@ -39,6 +53,7 @@
 <td>
 <a href="../com.levibostian.wendy.service/-pending-tasks-factory/index.html">com.levibostian.wendy.service.PendingTasksFactory</a></td>
 <td>
+<p>Wendy requires that you create a subclass of <a href="../com.levibostian.wendy.service/-pending-tasks-factory/index.html">PendingTasksFactory</a> and provide it to Wendy in the <a href="#">PendingTasks.init</a> call. Do this in your Application's onCreate() call if you can.</p>
 </td>
 </tr>
 <tr>

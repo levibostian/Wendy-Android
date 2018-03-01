@@ -37,6 +37,22 @@ interface TaskRunnerListener {
     @UiThread fun taskSkipped(reason: ReasonPendingTaskSkipped, task: PendingTask)
 
     /**
+     * There was an error recorded to Wendy.
+     *
+     * @param task The [PendingTask] that had an error occur to.
+     * @param errorMessage The human readable error message recorded to Wendy.
+     * @param errorId The error ID recorded to Wendy.
+     */
+    @UiThread fun errorRecorded(task: PendingTask, errorMessage: String?, errorId: String?)
+
+    /**
+     * A previously recorded error for a [PendingTask] has been marked as resolved.
+     *
+     * @param task the [PendingTask] that the recorded error has been marked as resolved.
+     */
+    @UiThread fun errorResolved(task: PendingTask)
+
+    /**
      * Task has either successfully run or failed it's run by the task runner.
      *
      * @param success Indicates if the task that was run by the task runner was run successfully or not.

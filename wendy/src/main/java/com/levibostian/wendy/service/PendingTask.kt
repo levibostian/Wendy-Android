@@ -34,7 +34,7 @@ abstract class PendingTask(override var manually_run: Boolean,
      *
      * When you are done performing the task, return if the task was run successfully or not. You have 3 options as outlined in [PendingTaskResult].
      *
-     * This method is run on a background thread for you already. Make sure to run all of your code in a synchronous style. If you would like to run async code, check this: https://github.com/evernote/android-job/wiki/FAQ#how-can-i-run-async-operations-in-a-job
+     * This method is run on a background thread for you already. Make sure to run all of your code in a synchronous style. If you would like to run async code, check out the `BEST_PRACTICES.md` file in the root of this project to learn more on how you could do this.
      *
      * @see PendingTaskResult to learn about the different results you may return after the task runs.
      */

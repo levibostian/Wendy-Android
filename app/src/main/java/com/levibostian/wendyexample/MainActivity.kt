@@ -9,6 +9,7 @@ import android.widget.CompoundButton
 
 import com.curiosityio.wendyexample.R
 import com.levibostian.wendy.WendyConfig
+import com.levibostian.wendy.db.PendingTaskError
 import com.levibostian.wendy.listeners.TaskRunnerListener
 import com.levibostian.wendy.service.PendingTask
 import com.levibostian.wendy.service.PendingTasks
