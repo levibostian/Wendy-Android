@@ -1,0 +1,149 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>PendingTasks - wendy</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">wendy</a>&nbsp;/&nbsp;<a href="../index.html">com.levibostian.wendy.service</a>&nbsp;/&nbsp;<a href="./index.html">PendingTasks</a><br/>
+<br/>
+<h1>PendingTasks</h1>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">PendingTasks</span></code>
+<p>How you interact with Wendy with <a href="../-pending-task/index.html">PendingTask</a> instances you create. Add tasks to Wendy to run, get a list of all the <a href="../-pending-task/index.html">PendingTask</a>s registered to Wendy, etc.</p>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="tasks-factory.html">tasksFactory</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">tasksFactory</span><span class="symbol">: </span><a href="../-pending-tasks-factory/index.html"><span class="identifier">PendingTasksFactory</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="add-task.html">addTask</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addTask</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks$addTask(com.levibostian.wendy.service.PendingTask)/pendingTask">pendingTask</span><span class="symbol">:</span>&nbsp;<a href="../-pending-task/index.html"><span class="identifier">PendingTask</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code>
+<p>Call when you have a new <a href="../-pending-task/index.html">PendingTask</a> that you would like to register to Wendy to run.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="debug.html">debug</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">debug</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks$debug(kotlin.Boolean)/enableDebug">enableDebug</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">PendingTasks</span></a></code>
+<p>Turn on and off debug log messages from Wendy.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-all-errors.html">getAllErrors</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getAllErrors</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.levibostian.wendy.db/-pending-task-error/index.html"><span class="identifier">PendingTaskError</span></a><span class="symbol">&gt;</span></code>
+<p>Get all errors that currently exist for <a href="../-pending-task/index.html">PendingTask</a>s.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-all-tasks.html">getAllTasks</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getAllTasks</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-pending-task/index.html"><span class="identifier">PendingTask</span></a><span class="symbol">&gt;</span></code>
+<p>If you, for some reason, wish to receive a copy of all the <a href="../-pending-task/index.html">PendingTask</a> instances that still need to run successfully by Wendy, here is how you get them.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-latest-error.html">getLatestError</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getLatestError</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks$getLatestError(kotlin.Long)/taskId">taskId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.levibostian.wendy.db/-pending-task-error/index.html"><span class="identifier">PendingTaskError</span></a><span class="symbol">?</span></code>
+<p>How to check if an error has been recorded for a <a href="../-pending-task/index.html">PendingTask</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="record-error.html">recordError</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">recordError</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks$recordError(kotlin.Long, kotlin.String, kotlin.String)/taskId">taskId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks$recordError(kotlin.Long, kotlin.String, kotlin.String)/humanReadableErrorMessage">humanReadableErrorMessage</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks$recordError(kotlin.Long, kotlin.String, kotlin.String)/errorId">errorId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>If you encounter an error while executing <a href="../-pending-task/run-task.html">PendingTask.runTask</a> in one of your <a href="../-pending-task/index.html">PendingTask</a>s, you can record it here to handle later in your app. This is usually used when your <a href="../-pending-task/index.html">PendingTask</a> encounters an error that requires the app user to fix (example: A string sent up to your API is too long. The user must shorten it up).</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="resolve-error.html">resolveError</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">resolveError</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks$resolveError(kotlin.Long)/taskId">taskId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Mark a previously recorded error for a <a href="../-pending-task/index.html">PendingTask</a> as resolved.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="run-task.html">runTask</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">runTask</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks$runTask(kotlin.Long)/taskId">taskId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Use this function along with manually run tasks to have Wendy run it for you. If it is successful, Wendy will take care of deleting it for you.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="run-tasks.html">runTasks</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">runTasks</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Manually run all pending tasks. Wendy takes care of running this periodically for you, but you can manually run tasks here.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="shared.html">shared</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">shared</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">PendingTasks</span></a></code>
+<p>Short hand version of calling <a href="shared-instance.html">sharedInstance</a>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="init.html">init</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">init</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks.Companion$init(android.content.Context, com.levibostian.wendy.service.PendingTasksFactory)/context">context</span><span class="symbol">:</span>&nbsp;<a href="https://developer.android.com/reference/android/content/Context.html"><span class="identifier">Context</span></a><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks.Companion$init(android.content.Context, com.levibostian.wendy.service.PendingTasksFactory)/tasksFactory">tasksFactory</span><span class="symbol">:</span>&nbsp;<a href="../-pending-tasks-factory/index.html"><span class="identifier">PendingTasksFactory</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">PendingTasks</span></a></code>
+<p>Initialize Wendy. It's recommended to do this in your <a href="https://developer.android.com/reference/android/app/Application.html">Application</a> class of your app.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="shared-instance.html">sharedInstance</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">sharedInstance</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">PendingTasks</span></a></code>
+<p>Get singleton instance of <a href="./index.html">PendingTasks</a>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

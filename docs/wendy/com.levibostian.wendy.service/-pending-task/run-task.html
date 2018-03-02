@@ -1,0 +1,20 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>PendingTask.runTask - wendy</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">wendy</a>&nbsp;/&nbsp;<a href="../index.html">com.levibostian.wendy.service</a>&nbsp;/&nbsp;<a href="index.html">PendingTask</a>&nbsp;/&nbsp;<a href="./run-task.html">runTask</a><br/>
+<br/>
+<h1>runTask</h1>
+<a name="com.levibostian.wendy.service.PendingTask$runTask()"></a>
+<code><span class="identifier">@WorkerThread</span> <span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">runTask</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.levibostian.wendy.types/-pending-task-result/index.html"><span class="identifier">PendingTaskResult</span></a></code>
+<p>The method Wendy calls when it's time for your task to run. This is where you will perform database operations on the device, perform API calls, etc.</p>
+<p>When you are done performing the task, return if the task was run successfully or not. You have 3 options as outlined in <a href="../../com.levibostian.wendy.types/-pending-task-result/index.html">PendingTaskResult</a>.</p>
+<p>This method is run on a background thread for you already. Make sure to run all of your code in a synchronous style. If you would like to run async code, check out the <code>BEST_PRACTICES.md</code> file in the root of this project to learn more on how you could do this.</p>
+<p><strong>See Also</strong><br/>
+<p><a href="../../com.levibostian.wendy.types/-pending-task-result/index.html">PendingTaskResult</a></p>
+</p>
+</BODY>
+</HTML>

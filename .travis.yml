@@ -33,7 +33,7 @@ env:
 jobs:
   include:
     - stage: danger
-      script: bundle exec danger --fail-on-errors=true
+      script: bundle exec danger
     - stage: pr
       script: ./bin/install_android_sdk.sh && ./gradlew androidDependencies && ./bin/pr-tasks.sh
 

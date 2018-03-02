@@ -1,0 +1,9 @@
+$dokka.format:html
+$dokka.linkExtension:html
+
+com.levibostian.wendy
+com.levibostian.wendy.db
+com.levibostian.wendy.extension
+com.levibostian.wendy.listeners
+com.levibostian.wendy.service
+com.levibostian.wendy.types

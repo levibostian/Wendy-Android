@@ -1,0 +1,43 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>PendingTaskResult - wendy</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">wendy</a>&nbsp;/&nbsp;<a href="../index.html">com.levibostian.wendy.types</a>&nbsp;/&nbsp;<a href="./index.html">PendingTaskResult</a><br/>
+<br/>
+<h1>PendingTaskResult</h1>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">PendingTaskResult</span></code>
+<p>When one of your <a href="../../com.levibostian.wendy.service/-pending-task/index.html">PendingTask</a> subclasses executes <a href="../../com.levibostian.wendy.service/-pending-task/run-task.html">PendingTask.runTask</a>, Wendy requires that it returns a result. You are required to return one of the following results.</p>
+<h3>Enum Values</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-s-u-c-c-e-s-s-f-u-l.html">SUCCESSFUL</a></p>
+</td>
+<td>
+<p>Indicates the task was run successfully. Wendy will delete the <a href="../../com.levibostian.wendy.service/-pending-task/index.html">PendingTask</a> instance and not run it again.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-f-a-i-l-e-d_-r-e-s-c-h-e-d-u-l-e.html">FAILED_RESCHEDULE</a></p>
+</td>
+<td>
+<p>Indicates the task failed, but it should be run again the next time that Wendy runs tasks.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-f-a-i-l-e-d_-d-o_-n-o-t_-r-e-s-c-h-e-d-u-l-e.html">FAILED_DO_NOT_RESCHEDULE</a></p>
+</td>
+<td>
+<p>Indicates the task failed, and Wendy should not run it again the next time that Wendy runs tasks.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

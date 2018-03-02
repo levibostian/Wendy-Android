@@ -1,0 +1,24 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>WendyConfig.addTaskStatusListenerForTask - wendy</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">wendy</a>&nbsp;/&nbsp;<a href="../index.html">com.levibostian.wendy</a>&nbsp;/&nbsp;<a href="index.html">WendyConfig</a>&nbsp;/&nbsp;<a href="./add-task-status-listener-for-task.html">addTaskStatusListenerForTask</a><br/>
+<br/>
+<h1>addTaskStatusListenerForTask</h1>
+<a name="com.levibostian.wendy.WendyConfig.Companion$addTaskStatusListenerForTask(kotlin.Long, com.levibostian.wendy.listeners.PendingTaskStatusListener)"></a>
+<code><span class="keyword">fun </span><span class="identifier">addTaskStatusListenerForTask</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.WendyConfig.Companion$addTaskStatusListenerForTask(kotlin.Long, com.levibostian.wendy.listeners.PendingTaskStatusListener)/taskId">taskId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.WendyConfig.Companion$addTaskStatusListenerForTask(kotlin.Long, com.levibostian.wendy.listeners.PendingTaskStatusListener)/listener">listener</span><span class="symbol">:</span>&nbsp;<a href="../../com.levibostian.wendy.listeners/-pending-task-status-listener/index.html"><span class="identifier">PendingTaskStatusListener</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Listen to updates about a specific task and how it is going. Get updated when this specific task gets run by the task runner, then if it fails/succeeds/gets skipped.</p>
+<p>If the task with the <a href="add-task-status-listener-for-task.html#com.levibostian.wendy.WendyConfig.Companion$addTaskStatusListenerForTask(kotlin.Long, com.levibostian.wendy.listeners.PendingTaskStatusListener)/taskId">taskId</a> parameter does not exist, you will simply not receive any callbacks. Your listener will be ignored.</p>
+<h3>Parameters</h3>
+<p><a name="taskId"></a>
+<code>taskId</code> - The task_id to the <a href="../../com.levibostian.wendy.service/-pending-task/index.html">PendingTask</a> you want to receive callbacks about.</p>
+<p><a name="listener"></a>
+<code>listener</code> - Instance of listener to receive the callbacks. Note: Wendy keeps a weak reference to your listener. Make sure that <em>you</em> keep a strong reference to the listener you give!</p>
+<p><strong>See Also</strong><br/>
+<p><a href="../../com.levibostian.wendy.listeners/-pending-task-status-listener/index.html">PendingTaskStatusListener</a></p>
+</p>
+</BODY>
+</HTML>

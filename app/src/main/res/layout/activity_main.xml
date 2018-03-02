@@ -5,12 +5,55 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.levibostian.wendyexample.MainActivity">
 
-    <Button
-        android:id="@+id/activity_main_create_pending_task_button"
+    <EditText
+        android:id="@+id/activity_main_custom_data_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="custom data"/>
+
+    <EditText
+        android:id="@+id/activity_main_group_id_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="(optional) group id"/>
+
+    <CheckBox
+        android:id="@+id/activity_main_manually_run_checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Create pending task"/>
+        android:text="Manually run"/>
+
+    <CheckBox
+        android:id="@+id/activity_main_automatically_run_tasks_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="Wendy automatically run pending tasks."/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/activity_main_create_pending_task_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create pending task"/>
+
+        <Button
+            android:id="@+id/activity_main_run_all_tasks_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Run all tasks"/>
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/activity_main_tasks_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </LinearLayout>

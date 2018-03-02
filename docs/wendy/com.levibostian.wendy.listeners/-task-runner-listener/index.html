@@ -1,0 +1,86 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>TaskRunnerListener - wendy</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">wendy</a>&nbsp;/&nbsp;<a href="../index.html">com.levibostian.wendy.listeners</a>&nbsp;/&nbsp;<a href="./index.html">TaskRunnerListener</a><br/>
+<br/>
+<h1>TaskRunnerListener</h1>
+<code><span class="keyword">interface </span><span class="identifier">TaskRunnerListener</span></code>
+<p>Listen to status updates from the Wendy task runner. You will get notified about the status of the task runner as well as general task updates on all of the tasks that it runs.</p>
+<p><strong>See Also</strong><br/>
+<p><a href="../-pending-task-status-listener/index.html">PendingTaskStatusListener</a></p>
+<p><a href="../../com.levibostian.wendy/-wendy-config/add-task-runner-listener.html">WendyConfig.addTaskRunnerListener</a></p>
+</p>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="all-tasks-complete.html">allTasksComplete</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">allTasksComplete</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>The task runner has completed running all of it's tasks.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="error-recorded.html">errorRecorded</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">errorRecorded</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.listeners.TaskRunnerListener$errorRecorded(com.levibostian.wendy.service.PendingTask, kotlin.String, kotlin.String)/task">task</span><span class="symbol">:</span>&nbsp;<a href="../../com.levibostian.wendy.service/-pending-task/index.html"><span class="identifier">PendingTask</span></a><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.listeners.TaskRunnerListener$errorRecorded(com.levibostian.wendy.service.PendingTask, kotlin.String, kotlin.String)/errorMessage">errorMessage</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.listeners.TaskRunnerListener$errorRecorded(com.levibostian.wendy.service.PendingTask, kotlin.String, kotlin.String)/errorId">errorId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>There was an error recorded to Wendy.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="error-resolved.html">errorResolved</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">errorResolved</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.listeners.TaskRunnerListener$errorResolved(com.levibostian.wendy.service.PendingTask)/task">task</span><span class="symbol">:</span>&nbsp;<a href="../../com.levibostian.wendy.service/-pending-task/index.html"><span class="identifier">PendingTask</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>A previously recorded error for a <a href="../../com.levibostian.wendy.service/-pending-task/index.html">PendingTask</a> has been marked as resolved.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="new-task-added.html">newTaskAdded</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">newTaskAdded</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.listeners.TaskRunnerListener$newTaskAdded(com.levibostian.wendy.service.PendingTask)/task">task</span><span class="symbol">:</span>&nbsp;<a href="../../com.levibostian.wendy.service/-pending-task/index.html"><span class="identifier">PendingTask</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>New task added to Wendy to be run.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="running-task.html">runningTask</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">runningTask</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.listeners.TaskRunnerListener$runningTask(com.levibostian.wendy.service.PendingTask)/task">task</span><span class="symbol">:</span>&nbsp;<a href="../../com.levibostian.wendy.service/-pending-task/index.html"><span class="identifier">PendingTask</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>The task runner is now running this given task.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="task-complete.html">taskComplete</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">taskComplete</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.listeners.TaskRunnerListener$taskComplete(kotlin.Boolean, com.levibostian.wendy.service.PendingTask, kotlin.Boolean)/success">success</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.listeners.TaskRunnerListener$taskComplete(kotlin.Boolean, com.levibostian.wendy.service.PendingTask, kotlin.Boolean)/task">task</span><span class="symbol">:</span>&nbsp;<a href="../../com.levibostian.wendy.service/-pending-task/index.html"><span class="identifier">PendingTask</span></a><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.listeners.TaskRunnerListener$taskComplete(kotlin.Boolean, com.levibostian.wendy.service.PendingTask, kotlin.Boolean)/rescheduled">rescheduled</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Task has either successfully run or failed it's run by the task runner.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="task-skipped.html">taskSkipped</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">taskSkipped</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.listeners.TaskRunnerListener$taskSkipped(com.levibostian.wendy.types.ReasonPendingTaskSkipped, com.levibostian.wendy.service.PendingTask)/reason">reason</span><span class="symbol">:</span>&nbsp;<a href="../../com.levibostian.wendy.types/-reason-pending-task-skipped/index.html"><span class="identifier">ReasonPendingTaskSkipped</span></a><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.listeners.TaskRunnerListener$taskSkipped(com.levibostian.wendy.types.ReasonPendingTaskSkipped, com.levibostian.wendy.service.PendingTask)/task">task</span><span class="symbol">:</span>&nbsp;<a href="../../com.levibostian.wendy.service/-pending-task/index.html"><span class="identifier">PendingTask</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>If the task runner decides to skip the given <a href="../../com.levibostian.wendy.service/-pending-task/index.html">PendingTask</a> for some reason.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>
