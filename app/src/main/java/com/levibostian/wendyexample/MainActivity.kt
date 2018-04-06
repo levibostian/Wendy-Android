@@ -58,10 +58,10 @@ class MainActivity : AppCompatActivity(), TaskRunnerListener {
         val recyclerViewAdapter = PendingTasksRecyclerViewAdapter(PendingTasks.sharedInstance().getAllTasks())
         recyclerViewAdapter.listener = object : PendingTasksRecyclerViewAdapter.Listener {
             override fun manuallyRunPressed(task: PendingTask) {
-                PendingTasks.sharedInstance().runTask(task.task_id)
+                PendingTasks.sharedInstance().runTask(task.task_id!!)
             }
             override fun resolveErrorPressed(task: PendingTask) {
-                PendingTasks.shared.resolveError(task.task_id)
+                PendingTasks.shared.resolveError(task.task_id!!)
             }
         }
         activity_main_tasks_recyclerview.adapter = recyclerViewAdapter

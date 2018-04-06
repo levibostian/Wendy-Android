@@ -50,12 +50,12 @@ class PendingTasksRecyclerViewAdapter(val data: List<PendingTask>) : RecyclerVie
         holder.createdAtTextView.text = String.format("Created: %s", SimpleDateFormat("yyyy.MM.dd G 'at' HH:mm:ss z", Locale.ENGLISH).format(adapterItem.created_at))
 
         holder.statusTextView.text = "not running"
-        WendyConfig.addTaskStatusListenerForTask(adapterItem.task_id, holder.statusTextView)
+        WendyConfig.addTaskStatusListenerForTask(adapterItem.task_id!!, holder.statusTextView)
 
         holder.runTaskButton.setOnClickListener {
             listener?.manuallyRunPressed(adapterItem)
         }
-        holder.resolveErrorButton.visibility = if (PendingTasks.shared.doesErrorExist(adapterItem.task_id)) View.VISIBLE else View.GONE
+        holder.resolveErrorButton.visibility = if (PendingTasks.shared.doesErrorExist(adapterItem.task_id!!)) View.VISIBLE else View.GONE
         holder.resolveErrorButton.setOnClickListener {
             listener?.resolveErrorPressed(adapterItem)
         }
