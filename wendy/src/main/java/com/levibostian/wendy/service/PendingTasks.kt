@@ -18,7 +18,7 @@ import com.levibostian.wendy.util.LogUtil
 /**
  * How you interact with Wendy with [PendingTask] instances you create. Add tasks to Wendy to run, get a list of all the [PendingTask]s registered to Wendy, etc.
  */
-open class PendingTasks private constructor(context: Context, private val tasksFactory: PendingTasksFactory) {
+open class PendingTasks private constructor(context: Context, internal val tasksFactory: PendingTasksFactory) {
 
     companion object {
         private var instance: PendingTasks? = null
