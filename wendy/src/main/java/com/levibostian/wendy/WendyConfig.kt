@@ -5,7 +5,7 @@ import android.os.Looper
 import com.levibostian.wendy.listeners.PendingTaskStatusListener
 import com.levibostian.wendy.listeners.TaskRunnerListener
 import com.levibostian.wendy.service.PendingTask
-import com.levibostian.wendy.service.PendingTasks
+import com.levibostian.wendy.service.Wendy
 import com.levibostian.wendy.service.PendingTasksRunner
 import com.levibostian.wendy.types.ReasonPendingTaskSkipped
 import java.lang.ref.WeakReference
@@ -13,16 +13,16 @@ import java.lang.ref.WeakReference
 /**
  * Configure Wendy and how it operates.
  */
-open class WendyConfig {
+class WendyConfig {
 
     companion object {
         /**
          * Turn on and off the ability for Wendy to automatically run all of the [PendingTask]s set to not manually run for you.
          * This takes place when you:
-         * 1. Add a task to Wendy via [PendingTasks.addTask].
+         * 1. Add a task to Wendy via [Wendy.addTask].
          * 2. The periodically scheduled execution of all [PendingTask]s by Wendy.
          *
-         * *Note:* You can still have this property set to false and manually call [PendingTasks.runTasks] to run all tasks.
+         * *Note:* You can still have this property set to false and manually call [Wendy.runTasks] to run all tasks.
          */
         var automaticallyRunTasks: Boolean = true
         /**
@@ -77,7 +77,7 @@ open class WendyConfig {
          * @see PendingTaskStatusListener to learn more about what callbacks to expect.
          */
         fun addTaskStatusListenerForTask(taskId: Long, listener: PendingTaskStatusListener) {
-            val tasksRunner: PendingTasksRunner = PendingTasks.sharedInstance().runner
+            val tasksRunner: PendingTasksRunner = Wendy.sharedInstance().runner
 
             taskStatusListeners.add(TaskStatusListener(taskId, WeakReference(listener)))
 

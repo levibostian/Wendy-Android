@@ -1,7 +1,6 @@
 package com.levibostian.wendy.db
 
 import com.levibostian.wendy.service.PendingTask
-import com.levibostian.wendy.service.PendingTasks
 import java.text.SimpleDateFormat
 import java.util.*
 

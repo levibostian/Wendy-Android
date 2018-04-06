@@ -18,22 +18,22 @@ import com.levibostian.wendy.util.LogUtil
 /**
  * How you interact with Wendy with [PendingTask] instances you create. Add tasks to Wendy to run, get a list of all the [PendingTask]s registered to Wendy, etc.
  */
-open class PendingTasks private constructor(context: Context, internal val tasksFactory: PendingTasksFactory) {
+class Wendy private constructor(context: Context, internal val tasksFactory: PendingTasksFactory) {
 
     companion object {
-        private var instance: PendingTasks? = null
+        private var instance: Wendy? = null
 
         /**
          * Initialize Wendy. It's recommended to do this in your [Application] class of your app.
          *
-         * This function essentially just creates a singleton instance of [PendingTasks] for your application to share. Future calls to this function will be ignored. The instance is only initialized once.
+         * This function essentially just creates a singleton instance of [Wendy] for your application to share. Future calls to this function will be ignored. The instance is only initialized once.
          *
          * @param context Android context (usually given in your Application class's onCreate() call)
          * @param tasksFactory [PendingTasksFactory] instance for your app to construct [PendingTask] instances used by Wendy.
          */
-        @JvmStatic fun init(context: Context, tasksFactory: PendingTasksFactory): PendingTasks {
+        @JvmStatic fun init(context: Context, tasksFactory: PendingTasksFactory): Wendy {
             if (instance == null) {
-                instance = PendingTasks(context, tasksFactory)
+                instance = Wendy(context, tasksFactory)
                 instance!!.init(context)
             }
 
@@ -41,11 +41,11 @@ open class PendingTasks private constructor(context: Context, internal val tasks
         }
 
         /**
-         * Get singleton instance of [PendingTasks].
+         * Get singleton instance of [Wendy].
          *
-         * @throws RuntimeException If you have not called [PendingTasks.Companion.init] yet to initialize singleton instance.
+         * @throws RuntimeException If you have not called [Wendy.Companion.init] yet to initialize singleton instance.
          */
-        @JvmStatic fun sharedInstance(): PendingTasks {
+        @JvmStatic fun sharedInstance(): Wendy {
             if (instance == null) throw RuntimeException("Sorry, you must initialize the instance first.")
             return instance!!
         }
@@ -53,16 +53,16 @@ open class PendingTasks private constructor(context: Context, internal val tasks
         /**
          * Short hand version of calling [sharedInstance].
          */
-        @JvmStatic val shared: PendingTasks by lazy { sharedInstance() }
+        @JvmStatic val shared: Wendy by lazy { sharedInstance() }
 
     }
 
     /**
      * Turn on and off debug log messages from Wendy.
      *
-     * Designed like a builder pattern so you can: PendingTasks(this, Factory()).enableDebug()
+     * Designed like a builder pattern so you can: Wendy(this, Factory()).enableDebug()
      */
-    fun debug(enableDebug: Boolean = false): PendingTasks {
+    fun debug(enableDebug: Boolean = false): Wendy {
         WendyConfig.debug = enableDebug
         return this
     }
@@ -84,7 +84,7 @@ open class PendingTasks private constructor(context: Context, internal val tasks
      *
      * *Note: If you attempt to add a [PendingTask] instance that has the same [PendingTask.tag] and [PendingTask.dataId] as another [PendingTask] already added to Wendy, your request (including calling the task runner listener) will be ignored (except for the exception below in that there was an error recorded previously for a [PendingTask]).*
      *
-     * *Note:* If you attempt to add a [PendingTask] instance that has the same [PendingTask.tag] and [PendingTask.dataId] as another [PendingTask] already added to Wendy that previously had an error recorded for it, that error will be marked as resolved (by internally calling [PendingTasks.resolveError].
+     * *Note:* If you attempt to add a [PendingTask] instance that has the same [PendingTask.tag] and [PendingTask.dataId] as another [PendingTask] already added to Wendy that previously had an error recorded for it, that error will be marked as resolved (by internally calling [Wendy.resolveError].
      *
      * @param pendingTask Task you want to add to Wendy.
      *

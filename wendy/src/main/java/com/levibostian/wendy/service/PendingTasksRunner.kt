@@ -91,7 +91,7 @@ internal class PendingTasksRunner(val context: Context,
 
         when (result) {
             PendingTaskResult.SUCCESSFUL -> {
-                if (PendingTasks.shared.doesErrorExist(taskToRun.taskId!!)) {
+                if (Wendy.shared.doesErrorExist(taskToRun.taskId!!)) {
                     val errorMessage = "You returned ${PendingTaskResult.SUCCESSFUL} for running your ${PendingTask::class.java.simpleName}, but you have unresolved issues for task: $taskToRun. You should resolve the previously recorded error to Wendy, or return ${PendingTaskResult.FAILED}."
                     if (WendyConfig.strict) throw RuntimeException(errorMessage) else LogUtil.w(errorMessage)
                 }

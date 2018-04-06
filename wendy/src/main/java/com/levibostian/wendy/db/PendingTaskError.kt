@@ -14,7 +14,7 @@ import com.levibostian.wendy.service.PendingTask
  * @property errorId The identifier you, the developer, use to determine what type of error was caused and how to fix it.
  * @property pendingTask The [PendingTask] this error is associated with.
  */
-open class PendingTaskError(internal var id: Long, // internal use only for SQL terms.
+class PendingTaskError(internal var id: Long, // internal use only for SQL terms.
                             var taskId: Long,
                             var createdAt: Long,
                             var errorMessage: String?,

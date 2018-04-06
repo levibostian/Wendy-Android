@@ -11,7 +11,7 @@ import com.curiosityio.wendyexample.R
 import com.levibostian.wendy.WendyConfig
 import com.levibostian.wendy.listeners.TaskRunnerListener
 import com.levibostian.wendy.service.PendingTask
-import com.levibostian.wendy.service.PendingTasks
+import com.levibostian.wendy.service.Wendy
 import com.levibostian.wendy.types.ReasonPendingTaskSkipped
 import com.levibostian.wendyexample.extension.closeKeyboard
 import kotlinx.android.synthetic.main.activity_main.*
@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity(), TaskRunnerListener {
                         if (activity_main_group_id_edittext.text.isNullOrBlank()) null else activity_main_group_id_edittext.text.toString(),
                         activity_main_custom_data_edittext.text.toString()
                 )
-                PendingTasks.sharedInstance().addTask(pendingTask)
+                Wendy.sharedInstance().addTask(pendingTask)
                 closeKeyboard()
             }
         }
@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity(), TaskRunnerListener {
         WendyConfig.automaticallyRunTasks = activity_main_automatically_run_tasks_checkbox.isChecked
 
         activity_main_run_all_tasks_button.setOnClickListener {
-            PendingTasks.sharedInstance().runTasks()
+            Wendy.sharedInstance().runTasks()
         }
 
         activity_main_tasks_recyclerview.layoutManager = LinearLayoutManager(this)
@@ -52,13 +52,13 @@ class MainActivity : AppCompatActivity(), TaskRunnerListener {
     }
 
     private fun refreshListOfTasks() {
-        val recyclerViewAdapter = PendingTasksRecyclerViewAdapter(PendingTasks.sharedInstance().getAllTasks())
+        val recyclerViewAdapter = PendingTasksRecyclerViewAdapter(Wendy.sharedInstance().getAllTasks())
         recyclerViewAdapter.listener = object : PendingTasksRecyclerViewAdapter.Listener {
             override fun manuallyRunPressed(task: PendingTask) {
-                PendingTasks.sharedInstance().runTask(task.taskId!!)
+                Wendy.sharedInstance().runTask(task.taskId!!)
             }
             override fun resolveErrorPressed(task: PendingTask) {
-                PendingTasks.shared.resolveError(task.taskId!!)
+                Wendy.shared.resolveError(task.taskId!!)
             }
         }
         activity_main_tasks_recyclerview.adapter = recyclerViewAdapter

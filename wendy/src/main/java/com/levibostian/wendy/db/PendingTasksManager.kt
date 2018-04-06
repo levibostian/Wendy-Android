@@ -2,7 +2,7 @@ package com.levibostian.wendy.db
 
 import android.content.Context
 import com.levibostian.wendy.service.PendingTask
-import com.levibostian.wendy.service.PendingTasks
+import com.levibostian.wendy.service.Wendy
 import com.levibostian.wendy.service.PendingTasksRunner
 import com.levibostian.wendy.util.LogUtil
 import org.jetbrains.anko.db.*
@@ -23,7 +23,7 @@ internal class PendingTasksManager(context: Context) {
             pendingTaskToAdd.fromSqlObject(existingPersistedPendingTask)
             return pendingTaskToAdd
         }
-        
+
         val persistedPendingTask = PersistedPendingTask.fromPendingTask(pendingTaskToAdd)
 
         return db.use {
@@ -85,7 +85,7 @@ internal class PendingTasksManager(context: Context) {
     }
 
     internal fun getAllTasks(): List<PendingTask> {
-        val tasksFactory = PendingTasks.sharedInstance().tasksFactory
+        val tasksFactory = Wendy.sharedInstance().tasksFactory
         return db.use {
             select(PersistedPendingTask.TABLE_NAME)
                     .exec {
@@ -118,7 +118,7 @@ internal class PendingTasksManager(context: Context) {
 
     @Synchronized
     internal fun getPendingTaskTaskById(taskId: Long): PendingTask? {
-        val tasksFactory = PendingTasks.sharedInstance().tasksFactory
+        val tasksFactory = Wendy.sharedInstance().tasksFactory
         return db.use {
             select(PersistedPendingTask.TABLE_NAME)
                     .whereArgs("${PersistedPendingTask.COLUMN_ID} = $taskId")
@@ -131,7 +131,7 @@ internal class PendingTasksManager(context: Context) {
 
     @Synchronized
     internal fun getNextTaskToRun(afterTaskId: Long = 0, filter: PendingTasksRunner.RunAllTasksFilter? = null): PendingTask? {
-        val tasksFactory = PendingTasks.sharedInstance().tasksFactory
+        val tasksFactory = Wendy.sharedInstance().tasksFactory
 
         var nextTask: PersistedPendingTask?
         return db.use {

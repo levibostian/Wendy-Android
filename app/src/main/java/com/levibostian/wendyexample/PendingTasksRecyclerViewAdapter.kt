@@ -10,7 +10,7 @@ import android.widget.TextView
 import com.curiosityio.wendyexample.R
 import com.levibostian.wendy.WendyConfig
 import com.levibostian.wendy.service.PendingTask
-import com.levibostian.wendy.service.PendingTasks
+import com.levibostian.wendy.service.Wendy
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -53,7 +53,7 @@ class PendingTasksRecyclerViewAdapter(val data: List<PendingTask>) : RecyclerVie
         holder.runTaskButton.setOnClickListener {
             listener?.manuallyRunPressed(adapterItem)
         }
-        holder.resolveErrorButton.visibility = if (PendingTasks.shared.doesErrorExist(adapterItem.taskId!!)) View.VISIBLE else View.GONE
+        holder.resolveErrorButton.visibility = if (Wendy.shared.doesErrorExist(adapterItem.taskId!!)) View.VISIBLE else View.GONE
         holder.resolveErrorButton.setOnClickListener {
             listener?.resolveErrorPressed(adapterItem)
         }
