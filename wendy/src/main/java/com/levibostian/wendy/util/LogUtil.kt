@@ -10,5 +10,11 @@ internal class LogUtil {
                 Log.d(WendyConfig.logTag, message)
             }
         }
+
+        fun w(message: String) {
+            if (WendyConfig.debug) {
+                Log.w(WendyConfig.logTag, message)
+            }
+        }
     }
 }
