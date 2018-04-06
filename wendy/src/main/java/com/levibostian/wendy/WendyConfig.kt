@@ -28,6 +28,10 @@ class WendyConfig {
         /**
          * Sets Wendy to strict mode or not. Strict mode helps while developing your app to find and fix potential issues while working with Wendy.
          *
+         * Strict mode is **only** used in scenarios that a warning is not critical to the success of your app. How success if defined here is: (1) Your user does not get confused when they perform an action in your app and the request is simply ignored resulting in them being confused and (2) your app crashing only when you have hit a major issue that you really should fix (wendy cannot work without you fixing these crashes).
+         *
+         * Wendy **does** still throw exceptions. Strict mode does *not* silence all exceptions. Strict simply gives you the option to silence warnings when it's really not a big deal that your code works in a certain way. It's assumed you know what you are doing.
+         *
          * When strict is true, warnings throw errors instead of logging the warning to the console.
          * When strict is false, warnings get logged to the console and not crash your app instead.
          *

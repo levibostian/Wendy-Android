@@ -43,7 +43,7 @@ abstract class PendingTask(override var manuallyRun: Boolean,
     /**
      * Override this to dynamically set if this task is ready to run or not.
      */
-    open fun canRunTask(): Boolean = true
+    open fun isReadyToRun(): Boolean = true
 
     /**
      * Use to go from [PersistedPendingTask] to [PendingTask] after running a SQLite query.

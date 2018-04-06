@@ -37,6 +37,22 @@ fun PendingTask.getLatestError(): PendingTaskError? {
 }
 
 /**
+ * Extension to [Wendy.doesErrorExist] easily from a [PendingTask] instance.
+ */
+fun PendingTask.doesErrorExist(): Boolean {
+    val taskId = assertHasBeenAddedToWendy()
+    return Wendy.shared.doesErrorExist(taskId)
+}
+
+/**
+ * Extension to [Wendy.isTaskAbleToManuallyRun] easily from a [PendingTask] instance.
+ */
+fun PendingTask.isAbleToManuallyRun(): Boolean {
+    val taskId = assertHasBeenAddedToWendy()
+    return Wendy.shared.isTaskAbleToManuallyRun(taskId)
+}
+
+/**
  * Extension to [WendyConfig.addTaskStatusListenerForTask] easily from a [PendingTask] instance.
  */
 fun PendingTask.addTaskStatusListenerForTask(listener: PendingTaskStatusListener) {

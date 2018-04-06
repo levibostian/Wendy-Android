@@ -45,6 +45,25 @@ internal class PendingTasksManager(context: Context) {
     }
 
     /**
+     * @throws IllegalArgumentException if task by taskId does not exist.
+     * @throws IllegalArgumentException if task by taskId does not belong to any groups.
+     */
+    @Synchronized
+    internal fun isTaskFirstTaskOfGroup(taskId: Long): Boolean {
+        val pendingTask = getTaskByTaskId(taskId) ?: throw IllegalArgumentException("Task with id: $taskId does not exist.")
+        if (pendingTask.groupId == null) throw IllegalArgumentException("Task: $pendingTask does not belong to a group.")
+
+        return db.use {
+            select(PersistedPendingTask.TABLE_NAME)
+                    .whereArgs("(${PersistedPendingTask.COLUMN_GROUP_ID} = ${pendingTask.groupId})")
+                    .exec {
+                        val tasksInGroup: List<PersistedPendingTask> = parseList(classParser<PersistedPendingTask>())
+                        tasksInGroup[0].id == taskId
+                    }
+        }
+    }
+
+    /**
      * Note: It's assumed that you have checked if the PendingTaskError.taskId exists.
      */
     @Synchronized

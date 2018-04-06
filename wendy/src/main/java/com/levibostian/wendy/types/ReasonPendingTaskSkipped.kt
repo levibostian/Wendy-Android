@@ -11,7 +11,7 @@ enum class ReasonPendingTaskSkipped {
     /**
      * The [PendingTask] of the app said that it was not ready to run.
      *
-     * @see PendingTask.canRunTask to learn how your app can indicate if it's able to run or not at runtime.
+     * @see PendingTask.isReadyToRun to learn how your app can indicate if it's able to run or not at runtime.
      */
     NOT_READY_TO_RUN {
         /**
