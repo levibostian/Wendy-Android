@@ -18,7 +18,7 @@ import com.levibostian.wendy.util.LogUtil
 /**
  * How you interact with Wendy with [PendingTask] instances you create. Add tasks to Wendy to run, get a list of all the [PendingTask]s registered to Wendy, etc.
  */
-open class PendingTasks private constructor(context: Context, val tasksFactory: PendingTasksFactory) {
+open class PendingTasks private constructor(context: Context, private val tasksFactory: PendingTasksFactory) {
 
     companion object {
         private var instance: PendingTasks? = null
@@ -27,6 +27,9 @@ open class PendingTasks private constructor(context: Context, val tasksFactory: 
          * Initialize Wendy. It's recommended to do this in your [Application] class of your app.
          *
          * This function essentially just creates a singleton instance of [PendingTasks] for your application to share. Future calls to this function will be ignored. The instance is only initialized once.
+         *
+         * @param context Android context (usually given in your Application class's onCreate() call)
+         * @param tasksFactory [PendingTasksFactory] instance for your app to construct [PendingTask] instances used by Wendy.
          */
         @JvmStatic fun init(context: Context, tasksFactory: PendingTasksFactory): PendingTasks {
             if (instance == null) {
@@ -40,7 +43,7 @@ open class PendingTasks private constructor(context: Context, val tasksFactory: 
         /**
          * Get singleton instance of [PendingTasks].
          *
-         * @throws RuntimeException If you have not called [PendingTasks.init] yet to initialize singleton instance.
+         * @throws RuntimeException If you have not called [PendingTasks.Companion.init] yet to initialize singleton instance.
          */
         @JvmStatic fun sharedInstance(): PendingTasks {
             if (instance == null) throw RuntimeException("Sorry, you must initialize the instance first.")

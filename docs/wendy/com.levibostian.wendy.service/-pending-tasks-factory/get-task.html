@@ -11,6 +11,14 @@
 <a name="com.levibostian.wendy.service.PendingTasksFactory$getTask(kotlin.String)"></a>
 <code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getTask</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.service.PendingTasksFactory$getTask(kotlin.String)/tag">tag</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-pending-task/index.html"><span class="identifier">PendingTask</span></a></code>
 <p>Wendy will provide a <a href="get-task.html#com.levibostian.wendy.service.PendingTasksFactory$getTask(kotlin.String)/tag">tag</a>, you provide a blank <a href="../-pending-task/index.html">PendingTask</a> for that specific <a href="get-task.html#com.levibostian.wendy.service.PendingTasksFactory$getTask(kotlin.String)/tag">tag</a>.</p>
-<pre><code class="lang-kotlin">//Missing function name in @sample</code></pre>
+<p>Example:
+class WendyExamplePendingTasksFactory : PendingTasksFactory {
+    override fun getTask(tag: String): PendingTask {
+        return when (tag) {
+            FooPendingTask::class.java.simpleName -&gt; FooPendingTask.blank()
+            else -&gt; throw RuntimeException("No idea what task that is... tag: $tag")
+        }
+    }
+}</p>
 </BODY>
 </HTML>

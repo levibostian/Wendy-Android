@@ -13,6 +13,7 @@
 <p>Mark a previously recorded error for a <a href="../-pending-task/index.html">PendingTask</a> as resolved.</p>
 <p><em>Note:</em> If you attempt to resolve an error using a <a href="resolve-error.html#com.levibostian.wendy.service.PendingTasks$resolveError(kotlin.Long)/taskId">taskId</a> that does not exist, your request to record an error will be ignored.</p>
 <p><em>Note:</em> If you attempt to resolve an error when an error does not exist in Wendy (because it has already been resolved or was never recorded) then the <a href="../../com.levibostian.wendy.listeners/-task-runner-listener/error-resolved.html">TaskRunnerListener.errorResolved</a> and <a href="../../com.levibostian.wendy.listeners/-pending-task-status-listener/error-resolved.html">PendingTaskStatusListener.errorResolved</a> will not be called.</p>
+<p><em>Note:</em> The task runner will attempt to run your task after it has been resolved immediately. If the task belongs to a group, the task runner will attempt to run all the tasks in the group.</p>
 <h3>Parameters</h3>
 <p><a name="taskId"></a>
 <code>taskId</code> - The task_id of a <a href="../-pending-task/index.html">PendingTask</a> previously recorded an error for.</p>

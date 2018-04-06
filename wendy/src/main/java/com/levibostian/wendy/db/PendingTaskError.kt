@@ -45,6 +45,9 @@ open class PendingTaskError(internal var id: Long, // internal use only for SQL 
         }
     }
 
+    /**
+     * Gives you a String representation of [PendingTaskError]
+     */
     override fun toString(): String {
         return "id: $id, " +
                 "task_id: $task_id, " +

@@ -9,6 +9,10 @@
 <br/>
 <h1>Visitor</h1>
 <code><span class="keyword">interface </span><span class="identifier">Visitor</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">E</span><span class="symbol">&gt;</span></code>
+<p>If you have ever used the Visitor Pattern before in Java/Kotlin, this is for you.</p>
+<p><strong>See Also</strong><br/>
+<p><a href="../accept.html">accept</a></p>
+</p>
 <h3>Functions</h3>
 <table>
 <tbody>
@@ -25,6 +29,13 @@
 </td>
 <td>
 <code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">visitPartOfFailedGroup</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="index.html#E"><span class="identifier">E</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="visit-unresolved-recorded-error.html">visitUnresolvedRecordedError</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">visitUnresolvedRecordedError</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="index.html#E"><span class="identifier">E</span></a></code></td>
 </tr>
 </tbody>
 </table>

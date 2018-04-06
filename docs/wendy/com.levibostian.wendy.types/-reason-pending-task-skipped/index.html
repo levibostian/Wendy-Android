@@ -18,7 +18,9 @@
 <p><a href="-visitor/index.html">Visitor</a></p>
 </td>
 <td>
-<code><span class="keyword">interface </span><span class="identifier">Visitor</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">E</span><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">interface </span><span class="identifier">Visitor</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">E</span><span class="symbol">&gt;</span></code>
+<p>If you have ever used the Visitor Pattern before in Java/Kotlin, this is for you.</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -41,6 +43,14 @@
 <p>If a <a href="../../com.levibostian.wendy.service/-pending-task/index.html">PendingTask</a> runs that has a non-null <a href="../../com.levibostian.wendy.service/-pending-task/group_id.html">PendingTask.group_id</a> and it fails running, then <em>all</em> of the other <a href="../../com.levibostian.wendy.service/-pending-task/index.html">PendingTask</a>s that belongs to the group that have yet to run will all be skipped and rescheduled to run again.</p>
 </td>
 </tr>
+<tr>
+<td>
+<p><a href="-u-n-r-e-s-o-l-v-e-d_-r-e-c-o-r-d-e-d_-e-r-r-o-r/index.html">UNRESOLVED_RECORDED_ERROR</a></p>
+</td>
+<td>
+<p>If there exists a recorded error for <a href="../../com.levibostian.wendy.service/-pending-task/index.html">PendingTask</a>. The <a href="../../com.levibostian.wendy.service/-pending-task/index.html">PendingTask</a> will execute again when <a href="../../com.levibostian.wendy.service/-pending-tasks/resolve-error.html">PendingTasks.resolveError</a> is called on the <a href="../../com.levibostian.wendy.service/-pending-task/index.html">PendingTask</a>.</p>
+</td>
+</tr>
 </tbody>
 </table>
 <h3>Functions</h3>
@@ -51,7 +61,9 @@
 <p><a href="accept.html">accept</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span> <span class="identifier">accept</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.types.ReasonPendingTaskSkipped$accept(com.levibostian.wendy.types.ReasonPendingTaskSkipped.Visitor((com.levibostian.wendy.types.ReasonPendingTaskSkipped.accept.E)))/visitor">visitor</span><span class="symbol">:</span>&nbsp;<a href="-visitor/index.html"><span class="identifier">Visitor</span></a><span class="symbol">&lt;</span><a href="accept.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="accept.html#E"><span class="identifier">E</span></a></code></td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span> <span class="identifier">accept</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.types.ReasonPendingTaskSkipped$accept(com.levibostian.wendy.types.ReasonPendingTaskSkipped.Visitor((com.levibostian.wendy.types.ReasonPendingTaskSkipped.accept.E)))/visitor">visitor</span><span class="symbol">:</span>&nbsp;<a href="-visitor/index.html"><span class="identifier">Visitor</span></a><span class="symbol">&lt;</span><a href="accept.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="accept.html#E"><span class="identifier">E</span></a></code>
+<p>If you have ever used the Visitor Pattern before in Java/Kotlin, this is for you.</p>
+</td>
 </tr>
 </tbody>
 </table>
