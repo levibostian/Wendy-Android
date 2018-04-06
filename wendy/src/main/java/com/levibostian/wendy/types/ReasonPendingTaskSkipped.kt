@@ -1,6 +1,7 @@
 package com.levibostian.wendy.types
 
 import com.levibostian.wendy.service.PendingTask
+import com.levibostian.wendy.service.PendingTasks
 
 /**
  * Reasons why a [PendingTask] was skipped by the task runner.
@@ -20,6 +21,12 @@ enum class ReasonPendingTaskSkipped {
      */
     PART_OF_FAILED_GROUP {
         override fun <E> accept(visitor: Visitor<E>): E = visitor.visitPartOfFailedGroup()
+    },
+    /**
+     * If there exists a recorded error for [PendingTask]. The [PendingTask] will execute again when [PendingTasks.resolveError] is called on the [PendingTask].
+     */
+    UNRESOLVED_RECORDED_ERROR {
+        override fun <E> accept(visitor: Visitor<E>): E = visitor.visitUnresolvedRecordedError()
     };
 
     abstract fun <E> accept(visitor: Visitor<E>): E
@@ -27,6 +34,7 @@ enum class ReasonPendingTaskSkipped {
     interface Visitor<out E> {
         fun visitNotReadyToRun(): E
         fun visitPartOfFailedGroup(): E
+        fun visitUnresolvedRecordedError(): E
     }
 
 }

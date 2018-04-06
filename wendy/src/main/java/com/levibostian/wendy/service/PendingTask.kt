@@ -26,7 +26,7 @@ abstract class PendingTask(override var manually_run: Boolean,
                            override var group_id: String?,
                            override var tag: String): PendingTaskFields {
 
-    override var task_id: Long = 0
+    var task_id: Long = 0
     override var created_at: Long = Date().time
 
     /**
@@ -49,7 +49,7 @@ abstract class PendingTask(override var manually_run: Boolean,
      * Use to go from [PersistedPendingTask] to [PendingTask] after running a SQLite query.
      */
     internal fun fromSqlObject(pendingTask: PersistedPendingTask): PendingTask {
-        this.task_id = pendingTask.task_id
+        this.task_id = pendingTask.id
         this.created_at = pendingTask.created_at
         this.manually_run = pendingTask.manually_run
         this.group_id = pendingTask.group_id

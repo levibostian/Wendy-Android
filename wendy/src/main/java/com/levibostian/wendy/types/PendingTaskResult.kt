@@ -9,20 +9,18 @@ import com.levibostian.wendy.service.PendingTasks
 enum class PendingTaskResult {
 
     /**
-     * Indicates the task was run successfully. Wendy will delete the [PendingTask] instance and not run it again.
+     * Indicates the task was run successfully.
+     *
+     * Wendy will delete the [PendingTask] instance and not run it again.
      */
     SUCCESSFUL,
     /**
-     * Indicates the task failed, but it should be run again the next time that Wendy runs tasks.
-     */
-    FAILED_RESCHEDULE,
-    /**
-     * Indicates the task failed, and Wendy should not run it again the next time that Wendy runs tasks.
+     * Indicates the task failed.
      *
-     * This will delete the [PendingTask] instance from the Wendy database to not run again. If you wish to run this task again at some point in the future, you must add it to Wendy again via [PendingTasks.addTask].
+     * Wendy will attempt to run the task again the next time that Wendy runs tasks.
      *
-     * This result is usually used if the task failed to run and you need the user to perform an action in order to fix it.
+     * *Note:* If an error occurs that you need your app user to handle, make sure to call [PendingTasks.recordError]. Wendy will skip the execution of the current [PendingTask] for as long as it has a recorded error for it.
      */
-    FAILED_DO_NOT_RESCHEDULE;
+    FAILED;
 
 }

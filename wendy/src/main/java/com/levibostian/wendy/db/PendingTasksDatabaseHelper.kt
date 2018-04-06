@@ -22,7 +22,6 @@ internal class PendingTasksDatabaseHelper(applicationContext: Context, databaseN
         database.createTable(PersistedPendingTask.TABLE_NAME, true,
                 listOf(
                         PersistedPendingTask.COLUMN_ID to INTEGER + PRIMARY_KEY, // autoincrementing by default.
-                        PersistedPendingTask.COLUMN_TASK_ID to INTEGER + NOT_NULL,
                         PersistedPendingTask.COLUMN_CREATED_AT to INTEGER + NOT_NULL, // storing Date to INTEGER as date.time
                         PersistedPendingTask.COLUMN_MANUALLY_RUN to INTEGER + NOT_NULL, // 0 == false, 1 == true
                         PersistedPendingTask.COLUMN_GROUP_ID to TEXT,

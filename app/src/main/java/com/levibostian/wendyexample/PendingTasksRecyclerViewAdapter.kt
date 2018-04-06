@@ -20,6 +20,7 @@ class PendingTasksRecyclerViewAdapter(val data: List<PendingTask>) : RecyclerVie
 
     interface Listener {
         fun manuallyRunPressed(task: PendingTask)
+        fun resolveErrorPressed(task: PendingTask)
     }
 
     var listener: Listener? = null
@@ -33,6 +34,7 @@ class PendingTasksRecyclerViewAdapter(val data: List<PendingTask>) : RecyclerVie
         var createdAtTextView: TextView = view.findViewById(R.id.created_at_textview)
         var statusTextView: PendingStatusTextView = view.findViewById(R.id.status_textview)
         var runTaskButton: Button = view.findViewById(R.id.run_ask_button)
+        var resolveErrorButton: Button = view.findViewById(R.id.resolve_error_button)
     }
 
     override fun getItemCount(): Int = data.count()
@@ -52,6 +54,10 @@ class PendingTasksRecyclerViewAdapter(val data: List<PendingTask>) : RecyclerVie
 
         holder.runTaskButton.setOnClickListener {
             listener?.manuallyRunPressed(adapterItem)
+        }
+        holder.resolveErrorButton.visibility = if (PendingTasks.shared.doesErrorExist(adapterItem.task_id)) View.VISIBLE else View.GONE
+        holder.resolveErrorButton.setOnClickListener {
+            listener?.resolveErrorPressed(adapterItem)
         }
     }
 

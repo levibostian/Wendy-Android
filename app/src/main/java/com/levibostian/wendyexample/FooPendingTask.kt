@@ -28,11 +28,10 @@ class FooPendingTask(manuallyRun: Boolean,
         if (!successful) {
             if (rand.nextInt(100) <= 50) {
                 this.recordError("Random error....", RANDOMLY_GENERATED_ERROR_ERROR_ID)
-                return PendingTaskResult.FAILED_DO_NOT_RESCHEDULE
             }
         }
 
-        return if (successful) PendingTaskResult.SUCCESSFUL else PendingTaskResult.FAILED_RESCHEDULE
+        return if (successful) PendingTaskResult.SUCCESSFUL else PendingTaskResult.FAILED
     }
 
 }
