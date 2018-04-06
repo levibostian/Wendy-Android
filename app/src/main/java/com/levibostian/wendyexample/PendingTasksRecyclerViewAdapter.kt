@@ -9,6 +9,9 @@ import android.widget.Button
 import android.widget.TextView
 import com.curiosityio.wendyexample.R
 import com.levibostian.wendy.WendyConfig
+import com.levibostian.wendy.extension.addTaskStatusListenerForTask
+import com.levibostian.wendy.extension.doesErrorExist
+import com.levibostian.wendy.extension.isAbleToManuallyRun
 import com.levibostian.wendy.service.PendingTask
 import com.levibostian.wendy.service.Wendy
 import java.text.SimpleDateFormat
@@ -48,12 +51,13 @@ class PendingTasksRecyclerViewAdapter(val data: List<PendingTask>) : RecyclerVie
         holder.createdAtTextView.text = String.format("Created: %s", SimpleDateFormat("yyyy.MM.dd G 'at' HH:mm:ss z", Locale.ENGLISH).format(adapterItem.createdAt))
 
         holder.statusTextView.text = "not running"
-        WendyConfig.addTaskStatusListenerForTask(adapterItem.taskId!!, holder.statusTextView)
+        adapterItem.addTaskStatusListenerForTask(holder.statusTextView)
 
+        holder.runTaskButton.visibility = if (adapterItem.isAbleToManuallyRun()) View.VISIBLE else View.GONE
         holder.runTaskButton.setOnClickListener {
             listener?.manuallyRunPressed(adapterItem)
         }
-        holder.resolveErrorButton.visibility = if (Wendy.shared.doesErrorExist(adapterItem.taskId!!)) View.VISIBLE else View.GONE
+        holder.resolveErrorButton.visibility = if (adapterItem.doesErrorExist()) View.VISIBLE else View.GONE
         holder.resolveErrorButton.setOnClickListener {
             listener?.resolveErrorPressed(adapterItem)
         }

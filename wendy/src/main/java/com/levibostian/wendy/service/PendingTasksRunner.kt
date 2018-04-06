@@ -64,13 +64,16 @@ internal class PendingTasksRunner(val context: Context,
         })
     }
 
+    /**
+     * @throws [RuntimeException] when in [WendyConfig.strict] mode and you say that your [PendingTask] was [PendingTaskResult.SUCCESSFUL] when you have an unresolved error recorded for that [PendingTask].
+     */
     @Synchronized
     @WorkerThread
     fun runTask(taskId: Long): PendingTasksRunnerJobRunResult {
         val persistedPendingTaskId: Long = pendingTasksManager.getTaskByTaskId(taskId)?.id ?: return PendingTasksRunnerJobRunResult.SKIPPED_TASK_DOESNT_EXIST
         val taskToRun: PendingTask = pendingTasksManager.getPendingTaskTaskById(taskId)!!
 
-        if (!taskToRun.canRunTask()) {
+        if (!taskToRun.isReadyToRun()) {
             WendyConfig.logTaskSkipped(taskToRun, ReasonPendingTaskSkipped.NOT_READY_TO_RUN)
             LogUtil.d("Task: $taskToRun is not ready to run. Skipping it.")
             return PendingTasksRunnerJobRunResult.SKIPPED_NOT_READY

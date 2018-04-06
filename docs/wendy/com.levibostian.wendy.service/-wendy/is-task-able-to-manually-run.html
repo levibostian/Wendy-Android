@@ -1,0 +1,22 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Wendy.isTaskAbleToManuallyRun - wendy</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">wendy</a>&nbsp;/&nbsp;<a href="../index.html">com.levibostian.wendy.service</a>&nbsp;/&nbsp;<a href="index.html">Wendy</a>&nbsp;/&nbsp;<a href="./is-task-able-to-manually-run.html">isTaskAbleToManuallyRun</a><br/>
+<br/>
+<h1>isTaskAbleToManuallyRun</h1>
+<a name="com.levibostian.wendy.service.Wendy$isTaskAbleToManuallyRun(kotlin.Long)"></a>
+<code><span class="keyword">fun </span><span class="identifier">isTaskAbleToManuallyRun</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.service.Wendy$isTaskAbleToManuallyRun(kotlin.Long)/taskId">taskId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Tells you if a <a href="../-pending-task/index.html">PendingTask</a> is able to run yet or not.</p>
+<p>To be able to run, all of these must be true:</p>
+<ol><li>A <a href="../-pending-task/index.html">PendingTask</a> is not part of a group or it is the first task of a group.</li>
+</ol>
+<p>Call this before calling <a href="run-task.html">runTask</a> to avoid <a href="run-task.html">runTask</a> throwing an exception on you for it not being ready to run.</p>
+<h3>Exceptions</h3>
+<p><a name="IllegalArgumentException"></a>
+<code>IllegalArgumentException</code> - If the <a href="../-pending-task/index.html">PendingTask</a> for the taskId provided does not exist.</p>
+</BODY>
+</HTML>

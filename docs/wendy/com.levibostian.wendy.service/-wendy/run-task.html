@@ -13,7 +13,12 @@
 <p>Use this function along with manually run tasks to have Wendy run it for you. If it is successful, Wendy will take care of deleting it for you.</p>
 <h3>Parameters</h3>
 <p><a name="taskId"></a>
-<code>taskId</code> - The <a href="../-pending-task/task-id.html">PendingTask.taskId</a> of <a href="../-pending-task/index.html">PendingTask</a> you wish to run. If there is not a <a href="../-pending-task/index.html">PendingTask</a> with this ID, the task runner simply ignores your request and moves on.</p>
+<code>taskId</code> - The <a href="../-pending-task/task-id.html">PendingTask.taskId</a> of <a href="../-pending-task/index.html">PendingTask</a> you wish to run.</p>
+<h3>Exceptions</h3>
+<p><a name="IllegalArgumentException"></a>
+<code>IllegalArgumentException</code> - If the <a href="../-pending-task/index.html">PendingTask</a> for the taskId provided does not exist.</p>
+<p><a name="RuntimeException"></a>
+<code>RuntimeException</code> - If the <a href="../-pending-task/index.html">PendingTask</a> returns false for <a href="is-task-able-to-manually-run.html">isTaskAbleToManuallyRun</a>.</p>
 <p><strong>See Also</strong><br/>
 <p><a href="../../com.levibostian.wendy/-wendy-config/add-task-status-listener-for-task.html">WendyConfig.addTaskStatusListenerForTask</a></p>
 </p>

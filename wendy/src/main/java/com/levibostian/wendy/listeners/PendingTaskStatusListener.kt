@@ -57,5 +57,5 @@ interface PendingTaskStatusListener {
      *
      * @see ReasonPendingTaskSkipped for all available reasons why a [PendingTask] was skipped.
      */
-    @UiThread fun skipped(taskId: Long, reason: ReasonPendingTaskSkipped) // Currently, the only reason a pending task is skipped is if the task `canRunTask()` returns false. There is currently no way to determine if it's because of a group id skip.
+    @UiThread fun skipped(taskId: Long, reason: ReasonPendingTaskSkipped) // Currently, the only reason a pending task is skipped is if the task `isReadyToRun()` returns false. There is currently no way to determine if it's because of a group id skip.
 }
