@@ -91,8 +91,8 @@ open class WendyConfig {
 
 internal fun WendyConfig.Companion.logTaskSkipped(task: PendingTask, reasonForSkip: ReasonPendingTaskSkipped) {
     Handler(Looper.getMainLooper()).post({
-        WendyConfig.getTaskStatusListenerForTask(task.task_id).forEach {
-            it.skipped(task.task_id, reasonForSkip)
+        WendyConfig.getTaskStatusListenerForTask(task.task_id ?: 0).forEach {
+            it.skipped(task.task_id!!, reasonForSkip)
         }
         WendyConfig.getTaskRunnerListeners().forEach {
             it.taskSkipped(reasonForSkip, task)
@@ -102,8 +102,8 @@ internal fun WendyConfig.Companion.logTaskSkipped(task: PendingTask, reasonForSk
 
 internal fun WendyConfig.Companion.logTaskRunning(task: PendingTask) {
     Handler(Looper.getMainLooper()).post({
-        WendyConfig.getTaskStatusListenerForTask(task.task_id).forEach {
-            it.running(task.task_id)
+        WendyConfig.getTaskStatusListenerForTask(task.task_id ?: 0).forEach {
+            it.running(task.task_id!!)
         }
         WendyConfig.getTaskRunnerListeners().forEach {
             it.runningTask(task)
@@ -113,8 +113,8 @@ internal fun WendyConfig.Companion.logTaskRunning(task: PendingTask) {
 
 internal fun WendyConfig.Companion.logTaskComplete(task: PendingTask, successful: Boolean, rescheduled: Boolean) {
     Handler(Looper.getMainLooper()).post({
-        WendyConfig.getTaskStatusListenerForTask(task.task_id).forEach {
-            it.complete(task.task_id, successful, rescheduled)
+        WendyConfig.getTaskStatusListenerForTask(task.task_id ?: 0).forEach {
+            it.complete(task.task_id!!, successful, rescheduled)
         }
         WendyConfig.getTaskRunnerListeners().forEach {
             it.taskComplete(successful, task, rescheduled)
@@ -124,8 +124,8 @@ internal fun WendyConfig.Companion.logTaskComplete(task: PendingTask, successful
 
 internal fun WendyConfig.Companion.logErrorRecorded(task: PendingTask, errorMessage: String?, errorId: String?) {
     Handler(Looper.getMainLooper()).post({
-        WendyConfig.getTaskStatusListenerForTask(task.task_id).forEach {
-            it.errorRecorded(task.task_id, errorMessage, errorId)
+        WendyConfig.getTaskStatusListenerForTask(task.task_id ?: 0).forEach {
+            it.errorRecorded(task.task_id!!, errorMessage, errorId)
         }
         WendyConfig.getTaskRunnerListeners().forEach {
             it.errorRecorded(task, errorMessage, errorId)
@@ -135,8 +135,8 @@ internal fun WendyConfig.Companion.logErrorRecorded(task: PendingTask, errorMess
 
 internal fun WendyConfig.Companion.logErrorResolved(task: PendingTask) {
     Handler(Looper.getMainLooper()).post({
-        WendyConfig.getTaskStatusListenerForTask(task.task_id).forEach {
-            it.errorResolved(task.task_id)
+        WendyConfig.getTaskStatusListenerForTask(task.task_id ?: 0).forEach {
+            it.errorResolved(task.task_id!!)
         }
         WendyConfig.getTaskRunnerListeners().forEach {
             it.errorResolved(task)

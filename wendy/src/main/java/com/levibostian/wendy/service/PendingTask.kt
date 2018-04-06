@@ -26,7 +26,7 @@ abstract class PendingTask(override var manually_run: Boolean,
                            override var group_id: String?,
                            override var tag: String): PendingTaskFields {
 
-    var task_id: Long = 0
+    var task_id: Long? = null
     override var created_at: Long = Date().time
 
     /**

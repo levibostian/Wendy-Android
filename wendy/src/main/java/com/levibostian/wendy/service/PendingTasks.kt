@@ -97,11 +97,11 @@ open class PendingTasks private constructor(context: Context, internal val tasks
             throw IllegalArgumentException("Exception thrown while calling ${tasksFactory::class.java.simpleName}'s getTask(). Did you forgot to add ${pendingTask::class.java.simpleName} to your instance of ${tasksFactory::class.java.simpleName}?")
         }
 
-        if (doesErrorExist(pendingTask.task_id) && resolveErrorIfTaskExists) {
-            resolveError(pendingTask.task_id)
-        }
-
         tasksManager.getExistingTask(pendingTask)?.let { existingPersistedPendingTask ->
+            if (doesErrorExist(existingPersistedPendingTask.id) && resolveErrorIfTaskExists) {
+                resolveError(existingPersistedPendingTask.id)
+            }
+
             return existingPersistedPendingTask.id
         }
 
@@ -110,10 +110,10 @@ open class PendingTasks private constructor(context: Context, internal val tasks
 
         if (WendyConfig.automaticallyRunTasks && !addedTask.manually_run) {
             LogUtil.d("Wendy is configured to automatically run tasks. Wendy will now attempt to run newly added task: $addedTask")
-            runTask(addedTask.task_id) // Run task right now in case this newly added task can run right away.
+            runTask(addedTask.task_id!!) // Run task right now in case this newly added task can run right away.
         } else LogUtil.d("Wendy configured to not automatically run tasks. Skipping execution of newly added task: $addedTask")
 
-        return addedTask.task_id
+        return addedTask.task_id!!
     }
 
     /**
