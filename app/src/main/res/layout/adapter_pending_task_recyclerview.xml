@@ -67,6 +67,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Run task"/>
+
+        <Button
+            android:id="@+id/resolve_error_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Resolve error"/>
     </LinearLayout>
 
 </LinearLayout>

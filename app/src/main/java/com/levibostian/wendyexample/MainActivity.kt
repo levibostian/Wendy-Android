@@ -60,6 +60,9 @@ class MainActivity : AppCompatActivity(), TaskRunnerListener {
             override fun manuallyRunPressed(task: PendingTask) {
                 PendingTasks.sharedInstance().runTask(task.task_id)
             }
+            override fun resolveErrorPressed(task: PendingTask) {
+                PendingTasks.shared.resolveError(task.task_id)
+            }
         }
         activity_main_tasks_recyclerview.adapter = recyclerViewAdapter
     }
@@ -93,6 +96,7 @@ class MainActivity : AppCompatActivity(), TaskRunnerListener {
         notificationManager.notify(0, notification)
     }
     override fun errorResolved(task: PendingTask) {
+        refreshListOfTasks()
     }
 
 }

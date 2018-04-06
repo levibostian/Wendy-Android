@@ -27,14 +27,14 @@ open class PendingTaskError(internal var id: Long, // internal use only for SQL 
     companion object {
         internal const val TABLE_NAME = "PendingTaskError"
         internal const val COLUMN_ID = "id" // Primary key, internal use only SQL ID.
-        internal const val COLUMN_TASK_ID = "task_id"
+        internal const val COLUMN_TASK_ID = "task_id" // Maps to PendingTask.task_id
         internal const val COLUMN_CREATED_AT = "created_at"
         internal const val COLUMN_ERROR_MESSAGE = "error_message"
         internal const val COLUMN_ERROR_ID = "error_id"
 
         internal val UNIQUE_CONSTRAINT_COLUMNS = listOf(COLUMN_TASK_ID)
 
-        internal val FOREIGN_KEY_TASK_ID = ForeignKey(COLUMN_TASK_ID, PersistedPendingTask.TABLE_NAME to PersistedPendingTask.COLUMN_TASK_ID)
+        internal val FOREIGN_KEY_TASK_ID = ForeignKey(COLUMN_TASK_ID, PersistedPendingTask.TABLE_NAME to PersistedPendingTask.COLUMN_ID)
 
         internal fun init(taskId: Long, errorMessage: String?, errorId: String?): PendingTaskError {
             return PendingTaskError(0,
@@ -45,6 +45,9 @@ open class PendingTaskError(internal var id: Long, // internal use only for SQL 
         }
     }
 
+    /**
+     * Gives you a String representation of [PendingTaskError]
+     */
     override fun toString(): String {
         return "id: $id, " +
                 "task_id: $task_id, " +

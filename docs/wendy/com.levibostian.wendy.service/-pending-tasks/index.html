@@ -10,18 +10,6 @@
 <h1>PendingTasks</h1>
 <code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">PendingTasks</span></code>
 <p>How you interact with Wendy with <a href="../-pending-task/index.html">PendingTask</a> instances you create. Add tasks to Wendy to run, get a list of all the <a href="../-pending-task/index.html">PendingTask</a>s registered to Wendy, etc.</p>
-<h3>Properties</h3>
-<table>
-<tbody>
-<tr>
-<td>
-<p><a href="tasks-factory.html">tasksFactory</a></p>
-</td>
-<td>
-<code><span class="keyword">val </span><span class="identifier">tasksFactory</span><span class="symbol">: </span><a href="../-pending-tasks-factory/index.html"><span class="identifier">PendingTasksFactory</span></a></code></td>
-</tr>
-</tbody>
-</table>
 <h3>Functions</h3>
 <table>
 <tbody>
@@ -30,7 +18,7 @@
 <p><a href="add-task.html">addTask</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="identifier">addTask</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks$addTask(com.levibostian.wendy.service.PendingTask)/pendingTask">pendingTask</span><span class="symbol">:</span>&nbsp;<a href="../-pending-task/index.html"><span class="identifier">PendingTask</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code>
+<code><span class="keyword">fun </span><span class="identifier">addTask</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks$addTask(com.levibostian.wendy.service.PendingTask, kotlin.Boolean)/pendingTask">pendingTask</span><span class="symbol">:</span>&nbsp;<a href="../-pending-task/index.html"><span class="identifier">PendingTask</span></a><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks$addTask(com.levibostian.wendy.service.PendingTask, kotlin.Boolean)/resolveErrorIfTaskExists">resolveErrorIfTaskExists</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;true<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code>
 <p>Call when you have a new <a href="../-pending-task/index.html">PendingTask</a> that you would like to register to Wendy to run.</p>
 </td>
 </tr>
@@ -41,6 +29,15 @@
 <td>
 <code><span class="keyword">fun </span><span class="identifier">debug</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks$debug(kotlin.Boolean)/enableDebug">enableDebug</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">PendingTasks</span></a></code>
 <p>Turn on and off debug log messages from Wendy.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="does-error-exist.html">doesErrorExist</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">doesErrorExist</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks$doesErrorExist(kotlin.Long)/taskId">taskId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Convenient method to see if an error has been recorded for a <a href="../-pending-task/index.html">PendingTask</a> and has not been resolved yet.</p>
 </td>
 </tr>
 <tr>
@@ -102,7 +99,7 @@
 <p><a href="run-tasks.html">runTasks</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="identifier">runTasks</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<code><span class="keyword">fun </span><span class="identifier">runTasks</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.service.PendingTasks$runTasks(kotlin.String)/groupId">groupId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
 <p>Manually run all pending tasks. Wendy takes care of running this periodically for you, but you can manually run tasks here.</p>
 </td>
 </tr>

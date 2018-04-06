@@ -90,13 +90,15 @@ class CreateGroceryListItemPendingTask(groceryStoreItemId: Long) : PendingTask(
     group_id = null,
     tag = CreateGroceryListItemPendingTask::class.java.simpleName) {
 
+    val GROCERY_STORE_ITEM_TEXT_TOO_LONG = "GROCERY_STORE_ITEM_TEXT_TOO_LONG"
+
     companion object {
         fun blank(): CreateGroceryListItemPendingTask { return CreateGroceryListItemPendingTask(0) }
     }
 
-    override fun runTask() {
+    @WorkerThread abstract fun runTask(): PendingTaskResult
         // Here, instantiate your dependencies, talk to your DB, your API, etc. Run the task.
-        // After you are done (or failed), return to Wendy the result.
+        // After the task succeeds or fails, return to Wendy the result.
 
         val groceryStoreItem = localDatabase.queryGroceryStoreItem(data_id)
 
@@ -106,11 +108,14 @@ class CreateGroceryListItemPendingTask(groceryStoreItemId: Long) : PendingTask(
 
         if (apiCallResult.error != null) {
              // There was an error. Parse the error and decide what to do from here.
-             // If it's an error that deserves the attention of your user to fix, return a result to not reschedule the task, have the user fix the error, then you can create a new `CreateGroceryListItemPendingTask` to try again.
-             return PendingTaskResult.FAILED_DO_NOT_RESCHEDULE
+
+             // If it's an error that deserves the attention of your user to fix, make sure and record it with Wendy.
+             // If the error is a network error, for example, that does not require the user's attention to fix, do *not* record an error to Wendy.
+             // Wendy will not run your task if there is a recorded error for it. Record an error, prompt your user to fix it, then resolve it ASAP so it can run.
+             PendingTasks.shared.recordError(task_id, "Grocery store item too long. Please shorten it up for me.", GROCERY_STORE_ITEM_TEXT_TOO_LONG)
         }
 
-        return if (apiCallResult.successful) PendingTaskResult.SUCCESSFUL else PendingTaskResult.FAILED_RESCHEDULE
+        return if (successful) PendingTaskResult.SUCCESSFUL else PendingTaskResult.FAILED
     }
 
 }

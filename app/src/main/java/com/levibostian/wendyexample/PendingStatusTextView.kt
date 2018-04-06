@@ -28,6 +28,9 @@ class PendingStatusTextView : TextView, PendingTaskStatusListener {
 
     override fun skipped(taskId: Long, reason: ReasonPendingTaskSkipped) {
         text = reason.accept(object : ReasonPendingTaskSkipped.Visitor<String> {
+            override fun visitUnresolvedRecordedError(): String {
+                return "Skipped: previously recorded error exists."
+            }
             override fun visitPartOfFailedGroup(): String {
                 return "Skipped: part of failing group"
             }

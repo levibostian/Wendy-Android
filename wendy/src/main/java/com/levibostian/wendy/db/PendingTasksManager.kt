@@ -3,6 +3,7 @@ package com.levibostian.wendy.db
 import android.content.Context
 import com.levibostian.wendy.service.PendingTask
 import com.levibostian.wendy.service.PendingTasks
+import com.levibostian.wendy.service.PendingTasksRunner
 import com.levibostian.wendy.util.LogUtil
 import org.jetbrains.anko.db.*
 import java.util.*
@@ -11,29 +12,35 @@ internal class PendingTasksManager(context: Context) {
 
     private val db = PendingTasksDatabaseHelper.sharedInstance(context)
 
+    /**
+     * Note: If you attempt to add a [PendingTask] instance of a [PendingTask] that already exists, your request will be ignored and not written to the database.
+     */
     @Synchronized
     internal fun insertPendingTask(pendingTaskToAdd: PendingTask): PendingTask {
         if (pendingTaskToAdd.tag.isBlank()) throw RuntimeException("You need to set a unique tag for ${PendingTask::class.java.simpleName} instances.")
 
-        val similarPendingTask = getExistingTask(pendingTaskToAdd)
-        pendingTaskToAdd.task_id = similarPendingTask?.task_id ?: getNextTaskId()
+        getExistingTask(pendingTaskToAdd)?.let { existingPersistedPendingTask ->
+            pendingTaskToAdd.fromSqlObject(existingPersistedPendingTask)
+            return pendingTaskToAdd
+        }
+
+        pendingTaskToAdd.task_id = getNextTaskId()
         val persistedPendingTask = PersistedPendingTask.fromPendingTask(pendingTaskToAdd)
 
         return db.use {
             persistedPendingTask.created_at = Date().time
-            pendingTaskToAdd.created_at = persistedPendingTask.created_at
 
             val id = insert(PersistedPendingTask.TABLE_NAME,
-                    PersistedPendingTask.COLUMN_TASK_ID to persistedPendingTask.task_id,
                     PersistedPendingTask.COLUMN_CREATED_AT to persistedPendingTask.created_at,
                     PersistedPendingTask.COLUMN_MANUALLY_RUN to persistedPendingTask.getManuallyRun(),
                     PersistedPendingTask.COLUMN_GROUP_ID to persistedPendingTask.group_id,
                     PersistedPendingTask.COLUMN_DATA_ID to persistedPendingTask.data_id,
                     PersistedPendingTask.COLUMN_TAG to persistedPendingTask.tag)
-
             persistedPendingTask.id = id
+
             LogUtil.d("Successfully added task to Wendy. Task: $pendingTaskToAdd")
 
+            pendingTaskToAdd.fromSqlObject(persistedPendingTask)
             pendingTaskToAdd
         }
     }
@@ -69,7 +76,7 @@ internal class PendingTasksManager(context: Context) {
     }
 
     @Synchronized
-    private fun getExistingTask(pendingTask: PendingTask): PersistedPendingTask? {
+    internal fun getExistingTask(pendingTask: PendingTask): PersistedPendingTask? {
         return db.use {
             select(PersistedPendingTask.TABLE_NAME)
                     .whereArgs("${PersistedPendingTask.COLUMN_DATA_ID} = '${pendingTask.data_id}' AND " +
@@ -82,7 +89,7 @@ internal class PendingTasksManager(context: Context) {
      * task_id starts at 1 and increments from there. Get the next one available.
      */
     @Synchronized
-    private fun getNextTaskId(): Long {
+    internal fun getNextTaskId(): Long {
         return db.use {
             val task: PersistedPendingTask? = select(PersistedPendingTask.TABLE_NAME)
                     .orderBy(PersistedPendingTask.COLUMN_ID, SqlOrderDirection.DESC)
@@ -109,7 +116,7 @@ internal class PendingTasksManager(context: Context) {
     internal fun getTaskByTaskId(taskId: Long): PersistedPendingTask? {
         return db.use {
             select(PersistedPendingTask.TABLE_NAME)
-                    .whereArgs("${PersistedPendingTask.COLUMN_TASK_ID} = $taskId")
+                    .whereArgs("${PersistedPendingTask.COLUMN_ID} = $taskId")
                     .exec { parseOpt(classParser()) }
         }
     }
@@ -130,7 +137,7 @@ internal class PendingTasksManager(context: Context) {
         val tasksFactory = PendingTasks.sharedInstance().tasksFactory
         return db.use {
             select(PersistedPendingTask.TABLE_NAME)
-                    .whereArgs("${PersistedPendingTask.COLUMN_TASK_ID} = $taskId")
+                    .whereArgs("${PersistedPendingTask.COLUMN_ID} = $taskId")
                     .exec {
                         val task = parseOpt(classParser<PersistedPendingTask>())
                         if (task == null) null else tasksFactory.getTask(task.tag).fromSqlObject(task)
@@ -139,13 +146,19 @@ internal class PendingTasksManager(context: Context) {
     }
 
     @Synchronized
-    internal fun getNextTaskToRun(afterTaskId: Long = 0): PendingTask? {
+    internal fun getNextTaskToRun(afterTaskId: Long = 0, filter: PendingTasksRunner.RunAllTasksFilter? = null): PendingTask? {
         val tasksFactory = PendingTasks.sharedInstance().tasksFactory
 
         var nextTask: PersistedPendingTask?
         return db.use {
+            var whereArgs = "(${PersistedPendingTask.COLUMN_ID} > $afterTaskId) AND (${PersistedPendingTask.COLUMN_MANUALLY_RUN} = ${PersistedPendingTask.NOT_MANUALLY_RUN})"
+
+            filter?.groupId?.let { filterByGroupId ->
+                whereArgs += " AND (${PersistedPendingTask.COLUMN_GROUP_ID} = $filterByGroupId)"
+            }
+
             nextTask = select(PersistedPendingTask.TABLE_NAME)
-                    .whereArgs("(${PersistedPendingTask.COLUMN_TASK_ID} > $afterTaskId) AND (${PersistedPendingTask.COLUMN_MANUALLY_RUN} = ${PersistedPendingTask.NOT_MANUALLY_RUN})")
+                    .whereArgs(whereArgs)
                     .exec { parseList(classParser<PersistedPendingTask>()).firstOrNull() }
 
             if (nextTask == null) null else tasksFactory.getTask(nextTask!!.tag).fromSqlObject(nextTask!!)
@@ -153,10 +166,16 @@ internal class PendingTasksManager(context: Context) {
     }
 
     @Synchronized
-    internal fun getTotalNumberOfTasksForRunnerToRun(): Int {
+    internal fun getTotalNumberOfTasksForRunnerToRun(filter: PendingTasksRunner.RunAllTasksFilter? = null): Int {
         return db.use {
+            var whereArgs = "(${PersistedPendingTask.COLUMN_MANUALLY_RUN} = ${PersistedPendingTask.NOT_MANUALLY_RUN})"
+
+            filter?.groupId?.let { filterByGroupId ->
+                whereArgs += " AND (${PersistedPendingTask.COLUMN_GROUP_ID} = $filterByGroupId)"
+            }
+
             select(PersistedPendingTask.TABLE_NAME)
-                    .whereArgs("${PersistedPendingTask.COLUMN_MANUALLY_RUN} = ${PersistedPendingTask.NOT_MANUALLY_RUN}")
+                    .whereArgs(whereArgs)
                     .exec { parseList(classParser<PersistedPendingTask>()).size }
         }
     }

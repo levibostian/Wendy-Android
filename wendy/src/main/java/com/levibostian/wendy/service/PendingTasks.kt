@@ -18,7 +18,7 @@ import com.levibostian.wendy.util.LogUtil
 /**
  * How you interact with Wendy with [PendingTask] instances you create. Add tasks to Wendy to run, get a list of all the [PendingTask]s registered to Wendy, etc.
  */
-open class PendingTasks private constructor(context: Context, val tasksFactory: PendingTasksFactory) {
+open class PendingTasks private constructor(context: Context, internal val tasksFactory: PendingTasksFactory) {
 
     companion object {
         private var instance: PendingTasks? = null
@@ -27,6 +27,9 @@ open class PendingTasks private constructor(context: Context, val tasksFactory: 
          * Initialize Wendy. It's recommended to do this in your [Application] class of your app.
          *
          * This function essentially just creates a singleton instance of [PendingTasks] for your application to share. Future calls to this function will be ignored. The instance is only initialized once.
+         *
+         * @param context Android context (usually given in your Application class's onCreate() call)
+         * @param tasksFactory [PendingTasksFactory] instance for your app to construct [PendingTask] instances used by Wendy.
          */
         @JvmStatic fun init(context: Context, tasksFactory: PendingTasksFactory): PendingTasks {
             if (instance == null) {
@@ -40,7 +43,7 @@ open class PendingTasks private constructor(context: Context, val tasksFactory: 
         /**
          * Get singleton instance of [PendingTasks].
          *
-         * @throws RuntimeException If you have not called [PendingTasks.init] yet to initialize singleton instance.
+         * @throws RuntimeException If you have not called [PendingTasks.Companion.init] yet to initialize singleton instance.
          */
         @JvmStatic fun sharedInstance(): PendingTasks {
             if (instance == null) throw RuntimeException("Sorry, you must initialize the instance first.")
@@ -79,15 +82,27 @@ open class PendingTasks private constructor(context: Context, val tasksFactory: 
      *
      * Wendy works in a FIFO order. Your task gets added to the end of the queue of tasks to run.
      *
+     * *Note: If you attempt to add a [PendingTask] instance that has the same [PendingTask.tag] and [PendingTask.data_id] as another [PendingTask] already added to Wendy, your request (including calling the task runner listener) will be ignored (except for the exception below in that there was an error recorded previously for a [PendingTask]).*
+     *
+     * *Note:* If you attempt to add a [PendingTask] instance that has the same [PendingTask.tag] and [PendingTask.data_id] as another [PendingTask] already added to Wendy that previously had an error recorded for it, that error will be marked as resolved (by internally calling [PendingTasks.resolveError].
+     *
      * @param pendingTask Task you want to add to Wendy.
      *
      * @throws IllegalArgumentException Wendy will check to make sure that you have remembered to add your argument's [PendingTask] subclass to your instance of [PendingTasksFactory] when you call this method. If your [PendingTasksFactory] throws an exception (which probably means that you forgot to include a [PendingTask]) then an [IllegalArgumentException] will be thrown.
      */
-    fun addTask(pendingTask: PendingTask): Long {
+    fun addTask(pendingTask: PendingTask, resolveErrorIfTaskExists: Boolean = true): Long {
         try {
             tasksFactory.getTask(pendingTask.tag)
         } catch (t: Throwable) {
             throw IllegalArgumentException("Exception thrown while calling ${tasksFactory::class.java.simpleName}'s getTask(). Did you forgot to add ${pendingTask::class.java.simpleName} to your instance of ${tasksFactory::class.java.simpleName}?")
+        }
+
+        if (doesErrorExist(pendingTask.task_id) && resolveErrorIfTaskExists) {
+            resolveError(pendingTask.task_id)
+        }
+
+        tasksManager.getExistingTask(pendingTask)?.let { existingPersistedPendingTask ->
+            return existingPersistedPendingTask.id
         }
 
         val addedTask = tasksManager.insertPendingTask(pendingTask)
@@ -105,9 +120,11 @@ open class PendingTasks private constructor(context: Context, val tasksFactory: 
      * Manually run all pending tasks. Wendy takes care of running this periodically for you, but you can manually run tasks here.
      *
      * *Note:* This will run all tasks even if you use [WendyConfig.automaticallyRunTasks] to enable/disable running of all the [PendingTask]s.
+     *
+     * @param groupId Limit running of the tasks to only tasks of this specific group id.
      */
-    fun runTasks() {
-        PendingTasksRunner.PendingTasksRunnerAllTasksAsyncTask(runner, tasksManager).execute(null)
+    fun runTasks(groupId: String? = null) {
+        PendingTasksRunner.PendingTasksRunnerAllTasksAsyncTask(runner, tasksManager).execute(PendingTasksRunner.RunAllTasksFilter(groupId))
     }
 
     /**
@@ -160,11 +177,18 @@ open class PendingTasks private constructor(context: Context, val tasksFactory: 
     }
 
     /**
+     * Convenient method to see if an error has been recorded for a [PendingTask] and has not been resolved yet.
+     */
+    fun doesErrorExist(taskId: Long): Boolean = getLatestError(taskId) != null
+
+    /**
      * Mark a previously recorded error for a [PendingTask] as resolved.
      *
      * *Note:* If you attempt to resolve an error using a [taskId] that does not exist, your request to record an error will be ignored.
      *
      * *Note:* If you attempt to resolve an error when an error does not exist in Wendy (because it has already been resolved or was never recorded) then the [TaskRunnerListener.errorResolved] and [PendingTaskStatusListener.errorResolved] will not be called.
+     *
+     * *Note:* The task runner will attempt to run your task after it has been resolved immediately. If the task belongs to a group, the task runner will attempt to run all the tasks in the group.
      *
      * @param taskId The task_id of a [PendingTask] previously recorded an error for.
      * @return If [PendingTask] had a previously recorded error and it has been marked as resolved now.
@@ -176,6 +200,12 @@ open class PendingTasks private constructor(context: Context, val tasksFactory: 
 
         if (tasksManager.deletePendingTaskError(taskId)) { // Only log error as resolved if an error was even recorded in the first place.
             WendyConfig.logErrorResolved(pendingTask)
+            LogUtil.d("Task: $pendingTask successfully resolved previously recorded error.")
+
+            val groupId: String? = pendingTask.group_id
+            if (groupId != null) runTasks(groupId)
+            else runTask(taskId)
+
             return true
         }
         return false
