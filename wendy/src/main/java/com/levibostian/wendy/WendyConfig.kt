@@ -26,6 +26,15 @@ open class WendyConfig {
          */
         var automaticallyRunTasks: Boolean = true
         /**
+         * Sets Wendy to strict mode or not. Strict mode helps while developing your app to find and fix potential issues while working with Wendy.
+         *
+         * When strict is true, warnings throw errors instead of logging the warning to the console.
+         * When strict is false, warnings get logged to the console and not crash your app instead.
+         *
+         * Default: true
+         */
+        var strict: Boolean = true
+        /**
          * Turn on and off debug mode. This turns on and off Wendy sending messages to the logcat.
          */
         var debug: Boolean = false
