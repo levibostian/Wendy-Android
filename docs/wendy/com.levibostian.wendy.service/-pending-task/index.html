@@ -19,7 +19,7 @@
 <p><a href="-init-.html">&lt;init&gt;</a></p>
 </td>
 <td>
-<code><span class="identifier">PendingTask</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.service.PendingTask$<init>(kotlin.Boolean, kotlin.String, kotlin.String, kotlin.String)/manually_run">manually_run</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.service.PendingTask$<init>(kotlin.Boolean, kotlin.String, kotlin.String, kotlin.String)/data_id">data_id</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.service.PendingTask$<init>(kotlin.Boolean, kotlin.String, kotlin.String, kotlin.String)/group_id">group_id</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.service.PendingTask$<init>(kotlin.Boolean, kotlin.String, kotlin.String, kotlin.String)/tag">tag</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span></code>
+<code><span class="identifier">PendingTask</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.service.PendingTask$<init>(kotlin.Boolean, kotlin.String, kotlin.String, kotlin.String)/manuallyRun">manuallyRun</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.service.PendingTask$<init>(kotlin.Boolean, kotlin.String, kotlin.String, kotlin.String)/dataId">dataId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.service.PendingTask$<init>(kotlin.Boolean, kotlin.String, kotlin.String, kotlin.String)/groupId">groupId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.service.PendingTask$<init>(kotlin.Boolean, kotlin.String, kotlin.String, kotlin.String)/tag">tag</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span></code>
 <p>Represents a single task to perform. Usually used to sync offline data stored on the device with online remote storage.</p>
 </td>
 </tr>
@@ -30,38 +30,38 @@
 <tbody>
 <tr>
 <td>
-<p><a href="created_at.html">created_at</a></p>
+<p><a href="created-at.html">createdAt</a></p>
 </td>
 <td>
-<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">created_at</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">createdAt</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code>
 <p>The date/time that the task was created.</p>
 </td>
 </tr>
 <tr>
 <td>
-<p><a href="data_id.html">data_id</a></p>
+<p><a href="data-id.html">dataId</a></p>
 </td>
 <td>
-<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">data_id</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code>
-<p>This field is used to help you identify what offline device data needs to be synced with online remote storage. Example: You have a sqlite database table named Employees. Your user creates a new Employee in your app. First, you will create a new Employee table row for this new employee and then create a new CreateEmployeePendingTask instance to sync this new Employees sqlite row with your online remote storage. Set <a href="data_id.html">data_id</a> to the newly created Employee table row id. So then when your CreateEmployeePendingTask instance is run by Wendy, you can query your database and sync that data with your remote storage.</p>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">dataId</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code>
+<p>This field is used to help you identify what offline device data needs to be synced with online remote storage. Example: You have a sqlite database table named Employees. Your user creates a new Employee in your app. First, you will create a new Employee table row for this new employee and then create a new CreateEmployeePendingTask instance to sync this new Employees sqlite row with your online remote storage. Set <a href="data-id.html">dataId</a> to the newly created Employee table row id. So then when your CreateEmployeePendingTask instance is run by Wendy, you can query your database and sync that data with your remote storage.</p>
 </td>
 </tr>
 <tr>
 <td>
-<p><a href="group_id.html">group_id</a></p>
+<p><a href="group-id.html">groupId</a></p>
 </td>
 <td>
-<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">group_id</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">groupId</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code>
 <p>If this task needs to be run after a set of previous tasks before it were all successfully run then mark this property with an identifier for the group. Wendy will run through all the tasks of this group until one of them fails. When one fails, Wendy will then skip all the other tasks belonging to this group and move on.</p>
 </td>
 </tr>
 <tr>
 <td>
-<p><a href="manually_run.html">manually_run</a></p>
+<p><a href="manually-run.html">manuallyRun</a></p>
 </td>
 <td>
-<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">manually_run</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
-<p>Sometimes you may want your user to be in charge of when a task is run. Setting <a href="manually_run.html">manually_run</a> to true will assert that this task does not get run automatically by the Wendy task runner. You will need to manually run the task yourself via <a href="../-pending-tasks/run-task.html">PendingTasks.runTask</a>.</p>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">manuallyRun</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Sometimes you may want your user to be in charge of when a task is run. Setting <a href="manually-run.html">manuallyRun</a> to true will assert that this task does not get run automatically by the Wendy task runner. You will need to manually run the task yourself via <a href="../-wendy/run-task.html">Wendy.runTask</a>.</p>
 </td>
 </tr>
 <tr>
@@ -75,11 +75,11 @@
 </tr>
 <tr>
 <td>
-<p><a href="task_id.html">task_id</a></p>
+<p><a href="task-id.html">taskId</a></p>
 </td>
 <td>
-<code><span class="keyword">var </span><span class="identifier">task_id</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code>
-<p>ID of the <a href="./index.html">PendingTask</a>. After you have used <a href="../-pending-tasks/add-task.html">PendingTasks.addTask</a> to add this task to Wendy, this property will become populated and available to you. It is then up to <em>you</em> to hang onto this ID if you want to reference it later on.</p>
+<code><span class="keyword">var </span><span class="identifier">taskId</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">?</span></code>
+<p>ID of the <a href="./index.html">PendingTask</a>. After you have used <a href="../-wendy/add-task.html">Wendy.addTask</a> to add this task to Wendy, this property will become populated and available to you. It is then up to <em>you</em> to hang onto this ID if you want to reference it later on.</p>
 </td>
 </tr>
 </tbody>
@@ -152,7 +152,16 @@
 </td>
 <td>
 <code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">PendingTask</span></a><span class="symbol">.</span><span class="identifier">getLatestError</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.levibostian.wendy.db/-pending-task-error/index.html"><span class="identifier">PendingTaskError</span></a><span class="symbol">?</span></code>
-<p>Extension to <a href="../-pending-tasks/get-latest-error.html">PendingTasks.getLatestError</a> easily from a <a href="./index.html">PendingTask</a> instance.</p>
+<p>Extension to <a href="../-wendy/get-latest-error.html">Wendy.getLatestError</a> easily from a <a href="./index.html">PendingTask</a> instance.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.levibostian.wendy.extension/has-been-added-to-wendy.html">hasBeenAddedToWendy</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">PendingTask</span></a><span class="symbol">.</span><span class="identifier">hasBeenAddedToWendy</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Checks to see if the <a href="./index.html">PendingTask</a> has been added to Wendy yet.</p>
 </td>
 </tr>
 <tr>
@@ -161,7 +170,7 @@
 </td>
 <td>
 <code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">PendingTask</span></a><span class="symbol">.</span><span class="identifier">recordError</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.extension$recordError(com.levibostian.wendy.service.PendingTask, kotlin.String, kotlin.String)/humanReadableErrorMessage">humanReadableErrorMessage</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.levibostian.wendy.extension$recordError(com.levibostian.wendy.service.PendingTask, kotlin.String, kotlin.String)/errorId">errorId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.levibostian.wendy.types/-pending-task-result/index.html"><span class="identifier">PendingTaskResult</span></a></code>
-<p>Extension to <a href="../-pending-tasks/record-error.html">PendingTasks.recordError</a> easily from a <a href="./index.html">PendingTask</a> instance.</p>
+<p>Extension to <a href="../-wendy/record-error.html">Wendy.recordError</a> easily from a <a href="./index.html">PendingTask</a> instance.</p>
 </td>
 </tr>
 <tr>
@@ -169,8 +178,8 @@
 <p><a href="../../com.levibostian.wendy.extension/resolve-error.html">resolveError</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">PendingTask</span></a><span class="symbol">.</span><span class="identifier">resolveError</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
-<p>Extension to <a href="../-pending-tasks/resolve-error.html">PendingTasks.resolveError</a> easily from a <a href="./index.html">PendingTask</a> instance.</p>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">PendingTask</span></a><span class="symbol">.</span><span class="identifier">resolveError</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Extension to <a href="../-wendy/resolve-error.html">Wendy.resolveError</a> easily from a <a href="./index.html">PendingTask</a> instance.</p>
 </td>
 </tr>
 </tbody>
