@@ -20,7 +20,7 @@ enum class ReasonPendingTaskSkipped {
         override fun <E> accept(visitor: Visitor<E>): E = visitor.visitNotReadyToRun()
     },
     /**
-     * If a [PendingTask] runs that has a non-null [PendingTask.group_id] and it fails running, then *all* of the other [PendingTask]s that belongs to the group that have yet to run will all be skipped and rescheduled to run again.
+     * If a [PendingTask] runs that has a non-null [PendingTask.groupId] and it fails running, then *all* of the other [PendingTask]s that belongs to the group that have yet to run will all be skipped and rescheduled to run again.
      */
     PART_OF_FAILED_GROUP {
         /**

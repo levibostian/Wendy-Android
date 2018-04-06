@@ -6,4 +6,4 @@ import com.levibostian.wendy.service.PendingTasks
 /**
  * Extension to [PendingTasks.resolveError] easily from a [PendingTaskError] instance.
  */
-fun PendingTaskError.resolveError() = PendingTasks.shared.resolveError(this.task_id)
+fun PendingTaskError.resolveError() = PendingTasks.shared.resolveError(this.taskId)

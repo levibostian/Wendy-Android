@@ -6,12 +6,9 @@ import android.os.Handler
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import android.support.v7.widget.LinearLayoutManager
-import android.view.View
-import android.widget.CompoundButton
 
 import com.curiosityio.wendyexample.R
 import com.levibostian.wendy.WendyConfig
-import com.levibostian.wendy.db.PendingTaskError
 import com.levibostian.wendy.listeners.TaskRunnerListener
 import com.levibostian.wendy.service.PendingTask
 import com.levibostian.wendy.service.PendingTasks
@@ -58,10 +55,10 @@ class MainActivity : AppCompatActivity(), TaskRunnerListener {
         val recyclerViewAdapter = PendingTasksRecyclerViewAdapter(PendingTasks.sharedInstance().getAllTasks())
         recyclerViewAdapter.listener = object : PendingTasksRecyclerViewAdapter.Listener {
             override fun manuallyRunPressed(task: PendingTask) {
-                PendingTasks.sharedInstance().runTask(task.task_id!!)
+                PendingTasks.sharedInstance().runTask(task.taskId!!)
             }
             override fun resolveErrorPressed(task: PendingTask) {
-                PendingTasks.shared.resolveError(task.task_id!!)
+                PendingTasks.shared.resolveError(task.taskId!!)
             }
         }
         activity_main_tasks_recyclerview.adapter = recyclerViewAdapter

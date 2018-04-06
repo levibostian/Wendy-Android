@@ -32,25 +32,25 @@ internal class PendingTasksRunner(val context: Context,
             return
         }
 
-        lastSuccessfulOrFailedTaskId = nextTaskToRun.task_id!!
-        if (nextTaskToRun.group_id != null && failedTasksGroups.contains(nextTaskToRun.group_id!!)) {
+        lastSuccessfulOrFailedTaskId = nextTaskToRun.taskId!!
+        if (nextTaskToRun.groupId != null && failedTasksGroups.contains(nextTaskToRun.groupId!!)) {
             WendyConfig.logTaskSkipped(nextTaskToRun, ReasonPendingTaskSkipped.PART_OF_FAILED_GROUP)
             LogUtil.d("Task: $nextTaskToRun belongs to a failing group of tasks. Skipping it.")
             runAllTasks()
             return
         }
 
-        val jobRunResult = runTask(nextTaskToRun.task_id!!)
+        val jobRunResult = runTask(nextTaskToRun.taskId!!)
         jobRunResult.accept(object : PendingTasksRunnerJobRunResult.Visitor<Unit?> {
             override fun visitSkippedUnresolvedRecordedError(): Unit? {
-                nextTaskToRun.group_id?.let { failedTasksGroups.add(it) }
+                nextTaskToRun.groupId?.let { failedTasksGroups.add(it) }
                 return runAllTasks()
             }
             override fun visitSuccessful(): Unit? {
                 return runAllTasks()
             }
             override fun visitNotSuccessful(): Unit? {
-                nextTaskToRun.group_id?.let { failedTasksGroups.add(it) }
+                nextTaskToRun.groupId?.let { failedTasksGroups.add(it) }
                 return runAllTasks()
             }
             override fun visitTaskDoesntExist(): Unit? {
@@ -58,7 +58,7 @@ internal class PendingTasksRunner(val context: Context,
                 return runAllTasks()
             }
             override fun visitSkippedNotReady(): Unit? {
-                nextTaskToRun.group_id?.let { failedTasksGroups.add(it) }
+                nextTaskToRun.groupId?.let { failedTasksGroups.add(it) }
                 return runAllTasks()
             }
         })
@@ -75,7 +75,7 @@ internal class PendingTasksRunner(val context: Context,
             LogUtil.d("Task: $taskToRun is not ready to run. Skipping it.")
             return PendingTasksRunnerJobRunResult.SKIPPED_NOT_READY
         }
-        if (pendingTasksManager.getLatestError(taskToRun.task_id!!) != null) {
+        if (pendingTasksManager.getLatestError(taskToRun.taskId!!) != null) {
             WendyConfig.logTaskSkipped(taskToRun, ReasonPendingTaskSkipped.UNRESOLVED_RECORDED_ERROR)
             LogUtil.d("Task: $taskToRun has a unresolved error recorded. Skipping it.")
             return PendingTasksRunnerJobRunResult.SKIPPED_UNRESOLVED_RECORDED_ERROR
@@ -91,7 +91,7 @@ internal class PendingTasksRunner(val context: Context,
 
         when (result) {
             PendingTaskResult.SUCCESSFUL -> {
-                if (PendingTasks.shared.doesErrorExist(taskToRun.task_id!!)) {
+                if (PendingTasks.shared.doesErrorExist(taskToRun.taskId!!)) {
                     val errorMessage = "You returned ${PendingTaskResult.SUCCESSFUL} for running your ${PendingTask::class.java.simpleName}, but you have unresolved issues for task: $taskToRun. You should resolve the previously recorded error to Wendy, or return ${PendingTaskResult.FAILED}."
                     if (WendyConfig.strict) throw RuntimeException(errorMessage) else LogUtil.w(errorMessage)
                 }

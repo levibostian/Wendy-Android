@@ -47,12 +47,12 @@ fun PendingTask.addTaskStatusListenerForTask(listener: PendingTaskStatusListener
 /**
  * Checks to see if the [PendingTask] has been added to Wendy yet.
  *
- * This function simply checks if the [PendingTask.task_id] is null or not.
+ * This function simply checks if the [PendingTask.taskId] is null or not.
  */
-fun PendingTask.hasBeenAddedToWendy(): Boolean = this.task_id != null
+fun PendingTask.hasBeenAddedToWendy(): Boolean = this.taskId != null
 
 internal fun PendingTask.assertHasBeenAddedToWendy(): Long {
     if (!hasBeenAddedToWendy()) throw RuntimeException("Cannot record error for your task because it has not been added to Wendy (aka: the task id has not been set yet)")
 
-    return this.task_id!!
+    return this.taskId!!
 }
