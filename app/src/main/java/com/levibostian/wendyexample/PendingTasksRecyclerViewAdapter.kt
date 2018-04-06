@@ -9,10 +9,8 @@ import android.widget.Button
 import android.widget.TextView
 import com.curiosityio.wendyexample.R
 import com.levibostian.wendy.WendyConfig
-import com.levibostian.wendy.listeners.PendingTaskStatusListener
 import com.levibostian.wendy.service.PendingTask
-import com.levibostian.wendy.service.PendingTasks
-import com.levibostian.wendy.types.ReasonPendingTaskSkipped
+import com.levibostian.wendy.service.Wendy
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -42,20 +40,20 @@ class PendingTasksRecyclerViewAdapter(val data: List<PendingTask>) : RecyclerVie
     override fun onBindViewHolder(holder: PendingTasksRecyclerViewAdapter.ViewHolder, position: Int) {
         val adapterItem: PendingTask = data[position]
 
-        holder.idTextView.text = String.format("task id: %d", adapterItem.task_id)
-        holder.dataIdTextView.text = String.format("data id: %s", adapterItem.data_id)
-        holder.groupIdTextView.text = String.format("group id: %s", adapterItem.group_id)
-        holder.manuallyRunTextView.text = String.format("manually run: %s", adapterItem.manually_run.toString())
+        holder.idTextView.text = String.format("task id: %d", adapterItem.taskId)
+        holder.dataIdTextView.text = String.format("data id: %s", adapterItem.dataId)
+        holder.groupIdTextView.text = String.format("group id: %s", adapterItem.groupId)
+        holder.manuallyRunTextView.text = String.format("manually run: %s", adapterItem.manuallyRun.toString())
         holder.tagTextView.text = String.format("tag: %s", adapterItem.tag)
-        holder.createdAtTextView.text = String.format("Created: %s", SimpleDateFormat("yyyy.MM.dd G 'at' HH:mm:ss z", Locale.ENGLISH).format(adapterItem.created_at))
+        holder.createdAtTextView.text = String.format("Created: %s", SimpleDateFormat("yyyy.MM.dd G 'at' HH:mm:ss z", Locale.ENGLISH).format(adapterItem.createdAt))
 
         holder.statusTextView.text = "not running"
-        WendyConfig.addTaskStatusListenerForTask(adapterItem.task_id!!, holder.statusTextView)
+        WendyConfig.addTaskStatusListenerForTask(adapterItem.taskId!!, holder.statusTextView)
 
         holder.runTaskButton.setOnClickListener {
             listener?.manuallyRunPressed(adapterItem)
         }
-        holder.resolveErrorButton.visibility = if (PendingTasks.shared.doesErrorExist(adapterItem.task_id!!)) View.VISIBLE else View.GONE
+        holder.resolveErrorButton.visibility = if (Wendy.shared.doesErrorExist(adapterItem.taskId!!)) View.VISIBLE else View.GONE
         holder.resolveErrorButton.setOnClickListener {
             listener?.resolveErrorPressed(adapterItem)
         }

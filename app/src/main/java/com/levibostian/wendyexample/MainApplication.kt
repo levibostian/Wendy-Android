@@ -6,11 +6,8 @@ import com.curiosityio.wendyexample.BuildConfig
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import com.levibostian.wendy.service.PendingTasks
+import com.levibostian.wendy.service.Wendy
 import android.os.Build
-import android.support.v4.app.NotificationCompat
-import android.support.v4.app.NotificationManagerCompat
-import com.curiosityio.wendyexample.R
 import com.levibostian.wendyexample.NotificationChannelUtil.Companion.ERROR_OCCURRED_CHANNEL_DESCRIPTION
 import com.levibostian.wendyexample.NotificationChannelUtil.Companion.ERROR_OCCURRED_CHANNEL_ID
 import com.levibostian.wendyexample.NotificationChannelUtil.Companion.ERROR_OCCURRED_CHANNEL_NAME
@@ -21,7 +18,7 @@ class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        PendingTasks.init(this, WendyExamplePendingTasksFactory())
+        Wendy.init(this, WendyExamplePendingTasksFactory())
                 .debug(BuildConfig.DEBUG)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

@@ -3,8 +3,6 @@ package com.levibostian.wendy.listeners
 import android.support.annotation.UiThread
 import com.levibostian.wendy.WendyConfig
 import com.levibostian.wendy.service.PendingTask
-import com.levibostian.wendy.service.PendingTasks
-import com.levibostian.wendy.types.PendingTaskResult
 import com.levibostian.wendy.types.ReasonPendingTaskSkipped
 
 /**
@@ -20,14 +18,14 @@ interface PendingTaskStatusListener {
     /**
      * The task runner is running this exact [PendingTask].
      *
-     * @param taskId The task_id of the [PendingTask] being run.
+     * @param taskId The taskId of the [PendingTask] being run.
      */
     @UiThread fun running(taskId: Long)
 
     /**
      * The task runner is done running the [PendingTask]. The task was either successful or not.
      *
-     * @param taskId The task_id of the [PendingTask] that just ran.
+     * @param taskId The taskId of the [PendingTask] that just ran.
      * @param successful Indicates if the running of the [PendingTask] was successful or not.
      * @param rescheduled If the task failed but should run again, the task is rescheduled to run again in the future.
      */
@@ -38,7 +36,7 @@ interface PendingTaskStatusListener {
      *
      * *Tip:* It's recommended that when [errorRecorded] gets called and if you decide to show something in the UI about a [PendingTask] having an error, keep that UI up until the user dismisses it. They touch it, swipe it, whatever. Why? Because other methods may get called after [errorRecorded] gets called and errors are a pretty important thing to fix.
      *
-     * @param taskId the task_id of the [PendingTask] that an error occurred to.
+     * @param taskId the taskId of the [PendingTask] that an error occurred to.
      * @param errorMessage The human readable error message recorded for the error.
      * @param errorId The error ID recorded to Wendy for the error.
      */
@@ -47,14 +45,14 @@ interface PendingTaskStatusListener {
     /**
      * A previously recorded error for this [PendingTask] has been marked as resolved.
      *
-     * @param taskId The task_id of the [PendingTask] that the error has been resolved for.
+     * @param taskId The taskId of the [PendingTask] that the error has been resolved for.
      */
     @UiThread fun errorResolved(taskId: Long)
 
     /**
      * The task runner skipped running the [PendingTask] for some reason.
      *
-     * @param taskId The task_id of the [PendingTask] that was skipped.
+     * @param taskId The taskId of the [PendingTask] that was skipped.
      * @param reason The reason that the [PendingTask] was skipped.
      *
      * @see ReasonPendingTaskSkipped for all available reasons why a [PendingTask] was skipped.

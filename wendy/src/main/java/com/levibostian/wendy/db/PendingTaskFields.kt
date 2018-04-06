@@ -6,9 +6,9 @@ import com.levibostian.wendy.service.PendingTask
  * Used to make sure that [PersistedPendingTask] and [PendingTask] both have the same fields.
  */
 internal interface PendingTaskFields {
-    var created_at: Long
-    var manually_run: Boolean
-    var group_id: String?
-    var data_id: String?
+    var createdAt: Long
+    var manuallyRun: Boolean
+    var groupId: String?
+    var dataId: String?
     var tag: String
 }

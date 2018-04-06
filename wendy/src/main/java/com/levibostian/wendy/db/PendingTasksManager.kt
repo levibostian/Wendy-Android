@@ -2,7 +2,7 @@ package com.levibostian.wendy.db
 
 import android.content.Context
 import com.levibostian.wendy.service.PendingTask
-import com.levibostian.wendy.service.PendingTasks
+import com.levibostian.wendy.service.Wendy
 import com.levibostian.wendy.service.PendingTasksRunner
 import com.levibostian.wendy.util.LogUtil
 import org.jetbrains.anko.db.*
@@ -24,17 +24,16 @@ internal class PendingTasksManager(context: Context) {
             return pendingTaskToAdd
         }
 
-        pendingTaskToAdd.task_id = getNextTaskId()
         val persistedPendingTask = PersistedPendingTask.fromPendingTask(pendingTaskToAdd)
 
         return db.use {
-            persistedPendingTask.created_at = Date().time
+            persistedPendingTask.createdAt = Date().time
 
             val id = insert(PersistedPendingTask.TABLE_NAME,
-                    PersistedPendingTask.COLUMN_CREATED_AT to persistedPendingTask.created_at,
+                    PersistedPendingTask.COLUMN_CREATED_AT to persistedPendingTask.createdAt,
                     PersistedPendingTask.COLUMN_MANUALLY_RUN to persistedPendingTask.getManuallyRun(),
-                    PersistedPendingTask.COLUMN_GROUP_ID to persistedPendingTask.group_id,
-                    PersistedPendingTask.COLUMN_DATA_ID to persistedPendingTask.data_id,
+                    PersistedPendingTask.COLUMN_GROUP_ID to persistedPendingTask.groupId,
+                    PersistedPendingTask.COLUMN_DATA_ID to persistedPendingTask.dataId,
                     PersistedPendingTask.COLUMN_TAG to persistedPendingTask.tag)
             persistedPendingTask.id = id
 
@@ -46,18 +45,18 @@ internal class PendingTasksManager(context: Context) {
     }
 
     /**
-     * Note: It's assumed that you have checked if the PendingTaskError.task_id exists.
+     * Note: It's assumed that you have checked if the PendingTaskError.taskId exists.
      */
     @Synchronized
     internal fun insertPendingTaskError(pendingTaskError: PendingTaskError): PendingTaskError {
         return db.use {
-            pendingTaskError.created_at = Date().time
+            pendingTaskError.createdAt = Date().time
 
             val id = insert(PendingTaskError.TABLE_NAME,
-                    PendingTaskError.COLUMN_TASK_ID to pendingTaskError.task_id,
+                    PendingTaskError.COLUMN_TASK_ID to pendingTaskError.taskId,
                     PendingTaskError.COLUMN_CREATED_AT to Date().time,
-                    PendingTaskError.COLUMN_ERROR_MESSAGE to pendingTaskError.error_message,
-                    PendingTaskError.COLUMN_ERROR_ID to pendingTaskError.error_id)
+                    PendingTaskError.COLUMN_ERROR_MESSAGE to pendingTaskError.errorMessage,
+                    PendingTaskError.COLUMN_ERROR_ID to pendingTaskError.errorId)
 
             pendingTaskError.id = id
             LogUtil.d("Successfully recorded error to Wendy. Error: $pendingTaskError")
@@ -79,29 +78,14 @@ internal class PendingTasksManager(context: Context) {
     internal fun getExistingTask(pendingTask: PendingTask): PersistedPendingTask? {
         return db.use {
             select(PersistedPendingTask.TABLE_NAME)
-                    .whereArgs("${PersistedPendingTask.COLUMN_DATA_ID} = '${pendingTask.data_id}' AND " +
+                    .whereArgs("${PersistedPendingTask.COLUMN_DATA_ID} = '${pendingTask.dataId}' AND " +
                             "${PersistedPendingTask.COLUMN_TAG} = '${pendingTask.tag}'")
                     .exec { parseOpt(classParser()) }
         }
     }
 
-    /**
-     * task_id starts at 1 and increments from there. Get the next one available.
-     */
-    @Synchronized
-    internal fun getNextTaskId(): Long {
-        return db.use {
-            val task: PersistedPendingTask? = select(PersistedPendingTask.TABLE_NAME)
-                    .orderBy(PersistedPendingTask.COLUMN_ID, SqlOrderDirection.DESC)
-                    .limit(1)
-                    .exec { parseOpt(classParser()) }
-
-            task?.id?.plus(1) ?: 1
-        }
-    }
-
     internal fun getAllTasks(): List<PendingTask> {
-        val tasksFactory = PendingTasks.sharedInstance().tasksFactory
+        val tasksFactory = Wendy.sharedInstance().tasksFactory
         return db.use {
             select(PersistedPendingTask.TABLE_NAME)
                     .exec {
@@ -126,7 +110,7 @@ internal class PendingTasksManager(context: Context) {
         return db.use {
             select(PendingTaskError.TABLE_NAME)
                     .exec { parseList(classParser<PendingTaskError>()).map {
-                        it.pending_task = getPendingTaskTaskById(it.task_id)!!
+                        it.pendingTask = getPendingTaskTaskById(it.taskId)!!
                         it
                     }}
         }
@@ -134,7 +118,7 @@ internal class PendingTasksManager(context: Context) {
 
     @Synchronized
     internal fun getPendingTaskTaskById(taskId: Long): PendingTask? {
-        val tasksFactory = PendingTasks.sharedInstance().tasksFactory
+        val tasksFactory = Wendy.sharedInstance().tasksFactory
         return db.use {
             select(PersistedPendingTask.TABLE_NAME)
                     .whereArgs("${PersistedPendingTask.COLUMN_ID} = $taskId")
@@ -147,7 +131,7 @@ internal class PendingTasksManager(context: Context) {
 
     @Synchronized
     internal fun getNextTaskToRun(afterTaskId: Long = 0, filter: PendingTasksRunner.RunAllTasksFilter? = null): PendingTask? {
-        val tasksFactory = PendingTasks.sharedInstance().tasksFactory
+        val tasksFactory = Wendy.sharedInstance().tasksFactory
 
         var nextTask: PersistedPendingTask?
         return db.use {
