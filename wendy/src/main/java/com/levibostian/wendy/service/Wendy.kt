@@ -90,14 +90,10 @@ class Wendy private constructor(context: Context, internal val tasksFactory: Pen
      *
      * @param pendingTask Task you want to add to Wendy.
      *
-     * @throws IllegalArgumentException Wendy will check to make sure that you have remembered to add your argument's [PendingTask] subclass to your instance of [PendingTasksFactory] when you call this method. If your [PendingTasksFactory] throws an exception (which probably means that you forgot to include a [PendingTask]) then an [IllegalArgumentException] will be thrown.
+     * @throws RuntimeException Wendy will check to make sure that you have remembered to add your argument's [PendingTask] subclass to your instance of [PendingTasksFactory] when you call this method. If your [PendingTasksFactory] returns null (which probably means that you forgot to include a [PendingTask]) then an [RuntimeException] will be thrown.
      */
     fun addTask(pendingTask: PendingTask, resolveErrorIfTaskExists: Boolean = true): Long {
-        try {
-            tasksFactory.getTask(pendingTask.tag)
-        } catch (t: Throwable) {
-            throw IllegalArgumentException("Exception thrown while calling ${tasksFactory::class.java.simpleName}'s getTask(). Did you forgot to add ${pendingTask::class.java.simpleName} to your instance of ${tasksFactory::class.java.simpleName}?")
-        }
+        tasksFactory.getTask(pendingTask.tag) ?: RuntimeException("You forgot to add ${pendingTask.tag} to your ${PendingTasksFactory::class.java.simpleName}")
 
         tasksManager.getExistingTask(pendingTask)?.let { existingPersistedPendingTask ->
             if (doesErrorExist(existingPersistedPendingTask.id) && resolveErrorIfTaskExists) {
