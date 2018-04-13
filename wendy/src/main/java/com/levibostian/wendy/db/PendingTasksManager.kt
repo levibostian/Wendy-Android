@@ -1,6 +1,7 @@
 package com.levibostian.wendy.db
 
 import android.content.Context
+import com.levibostian.wendy.extension.getTaskAssertPopulated
 import com.levibostian.wendy.service.PendingTask
 import com.levibostian.wendy.service.Wendy
 import com.levibostian.wendy.service.PendingTasksRunner
@@ -109,7 +110,7 @@ internal class PendingTasksManager(context: Context) {
             select(PersistedPendingTask.TABLE_NAME)
                     .exec {
                         parseList(classParser<PersistedPendingTask>()).map {
-                            tasksFactory.getTask(it.tag).fromSqlObject(it)
+                            tasksFactory.getTaskAssertPopulated(it.tag).fromSqlObject(it)
                         }
                     }
         }
@@ -143,7 +144,7 @@ internal class PendingTasksManager(context: Context) {
                     .whereArgs("${PersistedPendingTask.COLUMN_ID} = $taskId")
                     .exec {
                         val task = parseOpt(classParser<PersistedPendingTask>())
-                        if (task == null) null else tasksFactory.getTask(task.tag).fromSqlObject(task)
+                        if (task == null) null else tasksFactory.getTaskAssertPopulated(task.tag).fromSqlObject(task)
                     }
         }
     }
@@ -164,7 +165,7 @@ internal class PendingTasksManager(context: Context) {
                     .whereArgs(whereArgs)
                     .exec { parseList(classParser<PersistedPendingTask>()).firstOrNull() }
 
-            if (nextTask == null) null else tasksFactory.getTask(nextTask!!.tag).fromSqlObject(nextTask!!)
+            if (nextTask == null) null else tasksFactory.getTaskAssertPopulated(nextTask!!.tag).fromSqlObject(nextTask!!)
         }
     }
 

@@ -14,14 +14,14 @@ interface PendingTasksFactory {
      *
      * Example:
      * class WendyExamplePendingTasksFactory : PendingTasksFactory {
-     *     override fun getTask(tag: String): PendingTask {
+     *     override fun getTask(tag: String): PendingTask? {
      *         return when (tag) {
      *             FooPendingTask::class.java.simpleName -> FooPendingTask.blank()
-     *             else -> throw RuntimeException("No idea what task that is... tag: $tag")
+     *             else -> null
      *         }
      *     }
      *   }
      */
-    fun getTask(tag: String): PendingTask
+    fun getTask(tag: String): PendingTask?
 
 }
