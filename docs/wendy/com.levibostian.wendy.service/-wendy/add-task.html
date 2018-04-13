@@ -18,7 +18,7 @@
 <p><a name="pendingTask"></a>
 <code>pendingTask</code> - Task you want to add to Wendy.</p>
 <h3>Exceptions</h3>
-<p><a name="IllegalArgumentException"></a>
-<code>IllegalArgumentException</code> - Wendy will check to make sure that you have remembered to add your argument's <a href="../-pending-task/index.html">PendingTask</a> subclass to your instance of <a href="../-pending-tasks-factory/index.html">PendingTasksFactory</a> when you call this method. If your <a href="../-pending-tasks-factory/index.html">PendingTasksFactory</a> throws an exception (which probably means that you forgot to include a <a href="../-pending-task/index.html">PendingTask</a>) then an <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-illegal-argument-exception/index.html">IllegalArgumentException</a> will be thrown.</p>
+<p><a name="RuntimeException"></a>
+<code>RuntimeException</code> - Wendy will check to make sure that you have remembered to add your argument's <a href="../-pending-task/index.html">PendingTask</a> subclass to your instance of <a href="../-pending-tasks-factory/index.html">PendingTasksFactory</a> when you call this method. If your <a href="../-pending-tasks-factory/index.html">PendingTasksFactory</a> returns null (which probably means that you forgot to include a <a href="../-pending-task/index.html">PendingTask</a>) then an <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-runtime-exception/index.html">RuntimeException</a> will be thrown.</p>
 </BODY>
 </HTML>

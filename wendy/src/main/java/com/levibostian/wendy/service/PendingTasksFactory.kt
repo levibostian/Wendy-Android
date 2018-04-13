@@ -13,8 +13,8 @@ interface PendingTasksFactory {
      * Wendy will provide a [tag], you provide a blank [PendingTask] for that specific [tag].
      *
      * Example:
-     * class WendyExamplePendingTasksFactory : PendingTasksFactory? {
-     *     override fun getTask(tag: String): PendingTask {
+     * class WendyExamplePendingTasksFactory : PendingTasksFactory {
+     *     override fun getTask(tag: String): PendingTask? {
      *         return when (tag) {
      *             FooPendingTask::class.java.simpleName -> FooPendingTask.blank()
      *             else -> null

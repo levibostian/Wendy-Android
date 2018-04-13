@@ -7,6 +7,7 @@ import com.levibostian.wendy.WendyConfig
 import com.levibostian.wendy.db.PendingTaskError
 import com.levibostian.wendy.db.PendingTasksManager
 import com.levibostian.wendy.db.PersistedPendingTask
+import com.levibostian.wendy.extension.getTaskAssertPopulated
 import com.levibostian.wendy.job.PendingTaskJobCreator
 import com.levibostian.wendy.job.PendingTasksJob
 import com.levibostian.wendy.listeners.PendingTaskStatusListener
@@ -93,7 +94,7 @@ class Wendy private constructor(context: Context, internal val tasksFactory: Pen
      * @throws RuntimeException Wendy will check to make sure that you have remembered to add your argument's [PendingTask] subclass to your instance of [PendingTasksFactory] when you call this method. If your [PendingTasksFactory] returns null (which probably means that you forgot to include a [PendingTask]) then an [RuntimeException] will be thrown.
      */
     fun addTask(pendingTask: PendingTask, resolveErrorIfTaskExists: Boolean = true): Long {
-        tasksFactory.getTask(pendingTask.tag) ?: RuntimeException("You forgot to add ${pendingTask.tag} to your ${PendingTasksFactory::class.java.simpleName}")
+        tasksFactory.getTaskAssertPopulated(pendingTask.tag)
 
         tasksManager.getExistingTask(pendingTask)?.let { existingPersistedPendingTask ->
             if (doesErrorExist(existingPersistedPendingTask.id) && resolveErrorIfTaskExists) {
