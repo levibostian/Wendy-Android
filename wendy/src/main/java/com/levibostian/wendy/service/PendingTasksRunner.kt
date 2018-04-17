@@ -102,12 +102,12 @@ internal class PendingTasksRunner(val context: Context,
                 LogUtil.d("Task: $taskToRun ran successful. Deleting it.")
                 pendingTasksManager.deleteTask(persistedPendingTaskId)
                 runJobResult = PendingTasksRunnerJobRunResult.SUCCESSFUL
-                WendyConfig.logTaskComplete(taskToRun, true, false)
+                WendyConfig.logTaskComplete(taskToRun, true)
             }
             PendingTaskResult.FAILED -> {
                 LogUtil.d("Task: $taskToRun failed but is rescheduled. Skipping it.")
                 runJobResult = PendingTasksRunnerJobRunResult.NOT_SUCCESSFUL
-                WendyConfig.logTaskComplete(taskToRun, false, true)
+                WendyConfig.logTaskComplete(taskToRun, false)
             }
         }
 

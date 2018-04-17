@@ -56,9 +56,8 @@ interface TaskRunnerListener {
      *
      * @param success Indicates if the task that was run by the task runner was run successfully or not.
      * @param task The [PendingTask] that was run.
-     * @param rescheduled If the task failed but should run again, the task is rescheduled to run again in the future.
      */
-    @UiThread fun taskComplete(success: Boolean, task: PendingTask, rescheduled: Boolean)
+    @UiThread fun taskComplete(success: Boolean, task: PendingTask)
 
     /**
      * The task runner has completed running all of it's tasks.
