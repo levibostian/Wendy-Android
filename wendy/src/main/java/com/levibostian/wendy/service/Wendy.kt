@@ -92,9 +92,17 @@ class Wendy private constructor(context: Context, internal val tasksFactory: Pen
      * @param pendingTask Task you want to add to Wendy.
      *
      * @throws RuntimeException Wendy will check to make sure that you have remembered to add your argument's [PendingTask] subclass to your instance of [PendingTasksFactory] when you call this method. If your [PendingTasksFactory] returns null (which probably means that you forgot to include a [PendingTask]) then an [RuntimeException] will be thrown.
+     * @throws IllegalArgumentException If your [PendingTask] subclass does not follow the enforced best practice of: All subclasses of a [PendingTask] must **all** have a groupId or **none** of them have a groupId.
      */
     fun addTask(pendingTask: PendingTask, resolveErrorIfTaskExists: Boolean = true): Long {
         tasksFactory.getTaskAssertPopulated(pendingTask.tag)
+
+        tasksManager.getRandomTaskForTag(pendingTask.tag)?.let { similarPendingTask ->
+            if (similarPendingTask.groupId == null && pendingTask.groupId != null ||
+                    similarPendingTask.groupId != null && pendingTask.groupId == null) {
+                throw IllegalArgumentException("All subclasses of a PendingTask must either **all** have a groupId or **none** of them have a groupId.")
+            }
+        }
 
         tasksManager.getExistingTask(pendingTask)?.let { existingPersistedPendingTask ->
             if (doesErrorExist(existingPersistedPendingTask.id) && resolveErrorIfTaskExists) {

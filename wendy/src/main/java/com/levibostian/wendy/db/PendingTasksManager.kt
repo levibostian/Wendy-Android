@@ -1,6 +1,7 @@
 package com.levibostian.wendy.db
 
 import android.content.Context
+import com.levibostian.wendy.extension.getPendingTask
 import com.levibostian.wendy.extension.getTaskAssertPopulated
 import com.levibostian.wendy.service.PendingTask
 import com.levibostian.wendy.service.Wendy
@@ -64,6 +65,15 @@ internal class PendingTasksManager(context: Context) {
         }
     }
 
+    @Synchronized
+    internal fun getRandomTaskForTag(tag: String): PendingTask? {
+        return db.use {
+            select(PersistedPendingTask.TABLE_NAME)
+                    .whereArgs("(${PersistedPendingTask.COLUMN_TAG} = $tag)")
+                    .exec { parseList(classParser<PersistedPendingTask>()).firstOrNull()?.getPendingTask() }
+        }
+    }
+
     /**
      * Note: It's assumed that you have checked if the PendingTaskError.taskId exists.
      */
@@ -105,13 +115,10 @@ internal class PendingTasksManager(context: Context) {
     }
 
     internal fun getAllTasks(): List<PendingTask> {
-        val tasksFactory = Wendy.sharedInstance().tasksFactory
         return db.use {
             select(PersistedPendingTask.TABLE_NAME)
                     .exec {
-                        parseList(classParser<PersistedPendingTask>()).map {
-                            tasksFactory.getTaskAssertPopulated(it.tag).fromSqlObject(it)
-                        }
+                        parseList(classParser<PersistedPendingTask>()).map { it.getPendingTask() }
                     }
         }
     }
@@ -138,22 +145,15 @@ internal class PendingTasksManager(context: Context) {
 
     @Synchronized
     internal fun getPendingTaskTaskById(taskId: Long): PendingTask? {
-        val tasksFactory = Wendy.sharedInstance().tasksFactory
         return db.use {
             select(PersistedPendingTask.TABLE_NAME)
                     .whereArgs("${PersistedPendingTask.COLUMN_ID} = $taskId")
-                    .exec {
-                        val task = parseOpt(classParser<PersistedPendingTask>())
-                        if (task == null) null else tasksFactory.getTaskAssertPopulated(task.tag).fromSqlObject(task)
-                    }
+                    .exec { parseOpt(classParser<PersistedPendingTask>())?.getPendingTask() }
         }
     }
 
     @Synchronized
     internal fun getNextTaskToRun(afterTaskId: Long = 0, filter: PendingTasksRunner.RunAllTasksFilter? = null): PendingTask? {
-        val tasksFactory = Wendy.sharedInstance().tasksFactory
-
-        var nextTask: PersistedPendingTask?
         return db.use {
             var whereArgs = "(${PersistedPendingTask.COLUMN_ID} > $afterTaskId) AND (${PersistedPendingTask.COLUMN_MANUALLY_RUN} = ${PersistedPendingTask.NOT_MANUALLY_RUN})"
 
@@ -161,11 +161,9 @@ internal class PendingTasksManager(context: Context) {
                 whereArgs += " AND (${PersistedPendingTask.COLUMN_GROUP_ID} = $filterByGroupId)"
             }
 
-            nextTask = select(PersistedPendingTask.TABLE_NAME)
+            select(PersistedPendingTask.TABLE_NAME)
                     .whereArgs(whereArgs)
-                    .exec { parseList(classParser<PersistedPendingTask>()).firstOrNull() }
-
-            if (nextTask == null) null else tasksFactory.getTaskAssertPopulated(nextTask!!.tag).fromSqlObject(nextTask!!)
+                    .exec { parseList(classParser<PersistedPendingTask>()).firstOrNull()?.getPendingTask() }
         }
     }
 

@@ -6,6 +6,23 @@ You know the `data_id` property in `PendingTask`? That `data_id` property is mea
 
 Because you are supposed to query for the data of a job right before a job is run, there is no need to update a `PendingTask`. If the user edits data represented by a certain `data_id` `PendingData`, the freshest data will be the data that gets synced.
 
+# PendingTask subclasses each having 1 specific use case
+
+Each subclass of PendingTask that you create in your app should represent 1 task a user can perform in the app.
+
+Example: You are building a grocery list app. Users of your app can complete the following tasks:
+
+* Add grocery store list items.
+* Edit the name of the already added grocery store list items.
+* Delete grocery store list items.
+* Update the profile picture of their account they created.
+
+Because there are 4 separate, small tasks that users can do in your app, your app code needs to have 4 separate subclasses of PendingTask. One for each task. Sure, you might think you can and/or should combine the top 3 tasks into a PendingTask subclass called `GroceryStoreListItemPendingTask` and have all of the various abilities combined into 1 and have 1 subclass `ProfilePendingTask` for the last task of updating the profile picture. This is not the way Wendy is intended to work.
+
+Wendy requires each subclass of `PendingTask` is designed to perform 1 task. There are checks in Wendy that will throw exceptions on you if you do not follow this rule. If you do, you should not have an issue. Here is a list of those checks Wendy performs:
+
+* Every instance of a `PendingTask` subclass must **all** have a `groupId` or **all** must *not* have a `groupId`.
+
 # How do I delete a PendingTask that I added to Wendy?
 
 You don't delete `PendingTask`s. That is on purpose.
