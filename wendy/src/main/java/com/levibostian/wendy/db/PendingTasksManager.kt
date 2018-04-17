@@ -6,6 +6,7 @@ import com.levibostian.wendy.extension.getTaskAssertPopulated
 import com.levibostian.wendy.service.PendingTask
 import com.levibostian.wendy.service.Wendy
 import com.levibostian.wendy.service.PendingTasksRunner
+import com.levibostian.wendy.types.RunAllTasksFilter
 import com.levibostian.wendy.util.LogUtil
 import org.jetbrains.anko.db.*
 import java.util.*
@@ -153,7 +154,7 @@ internal class PendingTasksManager(context: Context) {
     }
 
     @Synchronized
-    internal fun getNextTaskToRun(afterTaskId: Long = 0, filter: PendingTasksRunner.RunAllTasksFilter? = null): PendingTask? {
+    internal fun getNextTaskToRun(afterTaskId: Long = 0, filter: RunAllTasksFilter? = null): PendingTask? {
         return db.use {
             var whereArgs = "(${PersistedPendingTask.COLUMN_ID} > $afterTaskId) AND (${PersistedPendingTask.COLUMN_MANUALLY_RUN} = ${PersistedPendingTask.NOT_MANUALLY_RUN})"
 
@@ -168,7 +169,7 @@ internal class PendingTasksManager(context: Context) {
     }
 
     @Synchronized
-    internal fun getTotalNumberOfTasksForRunnerToRun(filter: PendingTasksRunner.RunAllTasksFilter? = null): Int {
+    internal fun getTotalNumberOfTasksForRunnerToRun(filter: RunAllTasksFilter? = null): Int {
         return db.use {
             var whereArgs = "(${PersistedPendingTask.COLUMN_MANUALLY_RUN} = ${PersistedPendingTask.NOT_MANUALLY_RUN})"
 

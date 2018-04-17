@@ -18,7 +18,7 @@ internal class PendingTasksJob : Job() {
     private fun runTheJob() {
         if (WendyConfig.automaticallyRunTasks) {
             LogUtil.d("Wendy configured to automatically run tasks. Running the periodically scheduled job.")
-            Wendy.sharedInstance().runTasks()
+            Wendy.sharedInstance().runTasks(null)
         } else LogUtil.d("Wendy configured to *not* automatically run tasks. Skipping execution of periodically scheduled job.")
     }
 

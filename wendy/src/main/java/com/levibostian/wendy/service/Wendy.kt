@@ -16,6 +16,7 @@ import com.levibostian.wendy.logErrorRecorded
 import com.levibostian.wendy.logErrorResolved
 import com.levibostian.wendy.logNewTaskAdded
 import com.levibostian.wendy.types.PendingTaskResult
+import com.levibostian.wendy.types.RunAllTasksFilter
 import com.levibostian.wendy.util.LogUtil
 
 /**
@@ -151,8 +152,8 @@ class Wendy private constructor(context: Context, internal val tasksFactory: Pen
      * @param groupId Limit running of the tasks to only tasks of this specific group id.
      * @throws [RuntimeException] when in [WendyConfig.strict] mode and you say that your [PendingTask] was [PendingTaskResult.SUCCESSFUL] when you have an unresolved error recorded for that [PendingTask].
      */
-    fun runTasks(groupId: String? = null) {
-        PendingTasksRunner.PendingTasksRunnerAllTasksAsyncTask(runner, tasksManager).execute(PendingTasksRunner.RunAllTasksFilter(groupId))
+    fun runTasks(filter: RunAllTasksFilter?) {
+        PendingTasksRunner.PendingTasksRunnerAllTasksAsyncTask(runner, tasksManager).execute(filter)
     }
 
     /**
@@ -280,7 +281,7 @@ class Wendy private constructor(context: Context, internal val tasksFactory: Pen
             LogUtil.d("Task: $pendingTask successfully resolved previously recorded error.")
 
             val groupId: String? = pendingTask.groupId
-            if (groupId != null) runTasks(groupId)
+            if (groupId != null) runTasks(RunAllTasksFilter(groupId))
             else runTaskIfAbleTo(pendingTask)
 
             return true

@@ -9,6 +9,7 @@ import android.support.annotation.WorkerThread
 import com.levibostian.wendy.*
 import com.levibostian.wendy.db.PendingTasksManager
 import com.levibostian.wendy.types.PendingTaskResult
+import com.levibostian.wendy.types.RunAllTasksFilter
 
 internal class PendingTasksRunner(val context: Context,
                                   private val pendingTasksManager: PendingTasksManager) {
@@ -154,8 +155,6 @@ internal class PendingTasksRunner(val context: Context,
         }
 
     }
-
-    internal class RunAllTasksFilter(val groupId: String?)
 
     /**
      * Internal purposes job runner result.
