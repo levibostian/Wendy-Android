@@ -20,7 +20,7 @@ internal class PendingTasksRunner(val context: Context,
 
     @Synchronized
     @WorkerThread
-    fun runAllTasks(filter: RunAllTasksFilter? = null) {
+    fun runAllTasks(filter: RunAllTasksFilter?) {
         LogUtil.d("Getting next task to run.")
         val nextTaskToRun = pendingTasksManager.getNextTaskToRun(lastSuccessfulOrFailedTaskId, filter)
 
@@ -36,7 +36,7 @@ internal class PendingTasksRunner(val context: Context,
         if (nextTaskToRun.groupId != null && failedTasksGroups.contains(nextTaskToRun.groupId!!)) {
             WendyConfig.logTaskSkipped(nextTaskToRun, ReasonPendingTaskSkipped.PART_OF_FAILED_GROUP)
             LogUtil.d("Task: $nextTaskToRun belongs to a failing group of tasks. Skipping it.")
-            runAllTasks()
+            runAllTasks(filter)
             return
         }
 
@@ -44,22 +44,22 @@ internal class PendingTasksRunner(val context: Context,
         jobRunResult.accept(object : PendingTasksRunnerJobRunResult.Visitor<Unit?> {
             override fun visitSkippedUnresolvedRecordedError(): Unit? {
                 nextTaskToRun.groupId?.let { failedTasksGroups.add(it) }
-                return runAllTasks()
+                return runAllTasks(filter)
             }
             override fun visitSuccessful(): Unit? {
-                return runAllTasks()
+                return runAllTasks(filter)
             }
             override fun visitNotSuccessful(): Unit? {
                 nextTaskToRun.groupId?.let { failedTasksGroups.add(it) }
-                return runAllTasks()
+                return runAllTasks(filter)
             }
             override fun visitTaskDoesntExist(): Unit? {
                 // Ignore this. If it doesn't exist, it doesn't exist.
-                return runAllTasks()
+                return runAllTasks(filter)
             }
             override fun visitSkippedNotReady(): Unit? {
                 nextTaskToRun.groupId?.let { failedTasksGroups.add(it) }
-                return runAllTasks()
+                return runAllTasks(filter)
             }
         })
     }
