@@ -18,8 +18,8 @@ internal class PersistedPendingTask(var id: Long, // SQL primary key auto increm
 
     companion object {
         internal const val TABLE_NAME = "PendingTask"
-        internal const val COLUMN_ID = "id" // Primary key of SQL. Maps to PendingTask's taskId property.
-        internal const val COLUMN_CREATED_AT = "created_at"
+        internal const val COLUMN_ID = "id" // Primary key of SQL. Maps to PendingTask's taskId property. Simply used as an identifier. Is not used for sort order of when PendingTasks are run by the task runner.
+        internal const val COLUMN_CREATED_AT = "created_at" // Used to determine the sort order of when PendingTasks are run by the task runner.
         internal const val COLUMN_MANUALLY_RUN = "manually_run" // 0 == false, 1 == true
         internal const val COLUMN_GROUP_ID = "group_id"
         internal const val COLUMN_DATA_ID = "data_id"

@@ -18,11 +18,12 @@ import com.levibostian.wendy.logNewTaskAdded
 import com.levibostian.wendy.types.PendingTaskResult
 import com.levibostian.wendy.types.RunAllTasksFilter
 import com.levibostian.wendy.util.LogUtil
+import com.levibostian.wendy.util.PendingTasksUtil
 
 /**
  * How you interact with Wendy with [PendingTask] instances you create. Add tasks to Wendy to run, get a list of all the [PendingTask]s registered to Wendy, etc.
  */
-class Wendy private constructor(context: Context, internal val tasksFactory: PendingTasksFactory) {
+class Wendy private constructor(private val context: Context, internal val tasksFactory: PendingTasksFactory) {
 
     companion object {
         private var instance: Wendy? = null
@@ -108,9 +109,14 @@ class Wendy private constructor(context: Context, internal val tasksFactory: Pen
         tasksManager.getExistingTask(pendingTask)?.let { existingPersistedPendingTask ->
             if (doesErrorExist(existingPersistedPendingTask.id) && resolveErrorIfTaskExists) {
                 resolveError(existingPersistedPendingTask.id)
+                return existingPersistedPendingTask.id
             }
-
-            return existingPersistedPendingTask.id
+            runner.currentlyRunningTask?.let { currentlyRunningTask ->
+                if (currentlyRunningTask.equals(existingPersistedPendingTask)) {
+                    PendingTasksUtil.setRerunCurrentlyRunningPendingTask(context, true)
+                    return existingPersistedPendingTask.id
+                }
+            }
         }
 
         val addedTask = tasksManager.insertPendingTask(pendingTask)

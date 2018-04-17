@@ -1,5 +1,6 @@
 package com.levibostian.wendy.db
 
+import android.content.ContentValues
 import android.content.Context
 import com.levibostian.wendy.extension.getPendingTask
 import com.levibostian.wendy.extension.getTaskAssertPopulated
@@ -30,7 +31,7 @@ internal class PendingTasksManager(context: Context) {
         val persistedPendingTask = PersistedPendingTask.fromPendingTask(pendingTaskToAdd)
 
         return db.use {
-            persistedPendingTask.createdAt = Date().time
+            persistedPendingTask.createdAt = Date().time // Very important. This determines the sort order of when tasks run by the task runner. createdAt needs to be set by Wendy internally and only modified by Wendy under certain circumstances.
 
             val id = insert(PersistedPendingTask.TABLE_NAME,
                     PersistedPendingTask.COLUMN_CREATED_AT to persistedPendingTask.createdAt,
@@ -59,10 +60,23 @@ internal class PendingTasksManager(context: Context) {
         return db.use {
             select(PersistedPendingTask.TABLE_NAME)
                     .whereArgs("(${PersistedPendingTask.COLUMN_GROUP_ID} = ${pendingTask.groupId})")
+                    .orderBy(PersistedPendingTask.COLUMN_CREATED_AT, SqlOrderDirection.ASC)
                     .exec {
                         val tasksInGroup: List<PersistedPendingTask> = parseList(classParser<PersistedPendingTask>())
                         tasksInGroup[0].id == taskId
                     }
+        }
+    }
+
+    /**
+     * Note: It's assumed that you have checked if taskId exists.
+     */
+    @Synchronized
+    internal fun sendPendingTaskToEndOfTheLine(taskId: Long) {
+        db.use {
+            update(PersistedPendingTask.TABLE_NAME, PersistedPendingTask.COLUMN_CREATED_AT to Date())
+                    .whereArgs("(${PersistedPendingTask.COLUMN_ID} = $taskId)")
+                    .exec()
         }
     }
 
@@ -118,6 +132,7 @@ internal class PendingTasksManager(context: Context) {
     internal fun getAllTasks(): List<PendingTask> {
         return db.use {
             select(PersistedPendingTask.TABLE_NAME)
+                    .orderBy(PersistedPendingTask.COLUMN_CREATED_AT, SqlOrderDirection.ASC)
                     .exec {
                         parseList(classParser<PersistedPendingTask>()).map { it.getPendingTask() }
                     }
@@ -137,6 +152,7 @@ internal class PendingTasksManager(context: Context) {
     internal fun getAllErrors(): List<PendingTaskError> {
         return db.use {
             select(PendingTaskError.TABLE_NAME)
+                    .orderBy(PendingTaskError.COLUMN_CREATED_AT, SqlOrderDirection.ASC)
                     .exec { parseList(classParser<PendingTaskError>()).map {
                         it.pendingTask = getPendingTaskTaskById(it.taskId)!!
                         it
@@ -164,6 +180,7 @@ internal class PendingTasksManager(context: Context) {
 
             select(PersistedPendingTask.TABLE_NAME)
                     .whereArgs(whereArgs)
+                    .orderBy(PersistedPendingTask.COLUMN_CREATED_AT, SqlOrderDirection.ASC)
                     .exec { parseList(classParser<PersistedPendingTask>()).firstOrNull()?.getPendingTask() }
         }
     }

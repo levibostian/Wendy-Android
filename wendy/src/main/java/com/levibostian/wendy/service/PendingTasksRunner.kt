@@ -10,6 +10,7 @@ import com.levibostian.wendy.*
 import com.levibostian.wendy.db.PendingTasksManager
 import com.levibostian.wendy.types.PendingTaskResult
 import com.levibostian.wendy.types.RunAllTasksFilter
+import com.levibostian.wendy.util.PendingTasksUtil
 
 internal class PendingTasksRunner(val context: Context,
                                   private val pendingTasksManager: PendingTasksManager) {
@@ -85,6 +86,7 @@ internal class PendingTasksRunner(val context: Context,
             return PendingTasksRunnerJobRunResult.SKIPPED_UNRESOLVED_RECORDED_ERROR
         }
 
+        PendingTasksUtil.resetRerunCurrentlyRunningPendingTask(context)
         currentlyRunningTask = taskToRun
 
         WendyConfig.logTaskRunning(taskToRun)
@@ -100,8 +102,16 @@ internal class PendingTasksRunner(val context: Context,
                     if (WendyConfig.strict) throw RuntimeException(errorMessage) else LogUtil.w(errorMessage)
                 }
 
-                LogUtil.d("Task: $taskToRun ran successful. Deleting it.")
-                pendingTasksManager.deleteTask(persistedPendingTaskId)
+                LogUtil.d("Task: $taskToRun ran successful.")
+                if (PendingTasksUtil.getRerunCurrentlyRunningPendingTask(context)) {
+                    LogUtil.d("Task: $taskToRun is set to re-run. Not deleting it.")
+                    pendingTasksManager.sendPendingTaskToEndOfTheLine(persistedPendingTaskId)
+                } else {
+                    LogUtil.d("Deleting task: $taskToRun.")
+                    pendingTasksManager.deleteTask(persistedPendingTaskId)
+                }
+                PendingTasksUtil.resetRerunCurrentlyRunningPendingTask(context)
+
                 runJobResult = PendingTasksRunnerJobRunResult.SUCCESSFUL
                 WendyConfig.logTaskComplete(taskToRun, true)
             }
