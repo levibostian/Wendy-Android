@@ -85,7 +85,7 @@ class WendyConfig {
 
             taskStatusListeners.add(TaskStatusListener(taskId, WeakReference(listener)))
 
-            if (tasksRunner.currentlyRunningTask?.taskId?.equals(taskId) == true) listener.running(taskId)
+            if (tasksRunner.currentlyRunningTask?.id?.equals(taskId) == true) listener.running(taskId)
         }
     }
 

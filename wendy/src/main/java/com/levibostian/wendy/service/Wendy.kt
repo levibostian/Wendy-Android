@@ -7,6 +7,7 @@ import com.levibostian.wendy.WendyConfig
 import com.levibostian.wendy.db.PendingTaskError
 import com.levibostian.wendy.db.PendingTasksManager
 import com.levibostian.wendy.db.PersistedPendingTask
+import com.levibostian.wendy.extension.getPendingTask
 import com.levibostian.wendy.extension.getTaskAssertPopulated
 import com.levibostian.wendy.job.PendingTaskJobCreator
 import com.levibostian.wendy.job.PendingTasksJob
@@ -100,23 +101,24 @@ class Wendy private constructor(private val context: Context, internal val tasks
         tasksFactory.getTaskAssertPopulated(pendingTask.tag)
 
         tasksManager.getRandomTaskForTag(pendingTask.tag)?.let { similarPendingTask ->
-            if (similarPendingTask.groupId == null && pendingTask.groupId != null ||
-                    similarPendingTask.groupId != null && pendingTask.groupId == null) {
-                throw IllegalArgumentException("All subclasses of a PendingTask must either **all** have a groupId or **none** of them have a groupId.")
+            if (similarPendingTask.groupId == null && pendingTask.groupId != null) {
+                throw IllegalArgumentException("Cannot add task: $pendingTask. All subclasses of a PendingTask must either **all** have a groupId or **none** of them have a groupId. Other ${pendingTask.tag}'s you have previously added does not have a groupId. The task you are trying to add does have a groupId.")
+            }
+            if (similarPendingTask.groupId != null && pendingTask.groupId == null) {
+                throw IllegalArgumentException("Cannot add task: $pendingTask. All subclasses of a PendingTask must either **all** have a groupId or **none** of them have a groupId. Other ${pendingTask.tag}'s you have previously added does have a groupId. The task you are trying to add does not have a groupId.")
             }
         }
 
         tasksManager.getExistingTask(pendingTask)?.let { existingPersistedPendingTask ->
             if (doesErrorExist(existingPersistedPendingTask.id) && resolveErrorIfTaskExists) {
                 resolveError(existingPersistedPendingTask.id)
-                return existingPersistedPendingTask.id
             }
             runner.currentlyRunningTask?.let { currentlyRunningTask ->
-                if (currentlyRunningTask.equals(existingPersistedPendingTask)) {
+                if (currentlyRunningTask == existingPersistedPendingTask) {
                     PendingTasksUtil.setRerunCurrentlyRunningPendingTask(context, true)
-                    return existingPersistedPendingTask.id
                 }
             }
+            return existingPersistedPendingTask.id
         }
 
         val addedTask = tasksManager.insertPendingTask(pendingTask)
@@ -139,7 +141,7 @@ class Wendy private constructor(private val context: Context, internal val tasks
             LogUtil.d("Task is set to manually run. Skipping execution of newly added task: $pendingTask")
             return false
         }
-        if (isTaskAbleToManuallyRun(pendingTask.taskId!!)) {
+        if (!isTaskAbleToManuallyRun(pendingTask.taskId!!)) {
             LogUtil.d("Task is not able to manually run. Skipping execution of newly added task: $pendingTask")
             return false
         }

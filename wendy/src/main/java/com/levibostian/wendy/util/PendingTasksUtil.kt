@@ -8,7 +8,7 @@ internal object PendingTasksUtil {
     private const val PREFIX = "WENDY_PREFS_"
     private const val RERUN_CURRENTLY_RUNNING_PENDING_TASK_KEY = "${PREFIX}RERUN_CURRENTLY_RUNNING_PENDING_TASK_KEY"
 
-    internal fun getRerunCurrentlyRunningPendingTask(context: Context): Boolean {
+    internal fun rerunCurrentlyRunningPendingTask(context: Context): Boolean {
         return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(RERUN_CURRENTLY_RUNNING_PENDING_TASK_KEY, false)
     }
 

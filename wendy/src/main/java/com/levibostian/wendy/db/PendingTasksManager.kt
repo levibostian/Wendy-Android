@@ -59,10 +59,10 @@ internal class PendingTasksManager(context: Context) {
 
         return db.use {
             select(PersistedPendingTask.TABLE_NAME)
-                    .whereArgs("(${PersistedPendingTask.COLUMN_GROUP_ID} = ${pendingTask.groupId})")
+                    .whereArgs("(${PersistedPendingTask.COLUMN_GROUP_ID} = '${pendingTask.groupId}')")
                     .orderBy(PersistedPendingTask.COLUMN_CREATED_AT, SqlOrderDirection.ASC)
                     .exec {
-                        val tasksInGroup: List<PersistedPendingTask> = parseList(classParser<PersistedPendingTask>())
+                        val tasksInGroup: List<PersistedPendingTask> = parseList(classParser())
                         tasksInGroup[0].id == taskId
                     }
         }
@@ -74,7 +74,7 @@ internal class PendingTasksManager(context: Context) {
     @Synchronized
     internal fun sendPendingTaskToEndOfTheLine(taskId: Long) {
         db.use {
-            update(PersistedPendingTask.TABLE_NAME, PersistedPendingTask.COLUMN_CREATED_AT to Date())
+            update(PersistedPendingTask.TABLE_NAME, PersistedPendingTask.COLUMN_CREATED_AT to Date().time)
                     .whereArgs("(${PersistedPendingTask.COLUMN_ID} = $taskId)")
                     .exec()
         }
@@ -84,7 +84,7 @@ internal class PendingTasksManager(context: Context) {
     internal fun getRandomTaskForTag(tag: String): PendingTask? {
         return db.use {
             select(PersistedPendingTask.TABLE_NAME)
-                    .whereArgs("(${PersistedPendingTask.COLUMN_TAG} = $tag)")
+                    .whereArgs("(${PersistedPendingTask.COLUMN_TAG} = '$tag')")
                     .exec { parseList(classParser<PersistedPendingTask>()).firstOrNull()?.getPendingTask() }
         }
     }
@@ -114,7 +114,7 @@ internal class PendingTasksManager(context: Context) {
     internal fun getLatestError(pendingTaskId: Long): PendingTaskError? {
         return db.use {
             select(PendingTaskError.TABLE_NAME)
-                    .whereArgs("${PendingTaskError.COLUMN_TASK_ID} = '$pendingTaskId'")
+                    .whereArgs("${PendingTaskError.COLUMN_TASK_ID} = $pendingTaskId")
                     .exec { parseOpt(classParser()) }
         }
     }
@@ -175,7 +175,7 @@ internal class PendingTasksManager(context: Context) {
             var whereArgs = "(${PersistedPendingTask.COLUMN_ID} > $afterTaskId) AND (${PersistedPendingTask.COLUMN_MANUALLY_RUN} = ${PersistedPendingTask.NOT_MANUALLY_RUN})"
 
             filter?.groupId?.let { filterByGroupId ->
-                whereArgs += " AND (${PersistedPendingTask.COLUMN_GROUP_ID} = $filterByGroupId)"
+                whereArgs += " AND (${PersistedPendingTask.COLUMN_GROUP_ID} = '$filterByGroupId')"
             }
 
             select(PersistedPendingTask.TABLE_NAME)
@@ -191,7 +191,7 @@ internal class PendingTasksManager(context: Context) {
             var whereArgs = "(${PersistedPendingTask.COLUMN_MANUALLY_RUN} = ${PersistedPendingTask.NOT_MANUALLY_RUN})"
 
             filter?.groupId?.let { filterByGroupId ->
-                whereArgs += " AND (${PersistedPendingTask.COLUMN_GROUP_ID} = $filterByGroupId)"
+                whereArgs += " AND (${PersistedPendingTask.COLUMN_GROUP_ID} = '$filterByGroupId')"
             }
 
             select(PersistedPendingTask.TABLE_NAME)
