@@ -27,9 +27,8 @@ interface PendingTaskStatusListener {
      *
      * @param taskId The taskId of the [PendingTask] that just ran.
      * @param successful Indicates if the running of the [PendingTask] was successful or not.
-     * @param rescheduled If the task failed but should run again, the task is rescheduled to run again in the future.
      */
-    @UiThread fun complete(taskId: Long, successful: Boolean, rescheduled: Boolean)
+    @UiThread fun complete(taskId: Long, successful: Boolean)
 
     /**
      * There was an error recorded to Wendy for this [PendingTask].

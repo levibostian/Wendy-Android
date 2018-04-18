@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity(), TaskRunnerListener {
         WendyConfig.automaticallyRunTasks = activity_main_automatically_run_tasks_checkbox.isChecked
 
         activity_main_run_all_tasks_button.setOnClickListener {
-            Wendy.sharedInstance().runTasks()
+            Wendy.sharedInstance().runTasks(null)
         }
 
         activity_main_tasks_recyclerview.layoutManager = LinearLayoutManager(this)
@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity(), TaskRunnerListener {
     }
     override fun taskSkipped(reason: ReasonPendingTaskSkipped, task: PendingTask) {
     }
-    override fun taskComplete(success: Boolean, task: PendingTask, rescheduled: Boolean) {
+    override fun taskComplete(success: Boolean, task: PendingTask) {
         Handler().postDelayed({
             refreshListOfTasks()
         }, 1000)

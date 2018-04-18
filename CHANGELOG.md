@@ -1,3 +1,15 @@
+## [0.1.2-alpha] - 2018-04-18
+### Added
+- Enforce a new best practice: All subclasses of a PendingTask must all have a groupId or none of them have a groupId.
+
+### Fixed
+- While a PendingTask is running by the task runner, if a duplicate of that PendingTask gets added to Wendy, do not delete the PendingTask if it runs successfully.
+- I forgot to include all of the parameters in the recursion calls to the task runner's runAllTasks() function call. That's fixed. 
+
+### Changed
+- **Breaking Change** Removed the `rescheduled` parameter in the Wendy listeners when a task is complete. It is always rescheduled if it fails so no need for the paramter.
+- **Breaking Change** `Wendy.runAllTasks()` now takes an object for filtering instead of a string for `groupId`. 
+
 ## [0.1.1-alpha] - 2018-04-13
 ### Added 
 - Add `strict` mode to help developer during development of Wendy.

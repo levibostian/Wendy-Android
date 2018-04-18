@@ -85,7 +85,7 @@ class WendyConfig {
 
             taskStatusListeners.add(TaskStatusListener(taskId, WeakReference(listener)))
 
-            if (tasksRunner.currentlyRunningTask?.taskId?.equals(taskId) == true) listener.running(taskId)
+            if (tasksRunner.currentlyRunningTask?.id?.equals(taskId) == true) listener.running(taskId)
         }
     }
 
@@ -115,13 +115,13 @@ internal fun WendyConfig.Companion.logTaskRunning(task: PendingTask) {
     })
 }
 
-internal fun WendyConfig.Companion.logTaskComplete(task: PendingTask, successful: Boolean, rescheduled: Boolean) {
+internal fun WendyConfig.Companion.logTaskComplete(task: PendingTask, successful: Boolean) {
     Handler(Looper.getMainLooper()).post({
         WendyConfig.getTaskStatusListenerForTask(task.taskId ?: 0).forEach {
-            it.complete(task.taskId!!, successful, rescheduled)
+            it.complete(task.taskId!!, successful)
         }
         WendyConfig.getTaskRunnerListeners().forEach {
-            it.taskComplete(successful, task, rescheduled)
+            it.taskComplete(successful, task)
         }
     })
 }

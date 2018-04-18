@@ -18,8 +18,8 @@ internal class PersistedPendingTask(var id: Long, // SQL primary key auto increm
 
     companion object {
         internal const val TABLE_NAME = "PendingTask"
-        internal const val COLUMN_ID = "id" // Primary key of SQL. Maps to PendingTask's taskId property.
-        internal const val COLUMN_CREATED_AT = "created_at"
+        internal const val COLUMN_ID = "id" // Primary key of SQL. Maps to PendingTask's taskId property. Simply used as an identifier. Is not used for sort order of when PendingTasks are run by the task runner.
+        internal const val COLUMN_CREATED_AT = "created_at" // Used to determine the sort order of when PendingTasks are run by the task runner.
         internal const val COLUMN_MANUALLY_RUN = "manually_run" // 0 == false, 1 == true
         internal const val COLUMN_GROUP_ID = "group_id"
         internal const val COLUMN_DATA_ID = "data_id"
@@ -46,6 +46,29 @@ internal class PersistedPendingTask(var id: Long, // SQL primary key auto increm
 
     internal fun getManuallyRun(): Int {
         return if (manuallyRun) MANUALLY_RUN else NOT_MANUALLY_RUN
+    }
+
+    /**
+     * Run comparisons between two instances of [PersistedPendingTask].
+     */
+    override fun equals(other: Any?): Boolean {
+        if (other !is PersistedPendingTask) return false
+
+        // If the tasks have the same task id, we can assume they are the same already.
+        if (other.id == this.id) return true
+
+        // If they have the same dataId and tag, then they are the same in SQL unique terms.
+        return other.dataId == this.dataId &&
+                other.tag == this.tag
+    }
+
+    /**
+     * Your typical Java hashCode() function to match [equals].
+     */
+    override fun hashCode(): Int {
+        var result = dataId?.hashCode() ?: 0
+        result = 31 * result + tag.hashCode()
+        return result
     }
 
     override fun toString(): String {

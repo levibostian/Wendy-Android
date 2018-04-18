@@ -20,5 +20,7 @@
 <h3>Exceptions</h3>
 <p><a name="RuntimeException"></a>
 <code>RuntimeException</code> - Wendy will check to make sure that you have remembered to add your argument's <a href="../-pending-task/index.html">PendingTask</a> subclass to your instance of <a href="../-pending-tasks-factory/index.html">PendingTasksFactory</a> when you call this method. If your <a href="../-pending-tasks-factory/index.html">PendingTasksFactory</a> returns null (which probably means that you forgot to include a <a href="../-pending-task/index.html">PendingTask</a>) then an <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-runtime-exception/index.html">RuntimeException</a> will be thrown.</p>
+<p><a name="IllegalArgumentException"></a>
+<code>IllegalArgumentException</code> - If your <a href="../-pending-task/index.html">PendingTask</a> subclass does not follow the enforced best practice of: All subclasses of a <a href="../-pending-task/index.html">PendingTask</a> must <strong>all</strong> have a groupId or <strong>none</strong> of them have a groupId.</p>
 </BODY>
 </HTML>

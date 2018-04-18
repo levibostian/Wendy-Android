@@ -1,7 +1,11 @@
 if github.branch_for_base == "master"
-  if !git.modified_files.include? "config/*"
+  if !git.modified_files.include? "docs/*"
     warn 'Did you remember to generate documentation via dokku? (Hint: `./gradlew dokka`)'
   end
+  if !git.modified_files.include? "CHANGELOG.md"
+    fail 'You need to edit the CHANGELOG.md file.'
+  end
+  android_version_change.assert_version_name_changed("wendy/build.gradle")
 end
 
 if git.modified_files.include? "build.gradle" or git.modified_files.include? "wendy/build.gradle"

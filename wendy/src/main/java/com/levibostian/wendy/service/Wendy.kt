@@ -7,6 +7,7 @@ import com.levibostian.wendy.WendyConfig
 import com.levibostian.wendy.db.PendingTaskError
 import com.levibostian.wendy.db.PendingTasksManager
 import com.levibostian.wendy.db.PersistedPendingTask
+import com.levibostian.wendy.extension.getPendingTask
 import com.levibostian.wendy.extension.getTaskAssertPopulated
 import com.levibostian.wendy.job.PendingTaskJobCreator
 import com.levibostian.wendy.job.PendingTasksJob
@@ -16,12 +17,14 @@ import com.levibostian.wendy.logErrorRecorded
 import com.levibostian.wendy.logErrorResolved
 import com.levibostian.wendy.logNewTaskAdded
 import com.levibostian.wendy.types.PendingTaskResult
+import com.levibostian.wendy.types.RunAllTasksFilter
 import com.levibostian.wendy.util.LogUtil
+import com.levibostian.wendy.util.PendingTasksUtil
 
 /**
  * How you interact with Wendy with [PendingTask] instances you create. Add tasks to Wendy to run, get a list of all the [PendingTask]s registered to Wendy, etc.
  */
-class Wendy private constructor(context: Context, internal val tasksFactory: PendingTasksFactory) {
+class Wendy private constructor(private val context: Context, internal val tasksFactory: PendingTasksFactory) {
 
     companion object {
         private var instance: Wendy? = null
@@ -92,15 +95,29 @@ class Wendy private constructor(context: Context, internal val tasksFactory: Pen
      * @param pendingTask Task you want to add to Wendy.
      *
      * @throws RuntimeException Wendy will check to make sure that you have remembered to add your argument's [PendingTask] subclass to your instance of [PendingTasksFactory] when you call this method. If your [PendingTasksFactory] returns null (which probably means that you forgot to include a [PendingTask]) then an [RuntimeException] will be thrown.
+     * @throws IllegalArgumentException If your [PendingTask] subclass does not follow the enforced best practice of: All subclasses of a [PendingTask] must **all** have a groupId or **none** of them have a groupId.
      */
     fun addTask(pendingTask: PendingTask, resolveErrorIfTaskExists: Boolean = true): Long {
         tasksFactory.getTaskAssertPopulated(pendingTask.tag)
+
+        tasksManager.getRandomTaskForTag(pendingTask.tag)?.let { similarPendingTask ->
+            if (similarPendingTask.groupId == null && pendingTask.groupId != null) {
+                throw IllegalArgumentException("Cannot add task: $pendingTask. All subclasses of a PendingTask must either **all** have a groupId or **none** of them have a groupId. Other ${pendingTask.tag}'s you have previously added does not have a groupId. The task you are trying to add does have a groupId.")
+            }
+            if (similarPendingTask.groupId != null && pendingTask.groupId == null) {
+                throw IllegalArgumentException("Cannot add task: $pendingTask. All subclasses of a PendingTask must either **all** have a groupId or **none** of them have a groupId. Other ${pendingTask.tag}'s you have previously added does have a groupId. The task you are trying to add does not have a groupId.")
+            }
+        }
 
         tasksManager.getExistingTask(pendingTask)?.let { existingPersistedPendingTask ->
             if (doesErrorExist(existingPersistedPendingTask.id) && resolveErrorIfTaskExists) {
                 resolveError(existingPersistedPendingTask.id)
             }
-
+            runner.currentlyRunningTask?.let { currentlyRunningTask ->
+                if (currentlyRunningTask == existingPersistedPendingTask) {
+                    PendingTasksUtil.setRerunCurrentlyRunningPendingTask(context, true)
+                }
+            }
             return existingPersistedPendingTask.id
         }
 
@@ -124,7 +141,7 @@ class Wendy private constructor(context: Context, internal val tasksFactory: Pen
             LogUtil.d("Task is set to manually run. Skipping execution of newly added task: $pendingTask")
             return false
         }
-        if (isTaskAbleToManuallyRun(pendingTask.taskId!!)) {
+        if (!isTaskAbleToManuallyRun(pendingTask.taskId!!)) {
             LogUtil.d("Task is not able to manually run. Skipping execution of newly added task: $pendingTask")
             return false
         }
@@ -143,8 +160,8 @@ class Wendy private constructor(context: Context, internal val tasksFactory: Pen
      * @param groupId Limit running of the tasks to only tasks of this specific group id.
      * @throws [RuntimeException] when in [WendyConfig.strict] mode and you say that your [PendingTask] was [PendingTaskResult.SUCCESSFUL] when you have an unresolved error recorded for that [PendingTask].
      */
-    fun runTasks(groupId: String? = null) {
-        PendingTasksRunner.PendingTasksRunnerAllTasksAsyncTask(runner, tasksManager).execute(PendingTasksRunner.RunAllTasksFilter(groupId))
+    fun runTasks(filter: RunAllTasksFilter?) {
+        PendingTasksRunner.PendingTasksRunnerAllTasksAsyncTask(runner, tasksManager).execute(filter)
     }
 
     /**
@@ -272,7 +289,7 @@ class Wendy private constructor(context: Context, internal val tasksFactory: Pen
             LogUtil.d("Task: $pendingTask successfully resolved previously recorded error.")
 
             val groupId: String? = pendingTask.groupId
-            if (groupId != null) runTasks(groupId)
+            if (groupId != null) runTasks(RunAllTasksFilter(groupId))
             else runTaskIfAbleTo(pendingTask)
 
             return true

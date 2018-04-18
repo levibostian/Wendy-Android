@@ -44,7 +44,7 @@ class PendingStatusTextView : TextView, PendingTaskStatusListener {
         setTextColor(ContextCompat.getColor(mContext, android.R.color.holo_blue_dark))
     }
 
-    override fun complete(taskId: Long, successful: Boolean, rescheduled: Boolean) {
+    override fun complete(taskId: Long, successful: Boolean) {
         text = if (successful) "Success!" else "Failed!"
         setTextColor(ContextCompat.getColor(mContext, if (successful) android.R.color.holo_green_dark else android.R.color.holo_orange_dark))
     }
