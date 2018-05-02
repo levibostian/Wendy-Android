@@ -1,3 +1,11 @@
+## [0.1.3-alpha] - 2018-05-02
+### Fixed
+- When adding a TaskStatusListener for a PendingTask, check if there is an error for the PendingTask and call the listener if there is.
+- Improve logic for handling PendingTasks when one is added to Wendy but the task runner is already running a similar task.
+
+### Changed
+- When `Wendy.resolveError(taskId)` is called for a PendingTask that belongs to a group, Wendy will grab all of the *similar* PendingTasks of that group (same tag, dataId, groupId), iterate them all in order by createdAt property, then resolve the first error that Wendy comes upon. This is to help the developer not need to handle 2+ different PendingTask taskIds for groups. 
+
 ## [0.1.2-alpha] - 2018-04-18
 ### Added
 - Enforce a new best practice: All subclasses of a PendingTask must all have a groupId or none of them have a groupId.
