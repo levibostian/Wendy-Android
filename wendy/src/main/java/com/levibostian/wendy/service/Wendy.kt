@@ -100,6 +100,7 @@ class Wendy private constructor(private val context: Context, internal val tasks
     fun addTask(pendingTask: PendingTask, resolveErrorIfTaskExists: Boolean = true): Long {
         tasksFactory.getTaskAssertPopulated(pendingTask.tag)
 
+        // We enforce a best practice here.
         tasksManager.getRandomTaskForTag(pendingTask.tag)?.let { similarPendingTask ->
             if (similarPendingTask.groupId == null && pendingTask.groupId != null) {
                 throw IllegalArgumentException("Cannot add task: $pendingTask. All subclasses of a PendingTask must either **all** have a groupId or **none** of them have a groupId. Other ${pendingTask.tag}'s you have previously added does not have a groupId. The task you are trying to add does have a groupId.")
@@ -109,16 +110,35 @@ class Wendy private constructor(private val context: Context, internal val tasks
             }
         }
 
-        tasksManager.getExistingTask(pendingTask)?.let { existingPersistedPendingTask ->
-            if (doesErrorExist(existingPersistedPendingTask.id) && resolveErrorIfTaskExists) {
-                resolveError(existingPersistedPendingTask.id)
-            }
-            runner.currentlyRunningTask?.let { currentlyRunningTask ->
-                if (currentlyRunningTask == existingPersistedPendingTask) {
-                    PendingTasksUtil.setRerunCurrentlyRunningPendingTask(context, true)
+        tasksManager.getExistingTasks(pendingTask)?.let { existingPendingTasks ->
+            if (existingPendingTasks.isNotEmpty()) {
+                val sampleExistingPendingTask: PersistedPendingTask = existingPendingTasks.last()
+
+                runner.currentlyRunningTask?.let { currentlyRunningTask ->
+                    if (currentlyRunningTask == sampleExistingPendingTask) {
+                        PendingTasksUtil.setRerunCurrentlyRunningPendingTask(context)
+                        return sampleExistingPendingTask.id
+                    }
+                }
+                if (doesErrorExist(sampleExistingPendingTask.id) && resolveErrorIfTaskExists) {
+                    existingPendingTasks.forEach { existingPendingTask ->
+                        resolveError(existingPendingTask.id)
+                    }
+                    return sampleExistingPendingTask.id
+                }
+                // If a PendingTask belongs to a group, but is *not* the last item in the group, we want to insert it into the DB. Let is pass through below to add itself.
+                if (pendingTask.groupId != null) {
+                    val groupId = pendingTask.groupId!!
+
+                    tasksManager.getLastPendingTaskInGroup(groupId)?.let { lastPendingTaskInGroup ->
+                        if (lastPendingTaskInGroup.getPendingTask() == pendingTask) {
+                            return lastPendingTaskInGroup.id
+                        }
+                    }
+                } else {
+                    return sampleExistingPendingTask.id
                 }
             }
-            return existingPersistedPendingTask.id
         }
 
         val addedTask = tasksManager.insertPendingTask(pendingTask)
@@ -270,9 +290,11 @@ class Wendy private constructor(private val context: Context, internal val tasks
     /**
      * Mark a previously recorded error for a [PendingTask] as resolved.
      *
+     * *Note:* If your [PendingTask] belongs to a group, this function will iterate all of the [PendingTask]s of that group and resolve the first (and only the first one) error that it comes upon. This is because (1) groups allow having "duplicate" [PendingTask]s in them (2) it is assumed that if an error is resolved for one [PendingTask] in a group, the error is resolved for *all* [PendingTask]s in the group and, well, a group cannot execute if the *very first* [PendingTask] is blocking the group from executing. So with this feature, you technically only have to keep track of *1* [PendingTask.taskId] in your app when you call [Wendy.addTask] for a [PendingTask] that belongs to a group instead of having to keep track of multiple [PendingTask.taskId]s for every time you call [Wendy.addTask].
+     *
      * *Note:* If you attempt to resolve an error when an error does not exist in Wendy (because it has already been resolved or was never recorded) then the [TaskRunnerListener.errorResolved] and [PendingTaskStatusListener.errorResolved] will not be called.
      *
-     * *Note:* The task runner will attempt to run your task after it has been resolved immediately. If the task belongs to a group, the task runner will attempt to run all the tasks in the group.
+     * *Note:* If [WendyConfig.automaticallyRunTasks] is true, the task runner will attempt to run your task after it has been resolved immediately. If the task belongs to a group, the task runner will attempt to run all the tasks in the group.
      *
      * @param taskId The taskId of a [PendingTask] previously recorded an error for.
      * @return If [PendingTask] had a previously recorded error and it has been marked as resolved now.
@@ -284,16 +306,25 @@ class Wendy private constructor(private val context: Context, internal val tasks
     fun resolveError(taskId: Long): Boolean {
         val pendingTask: PendingTask = assertPendingTaskExists(taskId)
 
-        if (tasksManager.deletePendingTaskError(taskId)) { // Only log error as resolved if an error was even recorded in the first place.
-            WendyConfig.logErrorResolved(pendingTask)
-            LogUtil.d("Task: $pendingTask successfully resolved previously recorded error.")
+        tasksManager.getExistingTasks(pendingTask)?.let { existingPendingTasks ->
+            if (existingPendingTasks.isEmpty()) return false
 
-            val groupId: String? = pendingTask.groupId
-            if (groupId != null) runTasks(RunAllTasksFilter(groupId))
-            else runTaskIfAbleTo(pendingTask)
+            existingPendingTasks.forEach { existingPendingTask ->
+                val existingTaskPendingTask: PendingTask = existingPendingTask.getPendingTask()
 
-            return true
+                if (tasksManager.deletePendingTaskError(existingPendingTask.id)) { // Only log error as resolved if an error was even recorded in the first place.
+                    WendyConfig.logErrorResolved(existingTaskPendingTask)
+                    LogUtil.d("Task: $existingTaskPendingTask successfully resolved previously recorded error.")
+
+                    val groupId: String? = existingTaskPendingTask.groupId
+                    if (groupId != null) runTasks(RunAllTasksFilter(groupId))
+                    else runTaskIfAbleTo(existingTaskPendingTask)
+
+                    return true
+                }
+            }
         }
+
         return false
     }
 

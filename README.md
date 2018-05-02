@@ -6,6 +6,10 @@ Remove the difficulty in making offline-first Android apps. Sync your offline de
 
 ![project logo](misc/wendy_logo.jpg)
 
+[Read the official announcement of Wendy](https://levibostian.com/blog/no-more-excuses-build-offline-apps/) to learn more about what it does and why to use it.
+
+iOS developer? [I created an iOS version of Wendy too!](https://github.com/levibostian/wendy-ios)
+
 ## What is Wendy?
 
 Wendy is an Android library designed to help you make your app offline-first. Use Wendy to define sync tasks, then Wendy will run those tasks periodically to keep your app's device offline data in sync with it's online remote storage.

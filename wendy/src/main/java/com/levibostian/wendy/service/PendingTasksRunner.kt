@@ -106,7 +106,7 @@ internal class PendingTasksRunner(val context: Context,
                 LogUtil.d("Task: $taskToRun ran successful.")
                 if (PendingTasksUtil.rerunCurrentlyRunningPendingTask(context)) {
                     LogUtil.d("Task: $taskToRun is set to re-run. Not deleting it.")
-                    pendingTasksManager.sendPendingTaskToEndOfTheLine(taskId)
+                    pendingTasksManager.updatePlaceInLine(taskId, PendingTasksUtil.getRerunCurrentlyRunningPendingTaskValue(context)!!)
                 } else {
                     LogUtil.d("Deleting task: $taskToRun.")
                     pendingTasksManager.deleteTask(taskId)

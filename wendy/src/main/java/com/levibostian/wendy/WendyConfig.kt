@@ -86,6 +86,9 @@ class WendyConfig {
             taskStatusListeners.add(TaskStatusListener(taskId, WeakReference(listener)))
 
             if (tasksRunner.currentlyRunningTask?.id?.equals(taskId) == true) listener.running(taskId)
+            Wendy.shared.getLatestError(taskId)?.let { latestError ->
+                listener.errorRecorded(taskId, latestError.errorMessage, latestError.errorId)
+            }
         }
     }
 
