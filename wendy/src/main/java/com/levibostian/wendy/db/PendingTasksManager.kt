@@ -16,17 +16,9 @@ internal class PendingTasksManager(context: Context) {
 
     private val db = PendingTasksDatabaseHelper.sharedInstance(context)
 
-    /**
-     * Note: If you attempt to add a [PendingTask] instance of a [PendingTask] that already exists, your request will be ignored and not written to the database.
-     */
     @Synchronized
     internal fun insertPendingTask(pendingTaskToAdd: PendingTask): PendingTask {
         if (pendingTaskToAdd.tag.isBlank()) throw RuntimeException("You need to set a unique tag for ${PendingTask::class.java.simpleName} instances.")
-
-        getExistingTask(pendingTaskToAdd)?.let { existingPersistedPendingTask ->
-            pendingTaskToAdd.fromSqlObject(existingPersistedPendingTask)
-            return pendingTaskToAdd
-        }
 
         val persistedPendingTask = PersistedPendingTask.fromPendingTask(pendingTaskToAdd)
 
@@ -72,9 +64,9 @@ internal class PendingTasksManager(context: Context) {
      * Note: It's assumed that you have checked if taskId exists.
      */
     @Synchronized
-    internal fun sendPendingTaskToEndOfTheLine(taskId: Long) {
+    internal fun updatePlaceInLine(taskId: Long, createdAt: Date) {
         db.use {
-            update(PersistedPendingTask.TABLE_NAME, PersistedPendingTask.COLUMN_CREATED_AT to Date().time)
+            update(PersistedPendingTask.TABLE_NAME, PersistedPendingTask.COLUMN_CREATED_AT to createdAt.time)
                     .whereArgs("(${PersistedPendingTask.COLUMN_ID} = $taskId)")
                     .exec()
         }
@@ -120,22 +112,43 @@ internal class PendingTasksManager(context: Context) {
     }
 
     @Synchronized
-    internal fun getExistingTask(pendingTask: PendingTask): PersistedPendingTask? {
+    internal fun getExistingTasks(pendingTask: PendingTask): List<PersistedPendingTask>? {
         return db.use {
+            var whereArgs = "${PersistedPendingTask.COLUMN_TAG} = '${pendingTask.tag}'"
+
+            pendingTask.groupId?.let { groupId ->
+                whereArgs += " AND (${PersistedPendingTask.COLUMN_GROUP_ID} = '$groupId')"
+            }
+            pendingTask.dataId?.let { dataId ->
+                whereArgs += " AND (${PersistedPendingTask.COLUMN_DATA_ID} = '$dataId')"
+            }
+
             select(PersistedPendingTask.TABLE_NAME)
-                    .whereArgs("${PersistedPendingTask.COLUMN_DATA_ID} = '${pendingTask.dataId}' AND " +
-                            "${PersistedPendingTask.COLUMN_TAG} = '${pendingTask.tag}'")
-                    .exec { parseOpt(classParser()) }
+                    .whereArgs(whereArgs)
+                    .orderBy(PersistedPendingTask.COLUMN_CREATED_AT, SqlOrderDirection.ASC)
+                    .exec {
+                        val result: List<PersistedPendingTask> = parseList(classParser())
+                        if (result.isEmpty()) null else result
+                    }
         }
     }
 
+    @Synchronized
+    internal fun getLastPendingTaskInGroup(groupId: String): PersistedPendingTask? {
+        return db.use {
+            select(PersistedPendingTask.TABLE_NAME)
+                    .whereArgs("${PersistedPendingTask.COLUMN_GROUP_ID} = '$groupId'")
+                    .orderBy(PersistedPendingTask.COLUMN_CREATED_AT, SqlOrderDirection.DESC)
+                    .exec { parseList(classParser<PersistedPendingTask>()).firstOrNull() }
+        }
+    }
+
+    @Synchronized
     internal fun getAllTasks(): List<PendingTask> {
         return db.use {
             select(PersistedPendingTask.TABLE_NAME)
                     .orderBy(PersistedPendingTask.COLUMN_CREATED_AT, SqlOrderDirection.ASC)
-                    .exec {
-                        parseList(classParser<PersistedPendingTask>()).map { it.getPendingTask() }
-                    }
+                    .exec { parseList(classParser<PersistedPendingTask>()).map { it.getPendingTask() } }
         }
     }
 

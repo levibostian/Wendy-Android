@@ -28,10 +28,6 @@ internal class PersistedPendingTask(var id: Long, // SQL primary key auto increm
         internal const val MANUALLY_RUN: Int = 1
         internal const val NOT_MANUALLY_RUN: Int = 0
 
-        // If you are to update this, make sure to update equals() and hashCode() functions in PendingTask.
-        // Update PendingTasksManager's getExistingTask too.
-        internal val UNIQUE_CONSTRAINT_COLUMNS = listOf(COLUMN_DATA_ID, COLUMN_TAG)
-
         internal fun fromPendingTask(pendingTask: PendingTask): PersistedPendingTask {
             return PersistedPendingTask(
                     0,
