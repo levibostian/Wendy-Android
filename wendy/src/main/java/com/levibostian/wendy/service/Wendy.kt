@@ -2,6 +2,9 @@ package com.levibostian.wendy.service
 
 import android.app.Application
 import android.content.Context
+import android.content.SharedPreferences
+import android.os.AsyncTask
+import android.preference.PreferenceManager
 import com.evernote.android.job.JobManager
 import com.levibostian.wendy.WendyConfig
 import com.levibostian.wendy.db.PendingTaskError
@@ -82,6 +85,9 @@ class Wendy private constructor(private val context: Context, internal val tasks
 
     internal var tasksManager: PendingTasksManager = PendingTasksManager(context)
     internal var runner: PendingTasksRunner = PendingTasksRunner(context, tasksManager)
+
+    private var runAllTasksAsyncTask: PendingTasksRunner.PendingTasksRunnerAllTasksAsyncTask? = null
+    private var runGivenSetTasksAsyncTask: PendingTasksRunner.PendingTasksRunnerGivenSetTasksAsyncTask? = null
 
     /**
      * Call when you have a new [PendingTask] that you would like to register to Wendy to run.
@@ -177,11 +183,13 @@ class Wendy private constructor(private val context: Context, internal val tasks
      *
      * *Note:* This will run all tasks even if you use [WendyConfig.automaticallyRunTasks] to enable/disable running of all the [PendingTask]s.
      *
-     * @param groupId Limit running of the tasks to only tasks of this specific group id.
+     * @param filter Limit running of the tasks to match the criteria outlined in [RunAllTasksFilter] object.
      * @throws [RuntimeException] when in [WendyConfig.strict] mode and you say that your [PendingTask] was [PendingTaskResult.SUCCESSFUL] when you have an unresolved error recorded for that [PendingTask].
      */
     fun runTasks(filter: RunAllTasksFilter?) {
-        PendingTasksRunner.PendingTasksRunnerAllTasksAsyncTask(runner, tasksManager).execute(filter)
+        runAllTasksAsyncTask = PendingTasksRunner.PendingTasksRunnerAllTasksAsyncTask(runner, tasksManager).apply {
+            execute(filter)
+        }
     }
 
     /**
@@ -201,7 +209,9 @@ class Wendy private constructor(private val context: Context, internal val tasks
             throw RuntimeException("Task is not able to manually run. Task: $pendingTask")
         }
 
-        PendingTasksRunner.PendingTasksRunnerGivenSetTasksAsyncTask(runner).execute(taskId)
+        runGivenSetTasksAsyncTask = PendingTasksRunner.PendingTasksRunnerGivenSetTasksAsyncTask(runner).apply {
+            execute(taskId)
+        }
     }
 
     /**
@@ -329,10 +339,70 @@ class Wendy private constructor(private val context: Context, internal val tasks
     }
 
     /**
+     * Stop the task runner and clear all of the [PendingTask]s added to Wendy.
+     *
+     * This function was written with the intention of using when a user of your app is logged out and you want to clear all of the data associated with that user.
+     *
+     * This function will stop the task runner any tasks, deletes all of the data from the task database, and deletes all the data stored in 
+     */
+    fun clear(complete: () -> Unit?) {
+        ClearAsyncTask(runAllTasksAsyncTask, runGivenSetTasksAsyncTask, tasksManager, PreferenceManager.getDefaultSharedPreferences(context), { error ->
+            error?.let {
+                LogUtil.d("Error deleting data: $it")
+                throw it
+            }
+            LogUtil.d("Data cleared successfully.")
+            complete()
+        })
+    }
+
+    /**
      * Get all errors that currently exist for [PendingTask]s.
      */
     fun getAllErrors(): List<PendingTaskError> {
         return tasksManager.getAllErrors()
+    }
+
+    private class ClearAsyncTask(private val runAllTasksAsyncTask: PendingTasksRunner.PendingTasksRunnerAllTasksAsyncTask?,
+                                 private val runGivenSetTasksAsyncTask: PendingTasksRunner.PendingTasksRunnerGivenSetTasksAsyncTask?,
+                                 private val tasksManager: PendingTasksManager,
+                                 private val sharedPreferences: SharedPreferences,
+                                 private val complete: (error: Throwable?) -> Unit?): AsyncTask<Unit?, Unit?, Unit?>() {
+
+        private var doInBackgroundError: Throwable? = null
+
+        override fun doInBackground(vararg params: Unit?): Unit? {
+            try {
+                LogUtil.d("Cancel running all PendingTasks.")
+                runAllTasksAsyncTask?.cancel(true)
+                LogUtil.d("Cancel running given set of PendingTasks.")
+                runGivenSetTasksAsyncTask?.cancel(true)
+
+                LogUtil.d("Deleting database.")
+                tasksManager.clear()
+
+                LogUtil.d("Deleting SharedPreferences entries.")
+                val sharedPrefsToDelete: ArrayList<String> = ArrayList()
+                sharedPreferences.all.forEach {
+                    if (it.key.startsWith(PendingTasksUtil.PREFIX)) sharedPrefsToDelete.add(it.key)
+                }
+                sharedPreferences.edit().apply {
+                    sharedPrefsToDelete.forEach { remove(it) }
+                    commit()
+                }
+            } catch (e: Throwable) {
+                doInBackgroundError = e
+            }
+
+            return null
+        }
+
+        override fun onPostExecute(result: Unit?) {
+            super.onPostExecute(result)
+
+            complete(doInBackgroundError)
+        }
+
     }
 
 }

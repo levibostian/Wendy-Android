@@ -6,7 +6,7 @@ import java.util.*
 
 internal object PendingTasksUtil {
 
-    private const val PREFIX = "WENDY_PREFS_"
+    internal const val PREFIX = "WENDY_PREFS_"
     private const val RERUN_CURRENTLY_RUNNING_PENDING_TASK_KEY = "${PREFIX}RERUN_CURRENTLY_RUNNING_PENDING_TASK_KEY"
 
     internal fun rerunCurrentlyRunningPendingTask(context: Context): Boolean {

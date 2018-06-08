@@ -2,6 +2,11 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
+repositories {
+    jcenter()
+    google()
+    mavenCentral()
+}
 android {
     compileSdkVersion 27
     buildToolsVersion "27.0.3"
@@ -29,13 +34,11 @@ dependencies {
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    implementation "com.android.support:support-compat:27.1.0"
-    implementation 'com.android.support:appcompat-v7:27.1.0'
-    implementation 'com.android.support:recyclerview-v7:27.1.0'
+    def supportLibVersion = "27.1.1"
+    implementation "com.android.support:support-compat:$supportLibVersion"
+    implementation "com.android.support:appcompat-v7:$supportLibVersion"
+    implementation "com.android.support:recyclerview-v7:$supportLibVersion"
     testImplementation 'junit:junit:4.12'
     implementation project(':wendy')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-}
-repositories {
-    mavenCentral()
 }
