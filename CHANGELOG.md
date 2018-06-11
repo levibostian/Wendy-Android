@@ -1,3 +1,12 @@
+### [0.2.0-alpha] 2018-06-11
+
+### Added
+- Method added to stop the task runner and delete all Wendy databases and shared preferences. Used to "reset" Wendy if your app user decides to logout of the app, for example.
+- README.md docs have been improved to include how to provide dependencies to your `PendingTask` instances to perform tasks such as API calls and working with a database.
+
+### Changed
+- Compile version for library updated to SDK 28 (Android P).
+
 ## [0.1.3-alpha] - 2018-05-02
 ### Fixed
 - When adding a TaskStatusListener for a PendingTask, check if there is an error for the PendingTask and call the listener if there is.
