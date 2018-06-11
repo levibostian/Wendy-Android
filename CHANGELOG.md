@@ -1,3 +1,12 @@
+### [0.2.1-alpha] 2018-06-11
+
+### Fixed
+- Fix RuntimeException while deleting SQLite database.
+
+### Added
+- Wendy `.clear()` has an async and sync version.
+- **Breaking Change** `Wendy.clear()` has been renamed to `Wendy.clearAsync()`. `Wendy.clear()` is the synchronous version now.
+
 ### [0.2.0-alpha] 2018-06-11
 
 ### Added
