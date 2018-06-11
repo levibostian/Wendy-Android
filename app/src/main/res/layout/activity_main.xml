@@ -49,6 +49,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Run all tasks"/>
+
+        <Button
+            android:id="@+id/activity_main_clear_all_data_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Clear"/>
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView

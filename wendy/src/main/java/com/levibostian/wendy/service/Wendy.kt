@@ -346,14 +346,19 @@ class Wendy private constructor(private val context: Context, internal val tasks
      * This function will stop the task runner any tasks, deletes all of the data from the task database, and deletes all the data stored in 
      */
     fun clear(complete: () -> Unit?) {
-        ClearAsyncTask(runAllTasksAsyncTask, runGivenSetTasksAsyncTask, tasksManager, PreferenceManager.getDefaultSharedPreferences(context), { error ->
+        LogUtil.d("Cancel running all PendingTasks.")
+        runAllTasksAsyncTask?.cancel(true)
+        LogUtil.d("Cancel running given set of PendingTasks.")
+        runGivenSetTasksAsyncTask?.cancel(true)
+
+        ClearAsyncTask(tasksManager, PreferenceManager.getDefaultSharedPreferences(context), { error ->
             error?.let {
                 LogUtil.d("Error deleting data: $it")
                 throw it
             }
             LogUtil.d("Data cleared successfully.")
             complete()
-        })
+        }).execute()
     }
 
     /**
@@ -363,9 +368,7 @@ class Wendy private constructor(private val context: Context, internal val tasks
         return tasksManager.getAllErrors()
     }
 
-    private class ClearAsyncTask(private val runAllTasksAsyncTask: PendingTasksRunner.PendingTasksRunnerAllTasksAsyncTask?,
-                                 private val runGivenSetTasksAsyncTask: PendingTasksRunner.PendingTasksRunnerGivenSetTasksAsyncTask?,
-                                 private val tasksManager: PendingTasksManager,
+    private class ClearAsyncTask(private val tasksManager: PendingTasksManager,
                                  private val sharedPreferences: SharedPreferences,
                                  private val complete: (error: Throwable?) -> Unit?): AsyncTask<Unit?, Unit?, Unit?>() {
 
@@ -373,11 +376,6 @@ class Wendy private constructor(private val context: Context, internal val tasks
 
         override fun doInBackground(vararg params: Unit?): Unit? {
             try {
-                LogUtil.d("Cancel running all PendingTasks.")
-                runAllTasksAsyncTask?.cancel(true)
-                LogUtil.d("Cancel running given set of PendingTasks.")
-                runGivenSetTasksAsyncTask?.cancel(true)
-
                 LogUtil.d("Deleting database.")
                 tasksManager.clear()
 
