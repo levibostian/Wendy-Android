@@ -12,7 +12,7 @@ import com.levibostian.wendy.util.LogUtil
 import org.jetbrains.anko.db.*
 import java.util.*
 
-internal class PendingTasksManager(context: Context) {
+internal class PendingTasksManager(private val context: Context) {
 
     private val db = PendingTasksDatabaseHelper.sharedInstance(context)
 
@@ -228,6 +228,11 @@ internal class PendingTasksManager(context: Context) {
             val numberOfRowsEffected = delete(PendingTaskError.TABLE_NAME, "${PendingTaskError.COLUMN_TASK_ID} = $taskId")
             numberOfRowsEffected > 0
         }
+    }
+
+    @Synchronized
+    internal fun clear() {
+        if (!context.deleteDatabase(PendingTasksDatabaseHelper.DATABASE_NAME)) throw RuntimeException("Wendy database did not delete successfully.")
     }
 
 }

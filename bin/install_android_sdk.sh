@@ -7,6 +7,6 @@ unzip -qq -n $HOME/android-sdk-dl/sdk-tools.zip -d $HOME/android-sdk
 # Install or update Android SDK components (will not do anything if already up to date thanks to the cache mechanism)
 echo y | $HOME/android-sdk/tools/bin/sdkmanager 'tools' > /dev/null
 echo y | $HOME/android-sdk/tools/bin/sdkmanager 'platform-tools' > /dev/null
-echo y | $HOME/android-sdk/tools/bin/sdkmanager 'build-tools;27.1.0' > /dev/null
-echo y | $HOME/android-sdk/tools/bin/sdkmanager 'platforms;android-27' > /dev/null
+echo y | $HOME/android-sdk/tools/bin/sdkmanager 'build-tools;28.0.0' > /dev/null
+echo y | $HOME/android-sdk/tools/bin/sdkmanager 'platforms;android-28' > /dev/null
 echo y | $HOME/android-sdk/tools/bin/sdkmanager 'extras;google;m2repository' > /dev/null

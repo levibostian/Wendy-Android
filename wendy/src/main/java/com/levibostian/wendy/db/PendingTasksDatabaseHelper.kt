@@ -3,16 +3,14 @@ package com.levibostian.wendy.db
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import com.levibostian.wendy.db.migrations.Migration1
-import com.levibostian.wendy.extension.ForeignKey
 import com.levibostian.wendy.extension.createTable
-import com.levibostian.wendy.service.PendingTask
 import com.levibostian.wendy.util.LogUtil
 import org.jetbrains.anko.db.*
 
-internal class PendingTasksDatabaseHelper(applicationContext: Context) : ManagedSQLiteOpenHelper(applicationContext, PendingTasksDatabaseHelper.TABLE_NAME, null, 2) {
+internal class PendingTasksDatabaseHelper(applicationContext: Context) : ManagedSQLiteOpenHelper(applicationContext, PendingTasksDatabaseHelper.DATABASE_NAME, null, 2) {
 
     companion object {
-        const val TABLE_NAME = "WendyPendingTasksDatabase"
+        const val DATABASE_NAME = "WendyPendingTasksDatabase"
         private var instance: PendingTasksDatabaseHelper? = null
 
         @Synchronized fun sharedInstance(applicationContext: Context): PendingTasksDatabaseHelper {

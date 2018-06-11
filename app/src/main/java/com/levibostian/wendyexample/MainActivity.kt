@@ -6,6 +6,7 @@ import android.os.Handler
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import android.support.v7.widget.LinearLayoutManager
+import android.widget.Toast
 
 import com.curiosityio.wendyexample.R
 import com.levibostian.wendy.WendyConfig
@@ -20,6 +21,7 @@ class MainActivity : AppCompatActivity(), TaskRunnerListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
 
         activity_main_create_pending_task_button.setOnClickListener {
@@ -43,6 +45,13 @@ class MainActivity : AppCompatActivity(), TaskRunnerListener {
 
         activity_main_run_all_tasks_button.setOnClickListener {
             Wendy.sharedInstance().runTasks(null)
+        }
+        activity_main_clear_all_data_button.setOnClickListener {
+            Toast.makeText(this, "Clearing data...", Toast.LENGTH_SHORT).show()
+            Wendy.shared.clear {
+                refreshListOfTasks()
+                Toast.makeText(this, "Data cleared!", Toast.LENGTH_SHORT).show()
+            }
         }
 
         activity_main_tasks_recyclerview.layoutManager = LinearLayoutManager(this)
