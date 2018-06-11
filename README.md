@@ -2,6 +2,8 @@
 
 # Wendy
 
+<img src="Logotype primary.png" width="60%" height="60%" />
+
 Remove the difficulty in making offline-first Android apps. Sync your offline device storage with remote cloud storage easily. When building offline-first mobile apps, there are *lots* of use cases to think about. Wendy takes care of handling them all for you!
 
 ![project logo](misc/wendy_logo.jpg)
