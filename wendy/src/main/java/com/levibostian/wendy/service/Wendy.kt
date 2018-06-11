@@ -339,26 +339,59 @@ class Wendy private constructor(private val context: Context, internal val tasks
     }
 
     /**
-     * Stop the task runner and clear all of the [PendingTask]s added to Wendy.
+     * Async version of [clear].
      *
-     * This function was written with the intention of using when a user of your app is logged out and you want to clear all of the data associated with that user.
-     *
-     * This function will stop the task runner any tasks, deletes all of the data from the task database, and deletes all the data stored in 
+     * @see clear
      */
-    fun clear(complete: () -> Unit?) {
-        LogUtil.d("Cancel running all PendingTasks.")
-        runAllTasksAsyncTask?.cancel(true)
-        LogUtil.d("Cancel running given set of PendingTasks.")
-        runGivenSetTasksAsyncTask?.cancel(true)
+    fun clearAsync(complete: () -> Unit?) {
+        cancelTaskRunner()
 
-        ClearAsyncTask(tasksManager, PreferenceManager.getDefaultSharedPreferences(context), { error ->
+        ClearAsyncTask(this, { error ->
             error?.let {
-                LogUtil.d("Error deleting data: $it")
+                LogUtil.d("Error deleting data.")
                 throw it
             }
             LogUtil.d("Data cleared successfully.")
             complete()
         }).execute()
+    }
+
+    /**
+     * Stop the task runner and clear all of the [PendingTask]s added to Wendy.
+     *
+     * This function was written with the intention of using when a user of your app is logged out and you want to clear all of the data associated with that user.
+     *
+     * This function will stop the task runner any tasks, deletes all of the data from the task database, and deletes all the data stored in SharedPreferences.
+     *
+     * @see clearAsync For async version.
+     */
+    fun clear() {
+        cancelTaskRunner()
+
+        deleteAllData()
+    }
+
+    private fun deleteAllData() {
+        LogUtil.d("Deleting database.")
+        tasksManager.clear()
+
+        LogUtil.d("Deleting SharedPreferences entries.")
+        val sharedPrefsToDelete: ArrayList<String> = ArrayList()
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        sharedPreferences.all.forEach {
+            if (it.key.startsWith(PendingTasksUtil.PREFIX)) sharedPrefsToDelete.add(it.key)
+        }
+        sharedPreferences.edit().apply {
+            sharedPrefsToDelete.forEach { remove(it) }
+            commit()
+        }
+    }
+
+    private fun cancelTaskRunner() {
+        LogUtil.d("Cancel running all PendingTasks.")
+        runAllTasksAsyncTask?.cancel(true)
+        LogUtil.d("Cancel running given set of PendingTasks.")
+        runGivenSetTasksAsyncTask?.cancel(true)
     }
 
     /**
@@ -368,26 +401,14 @@ class Wendy private constructor(private val context: Context, internal val tasks
         return tasksManager.getAllErrors()
     }
 
-    private class ClearAsyncTask(private val tasksManager: PendingTasksManager,
-                                 private val sharedPreferences: SharedPreferences,
+    private class ClearAsyncTask(private val wendy: Wendy,
                                  private val complete: (error: Throwable?) -> Unit?): AsyncTask<Unit?, Unit?, Unit?>() {
 
         private var doInBackgroundError: Throwable? = null
 
         override fun doInBackground(vararg params: Unit?): Unit? {
             try {
-                LogUtil.d("Deleting database.")
-                tasksManager.clear()
-
-                LogUtil.d("Deleting SharedPreferences entries.")
-                val sharedPrefsToDelete: ArrayList<String> = ArrayList()
-                sharedPreferences.all.forEach {
-                    if (it.key.startsWith(PendingTasksUtil.PREFIX)) sharedPrefsToDelete.add(it.key)
-                }
-                sharedPreferences.edit().apply {
-                    sharedPrefsToDelete.forEach { remove(it) }
-                    commit()
-                }
+                wendy.deleteAllData()
             } catch (e: Throwable) {
                 doInBackgroundError = e
             }

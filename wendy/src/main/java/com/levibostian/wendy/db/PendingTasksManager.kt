@@ -232,7 +232,7 @@ internal class PendingTasksManager(private val context: Context) {
 
     @Synchronized
     internal fun clear() {
-        if (!context.deleteDatabase(PendingTasksDatabaseHelper.DATABASE_NAME)) throw RuntimeException("Wendy database did not delete successfully.")
+        context.deleteDatabase(PendingTasksDatabaseHelper.DATABASE_NAME)
     }
 
 }

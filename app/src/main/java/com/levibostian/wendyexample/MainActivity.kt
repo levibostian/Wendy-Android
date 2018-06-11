@@ -16,6 +16,7 @@ import com.levibostian.wendy.service.Wendy
 import com.levibostian.wendy.types.ReasonPendingTaskSkipped
 import com.levibostian.wendyexample.extension.closeKeyboard
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
 
 class MainActivity : AppCompatActivity(), TaskRunnerListener {
 
@@ -48,9 +49,17 @@ class MainActivity : AppCompatActivity(), TaskRunnerListener {
         }
         activity_main_clear_all_data_button.setOnClickListener {
             Toast.makeText(this, "Clearing data...", Toast.LENGTH_SHORT).show()
-            Wendy.shared.clear {
+
+            // This way we can test both the async and sync version.
+            if (Random().nextFloat() >= 0.5f) {
+                Wendy.shared.clear()
                 refreshListOfTasks()
-                Toast.makeText(this, "Data cleared!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Data cleared (sync)!", Toast.LENGTH_SHORT).show()
+            } else {
+                Wendy.shared.clearAsync {
+                    refreshListOfTasks()
+                    Toast.makeText(this, "Data cleared (async)!", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
