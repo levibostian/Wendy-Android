@@ -183,6 +183,8 @@ fun createNewGroceryStoreItem(itemName: String) {
 
 Done! Wendy takes care of all the rest. Wendy will try to run your task right away but if you're offline or in a spotty Internet connection, Wendy will wait and try again later.
 
+Oh, and lastly. If your user decides to logout of your app and you want to delete all of Wendy's data, you can do so via `Wendy.shared.clear()` or `Wendy.shared.clearAsync()`. 
+
 There is a document on [best practices when using Wendy](BEST_PRACTICES.md). Check that out to answer your questions you have about why Wendy works the way that it does.
 
 ## Example app
