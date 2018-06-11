@@ -94,11 +94,16 @@ class CreateGroceryListItemPendingTask(groceryStoreItemId: Long) : PendingTask(
 
     val GROCERY_STORE_ITEM_TEXT_TOO_LONG = "GROCERY_STORE_ITEM_TEXT_TOO_LONG"
 
+    lateinit var localDatabase: Database
+
     companion object {
-        fun blank(): CreateGroceryListItemPendingTask { return CreateGroceryListItemPendingTask(0) }
+        // Use the `blank()` static constructor to provide dependencies to the PendingTask.
+        fun blank(database: Database): CreateGroceryListItemPendingTask = CreateGroceryListItemPendingTask(0).apply {
+            localDatabase = database
+        }
     }
 
-    @WorkerThread abstract fun runTask(): PendingTaskResult
+    override fun runTask(): PendingTaskResult
         // Here, instantiate your dependencies, talk to your DB, your API, etc. Run the task.
         // After the task succeeds or fails, return to Wendy the result.
 
@@ -126,17 +131,19 @@ class CreateGroceryListItemPendingTask(groceryStoreItemId: Long) : PendingTask(
 Each time that you create a new subclass of `PendingTask`, you need to add that to the `PendingTasksFactory` you created. Your `GroceryListPendingTasksFactory` should look like this now:
 
 ```
-class GroceryListPendingTasksFactory : PendingTasksFactory {
+class GroceryListPendingTasksFactory(private val database: Database): PendingTasksFactory {
 
     override fun getTask(tag: String): PendingTask? {
         return when (tag) {
-            CreateGroceryListItemPendingTask::class.java.simpleName -> CreateGroceryListItem.blank()
+            CreateGroceryListItemPendingTask::class.java.simpleName -> CreateGroceryListItem.blank(database)
             else -> null
         }
     }
 
 }
 ```
+
+*Note:* As you can see, we are providing an instance of `Database` to the `PendingTasksFactory` above which is then passed to `CreateGroceryListItem.blank(database)`. Feel free to use this design pattern of providing dependencies or use a tool such as [Dagger](https://google.github.io/dagger/) to inject the dependencies into your `PendingTasksFactory` instance.
 
 Just about done.
 
