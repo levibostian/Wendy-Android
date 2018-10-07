@@ -2,6 +2,8 @@ package com.levibostian.wendy.db
 
 import com.levibostian.wendy.extension.ForeignKey
 import com.levibostian.wendy.service.PendingTask
+import org.jetbrains.anko.db.RowParser
+import org.jetbrains.anko.db.rowParser
 
 /**
  * Use this class to save a [PendingTask] instance to a SQLite database. [PendingTask] is designed to be a developer facing object.
@@ -29,6 +31,20 @@ class PendingTaskError(internal var id: Long, // internal use only for SQL terms
         internal const val COLUMN_CREATED_AT = "created_at"
         internal const val COLUMN_ERROR_MESSAGE = "error_message"
         internal const val COLUMN_ERROR_ID = "error_id"
+
+        /**
+         * Using a Anko-SQLite [RowParser] as a custom SQLite row parser for this class. Wendy used to use `classParser` which is a generated [RowParser] but as of this time, Anko's `classParser` does not support Kotlin optionals.
+         */
+        internal val rowParser: RowParser<PendingTaskError> = object : RowParser<PendingTaskError> {
+            override fun parseRow(columns: Array<Any?>): PendingTaskError {
+                return PendingTaskError(
+                        columns[0] as Long,
+                        columns[1] as Long,
+                        columns[2] as Long,
+                        columns[3] as String?,
+                        columns[4] as String?)
+            }
+        }
 
         internal val UNIQUE_CONSTRAINT_COLUMNS = listOf(COLUMN_TASK_ID)
 

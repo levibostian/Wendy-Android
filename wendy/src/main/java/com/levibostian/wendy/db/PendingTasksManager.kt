@@ -54,7 +54,7 @@ internal class PendingTasksManager(private val context: Context) {
                     .whereArgs("(${PersistedPendingTask.COLUMN_GROUP_ID} = '${pendingTask.groupId}')")
                     .orderBy(PersistedPendingTask.COLUMN_CREATED_AT, SqlOrderDirection.ASC)
                     .exec {
-                        val tasksInGroup: List<PersistedPendingTask> = parseList(classParser())
+                        val tasksInGroup: List<PersistedPendingTask> = parseList(PersistedPendingTask.rowParser)
                         tasksInGroup[0].id == taskId
                     }
         }
@@ -77,7 +77,7 @@ internal class PendingTasksManager(private val context: Context) {
         return db.use {
             select(PersistedPendingTask.TABLE_NAME)
                     .whereArgs("(${PersistedPendingTask.COLUMN_TAG} = '$tag')")
-                    .exec { parseList(classParser<PersistedPendingTask>()).firstOrNull()?.getPendingTask() }
+                    .exec { parseList(PersistedPendingTask.rowParser).firstOrNull()?.getPendingTask() }
         }
     }
 
@@ -107,7 +107,7 @@ internal class PendingTasksManager(private val context: Context) {
         return db.use {
             select(PendingTaskError.TABLE_NAME)
                     .whereArgs("${PendingTaskError.COLUMN_TASK_ID} = $pendingTaskId")
-                    .exec { parseOpt(classParser()) }
+                    .exec { parseOpt(PendingTaskError.rowParser) }
         }
     }
 
@@ -127,7 +127,7 @@ internal class PendingTasksManager(private val context: Context) {
                     .whereArgs(whereArgs)
                     .orderBy(PersistedPendingTask.COLUMN_CREATED_AT, SqlOrderDirection.ASC)
                     .exec {
-                        val result: List<PersistedPendingTask> = parseList(classParser())
+                        val result: List<PersistedPendingTask> = parseList(PersistedPendingTask.rowParser)
                         if (result.isEmpty()) null else result
                     }
         }
@@ -139,7 +139,7 @@ internal class PendingTasksManager(private val context: Context) {
             select(PersistedPendingTask.TABLE_NAME)
                     .whereArgs("${PersistedPendingTask.COLUMN_GROUP_ID} = '$groupId'")
                     .orderBy(PersistedPendingTask.COLUMN_CREATED_AT, SqlOrderDirection.DESC)
-                    .exec { parseList(classParser<PersistedPendingTask>()).firstOrNull() }
+                    .exec { parseList(PersistedPendingTask.rowParser).firstOrNull() }
         }
     }
 
@@ -148,7 +148,7 @@ internal class PendingTasksManager(private val context: Context) {
         return db.use {
             select(PersistedPendingTask.TABLE_NAME)
                     .orderBy(PersistedPendingTask.COLUMN_CREATED_AT, SqlOrderDirection.ASC)
-                    .exec { parseList(classParser<PersistedPendingTask>()).map { it.getPendingTask() } }
+                    .exec { parseList(PersistedPendingTask.rowParser).map { it.getPendingTask() } }
         }
     }
 
@@ -157,7 +157,7 @@ internal class PendingTasksManager(private val context: Context) {
         return db.use {
             select(PersistedPendingTask.TABLE_NAME)
                     .whereArgs("${PersistedPendingTask.COLUMN_ID} = $taskId")
-                    .exec { parseOpt(classParser()) }
+                    .exec { parseOpt(PersistedPendingTask.rowParser) }
         }
     }
 
@@ -166,7 +166,7 @@ internal class PendingTasksManager(private val context: Context) {
         return db.use {
             select(PendingTaskError.TABLE_NAME)
                     .orderBy(PendingTaskError.COLUMN_CREATED_AT, SqlOrderDirection.ASC)
-                    .exec { parseList(classParser<PendingTaskError>()).map {
+                    .exec { parseList(PendingTaskError.rowParser).map {
                         it.pendingTask = getPendingTaskTaskById(it.taskId)!!
                         it
                     }}
@@ -178,7 +178,7 @@ internal class PendingTasksManager(private val context: Context) {
         return db.use {
             select(PersistedPendingTask.TABLE_NAME)
                     .whereArgs("${PersistedPendingTask.COLUMN_ID} = $taskId")
-                    .exec { parseOpt(classParser<PersistedPendingTask>())?.getPendingTask() }
+                    .exec { parseOpt(PersistedPendingTask.rowParser)?.getPendingTask() }
         }
     }
 
@@ -194,7 +194,7 @@ internal class PendingTasksManager(private val context: Context) {
             select(PersistedPendingTask.TABLE_NAME)
                     .whereArgs(whereArgs)
                     .orderBy(PersistedPendingTask.COLUMN_CREATED_AT, SqlOrderDirection.ASC)
-                    .exec { parseList(classParser<PersistedPendingTask>()).firstOrNull()?.getPendingTask() }
+                    .exec { parseList(PersistedPendingTask.rowParser).firstOrNull()?.getPendingTask() }
         }
     }
 
@@ -209,7 +209,7 @@ internal class PendingTasksManager(private val context: Context) {
 
             select(PersistedPendingTask.TABLE_NAME)
                     .whereArgs(whereArgs)
-                    .exec { parseList(classParser<PersistedPendingTask>()).size }
+                    .exec { parseList(PersistedPendingTask.rowParser).size }
         }
     }
 

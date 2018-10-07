@@ -1,6 +1,7 @@
 package com.levibostian.wendy.db
 
 import com.levibostian.wendy.service.PendingTask
+import org.jetbrains.anko.db.RowParser
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -24,6 +25,21 @@ internal class PersistedPendingTask(var id: Long, // SQL primary key auto increm
         internal const val COLUMN_GROUP_ID = "group_id"
         internal const val COLUMN_DATA_ID = "data_id"
         internal const val COLUMN_TAG = "tag"
+
+        /**
+         * Using a Anko-SQLite [RowParser] as a custom SQLite row parser for this class. Wendy used to use `classParser` which is a generated [RowParser] but as of this time, Anko's `classParser` does not support Kotlin optionals.
+         */
+        internal val rowParser: RowParser<PersistedPendingTask> = object : RowParser<PersistedPendingTask> {
+            override fun parseRow(columns: Array<Any?>): PersistedPendingTask {
+                return PersistedPendingTask(
+                        columns[0] as Long,
+                        columns[1] as Long,
+                        (columns[2] as Int) == MANUALLY_RUN, // SQLite does not support Boolean. Parse column as Int (how SQL stores it) and then convert to Boolean for constructor.
+                        columns[3] as String?,
+                        columns[4] as String?,
+                        columns[5] as String)
+            }
+        }
 
         internal const val MANUALLY_RUN: Int = 1
         internal const val NOT_MANUALLY_RUN: Int = 0
