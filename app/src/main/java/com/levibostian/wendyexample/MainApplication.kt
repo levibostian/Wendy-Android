@@ -2,7 +2,7 @@ package com.levibostian.wendyexample
 
 import android.annotation.SuppressLint
 import android.app.Application
-import com.curiosityio.wendyexample.BuildConfig
+import com.levibostian.wendyexample.BuildConfig
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context

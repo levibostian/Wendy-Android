@@ -8,7 +8,7 @@ import android.support.v4.app.NotificationManagerCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.widget.Toast
 
-import com.curiosityio.wendyexample.R
+import com.levibostian.wendyexample.R
 import com.levibostian.wendy.WendyConfig
 import com.levibostian.wendy.listeners.TaskRunnerListener
 import com.levibostian.wendy.service.PendingTask

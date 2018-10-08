@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import com.curiosityio.wendyexample.R
+import com.levibostian.wendyexample.R
 import com.levibostian.wendy.WendyConfig
 import com.levibostian.wendy.extension.addTaskStatusListenerForTask
 import com.levibostian.wendy.extension.doesErrorExist
