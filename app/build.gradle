@@ -42,6 +42,11 @@ android {
     lintOptions {
         warningsAsErrors true
     }
+
+    // Temporary fix until alpha10. https://stackoverflow.com/a/52523819/1486374
+    packagingOptions {
+        exclude 'META-INF/proguard/androidx-annotations.pro'
+    }
 }
 
 dependencies {
@@ -49,10 +54,15 @@ dependencies {
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    def supportLibVersion = "28.0.0-alpha3"
+    def supportLibVersion = "28.0.0"
     implementation "com.android.support:support-compat:$supportLibVersion"
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
     implementation "com.android.support:recyclerview-v7:$supportLibVersion"
+
+    def workVersion = "1.0.0-alpha09"
+    implementation "android.arch.work:work-runtime:$workVersion"
+    androidTestImplementation "android.arch.work:work-testing:$workVersion"
+
     testImplementation 'junit:junit:4.12'
     implementation project(':wendy')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"

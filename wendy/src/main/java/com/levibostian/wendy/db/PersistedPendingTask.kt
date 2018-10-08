@@ -34,7 +34,7 @@ internal class PersistedPendingTask(var id: Long, // SQL primary key auto increm
                 return PersistedPendingTask(
                         columns[0] as Long,
                         columns[1] as Long,
-                        (columns[2] as Int) == MANUALLY_RUN, // SQLite does not support Boolean. Parse column as Int (how SQL stores it) and then convert to Boolean for constructor.
+                        (columns[2] as Long).toInt() == MANUALLY_RUN, // SQLite does not support Boolean. Parse column as Int (how SQL stores it) and then convert to Boolean for constructor.
                         columns[3] as String?,
                         columns[4] as String?,
                         columns[5] as String)

@@ -40,7 +40,6 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.19.0'
 
-    implementation 'com.evernote:android-job:1.2.2'
     implementation "org.jetbrains.anko:anko-sqlite:0.10.7"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }

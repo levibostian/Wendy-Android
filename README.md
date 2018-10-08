@@ -181,25 +181,94 @@ fun createNewGroceryStoreItem(itemName: String) {
 }
 ```
 
-Done! Wendy takes care of all the rest. Wendy will try to run your task right away but if you're offline or in a spotty Internet connection, Wendy will wait and try again later.
+Great! You are using Wendy. When you add a new `PendingTask` to Wendy, Wendy will try to run your task right away. If it fails, however, you will need to tell Wendy to run your failed task again.
 
-Oh, and lastly. If your user decides to logout of your app and you want to delete all of Wendy's data, you can do so via `Wendy.shared.clear()` or `Wendy.shared.clearAsync()`. 
+There are 2 ways to do this.
+
+1. If your `PendingTask` is set to `manuallyRun`, you will need to call `Wendy.shared.runTask(taskId)` with the `taskId`. `manuallyRun` tasks are good for instant messaging apps, for example. If your user tried to send a message to someone and it failed, they can press the "Resend" button next to a message and you ask Wendy to run that task for you again. If your task is set to `manuallyRun`, you *must* call `Wendy.shared.runTask(taskId)` yourself or that particular task will not run again. Wendy will not run that task for you automatically.
+
+2. If your task is *not* set to `manuallyRun`, then you have the ability to use Wendy's task runner to run your failed tasks for you. All you need to do is call `Wendy.shared.runTasks(null)` and that's it! Wendy will run through all of the tasks that have not yet been successfully run and run them.
+
+I tend to call `Wendy.shared.runTasks(null)` in the `onStart()` function of my `Activity` that is launched by my app to run tasks when the app is launched. You can call `Wendy.shared.runTasks(null)` anywhere you would like.
+
+Also, it is highly recommended to use an Android job scheduler to periodically run your Wendy tasks for you.
+
+Two libraries that are recommended to use are [evernote/android-job](https://github.com/evernote/android-job) and [Android Jetpack WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager/).
+
+Here is an example `Job` to run Wendy every 30 minutes using [evernote/android-job](https://github.com/evernote/android-job):
+
+```kotlin
+import com.evernote.android.job.JobRequest
+import com.evernote.android.job.Job
+import com.levibostian.wendy.service.Wendy
+import java.util.concurrent.TimeUnit
+
+class PendingTasksJob: Job() {
+
+    override fun onRunJob(params: Params): Job.Result {
+        // Here, we always return SUCCESS. We do not want to return FAILED because then this worker will be rescheduled to run again. We do not want that as we are running this task periodically anyway.
+        Wendy.sharedInstance().runTasks(null)
+
+        return Job.Result.SUCCESS
+    }
+
+    companion object {
+        const val TAG = "WendyPendingTasksJob"
+
+        fun scheduleJob() {
+            JobRequest.Builder(PendingTasksJob.TAG)
+                    .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
+                    .setPeriodic(TimeUnit.MINUTES.toMillis(30), TimeUnit.MINUTES.toMillis(5))
+                    .setRequirementsEnforced(true)
+                    .setUpdateCurrent(true)
+                    .build()
+                    .schedule()
+        }
+    }
+}
+```
+
+Here is an example `Worker` to run Wendy every 30 minutes using [Android Jetpack WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager/):
+
+```kotlin
+import android.content.Context
+import androidx.work.Worker
+import androidx.work.WorkerParameters
+import com.levibostian.wendy.service.Wendy
+
+class PendingTasksWorker(context: Context, params: WorkerParameters): Worker(context, params) {
+
+    override fun doWork(): Result {
+        Wendy.sharedInstance().runTasks(null)
+
+        // Here, we always return SUCCESS. We do not want to return FAILED because then this worker will be rescheduled to run again. We do not want that as we are running this task periodically anyway.
+        return Result.SUCCESS
+    }
+
+}
+```
+
+```kotlin
+val pendingTaskWorkerBuilder = PeriodicWorkRequest.Builder(PendingTasksWorker::class.java, 30, TimeUnit.MINUTES)
+val constraints = Constraints.Builder()
+        .setRequiredNetworkType(NetworkType.CONNECTED)
+        .build()
+WorkManager.getInstance().enqueue(pendingTaskWorkerBuilder.setConstraints(constraints).build())
+```
+
+## Best practices
 
 There is a document on [best practices when using Wendy](BEST_PRACTICES.md). Check that out to answer your questions you have about why Wendy works the way that it does.
 
-## Example app
+## Additional features
 
-This library comes with an example app. You may open it in Android Studio to test it out and see how the code works with the library.
+* Logout, clear data
 
-## Documentation
+If your user decides to logout of your app and you want to delete all of Wendy's data, you can do so via `Wendy.shared.clear()` or `Wendy.shared.clearAsync()`.
 
-There is a Javadoc (Kotlin doc, actually) for all of the public classes of Wendy [hosted here](https://levibostian.github.io/Wendy-Android/wendy/) for the `master` branch.
+* Configure Wendy
 
-The docs are installed in the `docs/` directory and can be generated from any branch with command: `./gradlew dokka`
-
-## Configure Wendy
-
-Use the class `WendyConfig` to configure the behavior of Wendy.
+Use the class `WendyConfig` to configure the behavior of Wendy. Mostly for setting up debugging.
 
 * Register listeners to Wendy task runner.
 
@@ -224,6 +293,16 @@ I recommend doing the following:
 ```
 WendyConfig.debug = BuildConfig.DEBUG
 ```
+
+## Example app
+
+This library comes with an example app. You may open it in Android Studio to test it out and see how the code works with the library.
+
+## Documentation
+
+There is a Javadoc (Kotlin doc, actually) for all of the public classes of Wendy [hosted here](https://levibostian.github.io/Wendy-Android/wendy/) for the `master` branch.
+
+The docs are installed in the `docs/` directory and can be generated from any branch with command: `./gradlew dokka`
 
 ## Author
 

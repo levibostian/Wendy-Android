@@ -5,15 +5,12 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.AsyncTask
 import android.preference.PreferenceManager
-import com.evernote.android.job.JobManager
 import com.levibostian.wendy.WendyConfig
 import com.levibostian.wendy.db.PendingTaskError
 import com.levibostian.wendy.db.PendingTasksManager
 import com.levibostian.wendy.db.PersistedPendingTask
 import com.levibostian.wendy.extension.getPendingTask
 import com.levibostian.wendy.extension.getTaskAssertPopulated
-import com.levibostian.wendy.job.PendingTaskJobCreator
-import com.levibostian.wendy.job.PendingTasksJob
 import com.levibostian.wendy.listeners.PendingTaskStatusListener
 import com.levibostian.wendy.listeners.TaskRunnerListener
 import com.levibostian.wendy.logErrorRecorded
@@ -77,10 +74,6 @@ class Wendy private constructor(private val context: Context, internal val tasks
     }
 
     private fun init(context: Context) {
-        val jobManager = JobManager.create(context)
-        jobManager.addJobCreator(PendingTaskJobCreator())
-
-        PendingTasksJob.scheduleJob()
     }
 
     internal var tasksManager: PendingTasksManager = PendingTasksManager(context)

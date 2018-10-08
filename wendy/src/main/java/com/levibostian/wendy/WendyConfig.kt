@@ -17,10 +17,8 @@ class WendyConfig {
 
     companion object {
         /**
-         * Turn on and off the ability for Wendy to automatically run all of the [PendingTask]s set to not manually run for you.
-         * This takes place when you:
+         * Turn on and off the ability for Wendy to automatically run a [PendingTask] for you when:
          * 1. Add a task to Wendy via [Wendy.addTask].
-         * 2. The periodically scheduled execution of all [PendingTask]s by Wendy.
          *
          * *Note:* You can still have this property set to false and manually call [Wendy.runTasks] to run all tasks.
          */
