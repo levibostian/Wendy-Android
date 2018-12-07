@@ -90,13 +90,14 @@ class CreateGroceryListItemPendingTask(groceryStoreItemId: Long) : PendingTask(
     manuallyRun = false,
     dataId = groceryStoreItemId.toString(),
     groupId = null,
-    tag = CreateGroceryListItemPendingTask::class.java.simpleName) {
+    tag = TAG) {
 
     val GROCERY_STORE_ITEM_TEXT_TOO_LONG = "GROCERY_STORE_ITEM_TEXT_TOO_LONG"
 
     lateinit var localDatabase: Database
 
     companion object {
+    	const val TAG = "Creates a grocery store item" 
         // Use the `blank()` static constructor to provide dependencies to the PendingTask.
         fun blank(database: Database): CreateGroceryListItemPendingTask = CreateGroceryListItemPendingTask(0).apply {
             localDatabase = database
@@ -135,7 +136,7 @@ class GroceryListPendingTasksFactory(private val database: Database): PendingTas
 
     override fun getTask(tag: String): PendingTask? {
         return when (tag) {
-            CreateGroceryListItemPendingTask::class.java.simpleName -> CreateGroceryListItem.blank(database)
+            CreateGroceryListItemPendingTask.TAG -> CreateGroceryListItem.blank(database)
             else -> null
         }
     }
