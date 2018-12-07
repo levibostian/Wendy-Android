@@ -45,7 +45,7 @@ If you can help it, no, do not. Run sync operations whenever you can. The code i
 
 If you need to run async operations, here is some inspiration thanks to [evernote/android-job](https://github.com/evernote/android-job/wiki/FAQ#how-can-i-run-async-operations-in-a-job)'s wiki page.
 
-```
+```kotlin
 public class FooPendingTask extends PendingTask {
 
     @Override
@@ -86,12 +86,12 @@ Let's say that your API only allows grocery store items to be of String length 1
 
 Here is our `CreateGroceryStoreItemPendingTask`:
 
-```
+```kotlin
 class CreateGroceryStoreItemPendingTask(groceryStoreItem: String): PendingTask(
         manually_run = false,
         data_id = groceryStoreItem,
         group_id = null,
-        tag = CreateGroceryStoreItemPendingTask::class.java.simpleName) {
+        tag = "Creates a grocery store item") {
 
     override fun runTask(): PendingTaskResult {
         val apiCallResult = performApiCallToCreateGroceryStoreItem(data_id)
@@ -121,12 +121,12 @@ If `runTask()` encountered an error that requires the user's attention, then her
 
 In your `runTask()` when an error occurs, record an error to Wendy so you can refer to it later in your app. Below is an edited `runTask()` function including the recording of an error:
 
-```
+```kotlin
 class CreateGroceryStoreItemPendingTask(groceryStoreItem: String): PendingTask(
         manually_run = false,
         data_id = groceryStoreItem,
         group_id = null,
-        tag = CreateGroceryStoreItemPendingTask::class.java.simpleName) {
+        tag = "Creates a grocery store item") {
 
     companion object {
         const val GROCERY_STORE_ITEM_TOO_LONG_ERROR = "groceryStoreItemTooLongErrorCode"
