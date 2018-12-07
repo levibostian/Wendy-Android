@@ -23,6 +23,29 @@ Wendy requires each subclass of `PendingTask` is designed to perform 1 task. The
 
 * Every instance of a `PendingTask` subclass must **all** have a `groupId` or **all** must *not* have a `groupId`.
 
+## PendingTask TAGs should not change
+
+When you choose a `TAG` for a pending task Wendy stores this `TAG` in it's internal DB, so if you
+change the `TAG` and Wendy tries to run a task with this old tag not mapped in the `PendingTasksFactory`
+you will receive an error.
+As [suggested by Levi](https://github.com/levibostian/Wendy-Android/issues/47#issuecomment-442848635), you should use
+a descriptive `TAG` name and don't change, so class `simpleName` is **NOT** a good
+idea if you plan to rename the class.
+
+But in case you did rename the `TAG` or really need to change the `TAG`,
+you can always do something like this in your app `PendingTasksFactory`:
+```kotlin
+    override fun getTask(tag: String): PendingTask? {
+        return when (tag) {
+            // My old tag that i plan to remove when i think it's safe
+            "WOW_SUCH_OLD_TAG_MUCH_LEGACY",
+            CreateGroceryListItemPendingTask.TAG -> CreateGroceryListItem.blank(database)
+            else -> null
+        }
+    }
+```
+
+
 # How do I delete a PendingTask that I added to Wendy?
 
 You don't delete `PendingTask`s. That is on purpose.
