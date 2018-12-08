@@ -8,7 +8,7 @@ class WendyExamplePendingTasksFactory : PendingTasksFactory {
 
     override fun getTask(tag: String): PendingTask {
         return when (tag) {
-            FooPendingTask::class.java.simpleName -> FooPendingTask.blank()
+            FooPendingTask.TAG -> FooPendingTask.blank()
             else -> throw RuntimeException("No idea what task that is... tag: $tag")
         }
     }
