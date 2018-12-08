@@ -61,7 +61,7 @@ For this getting started guide, lets work through an example for you to follow a
 
 First, create a `PendingTasksFactory` subclass that stores all of your app's Wendy `PendingTask`s. It's pretty blank to start but we will add more to it later. ([I plan to remove this requirement in the future](https://github.com/levibostian/Wendy-Android/issues/17). PRs welcome 😄)
 
-```
+```kotlin
 class GroceryListPendingTasksFactory : PendingTasksFactory {
 
     override fun getTask(tag: String): PendingTask? {
@@ -73,7 +73,7 @@ class GroceryListPendingTasksFactory : PendingTasksFactory {
 
 Add the following code to your Application `onCreate()`:
 
-```
+```kotlin
 Wendy.init(this, GroceryListPendingTasksFactory())
 ```
 
@@ -85,18 +85,19 @@ In our Grocery List app, we want to allow users to create new grocery items. Eve
 
 Let's create our first `PendingTask` subclass for creating new grocery items.
 
-```
+```kotlin
 class CreateGroceryListItemPendingTask(groceryStoreItemId: Long) : PendingTask(
     manuallyRun = false,
     dataId = groceryStoreItemId.toString(),
     groupId = null,
-    tag = CreateGroceryListItemPendingTask::class.java.simpleName) {
+    tag = TAG) {
 
     val GROCERY_STORE_ITEM_TEXT_TOO_LONG = "GROCERY_STORE_ITEM_TEXT_TOO_LONG"
 
     lateinit var localDatabase: Database
 
     companion object {
+    	const val TAG = "Creates a grocery store item" 
         // Use the `blank()` static constructor to provide dependencies to the PendingTask.
         fun blank(database: Database): CreateGroceryListItemPendingTask = CreateGroceryListItemPendingTask(0).apply {
             localDatabase = database
@@ -130,12 +131,12 @@ class CreateGroceryListItemPendingTask(groceryStoreItemId: Long) : PendingTask(
 
 Each time that you create a new subclass of `PendingTask`, you need to add that to the `PendingTasksFactory` you created. Your `GroceryListPendingTasksFactory` should look like this now:
 
-```
+```kotlin
 class GroceryListPendingTasksFactory(private val database: Database): PendingTasksFactory {
 
     override fun getTask(tag: String): PendingTask? {
         return when (tag) {
-            CreateGroceryListItemPendingTask::class.java.simpleName -> CreateGroceryListItem.blank(database)
+            CreateGroceryListItemPendingTask.TAG -> CreateGroceryListItem.blank(database)
             else -> null
         }
     }
@@ -149,7 +150,7 @@ Just about done.
 
 Let's check out the code you wrote in your Grocery List app when your users want to create a new grocery store item in the app.
 
-```
+```kotlin
 fun createNewGroceryStoreItem(itemName: String) {
     // First thing you need to do to make a mobile app offline-first is to save it to the device's storage.
     // Below, we are saving to a `localDatabase`. Whatever that is. It could be whatever you wish. Sqlite, Realm, shared preferences, whatever you decide to use works. After we save to the database, we probably get an ID back to reference that piece of data in the database. This ID could be the shared preferences key, the database row ID, it doesn't matter. Simply some way to identify that piece of data *to query later*.
@@ -203,25 +204,25 @@ Use the class `WendyConfig` to configure the behavior of Wendy.
 
 * Register listeners to Wendy task runner.
 
-```
+```kotlin
 WendyConfig.addTaskRunnerListener(listener)
 ```
 
 * Register listeners to a specific Wendy `PendingTask`.
 
-```
+```kotlin
 WendyConfig.addTaskStatusListenerForTask(pendingTaskId, listener)
 ```
 
 * Have Wendy log debug statements as it's running during development.
 
-```
-WendyConfig.debug = true # default is false.
+```kotlin
+WendyConfig.debug = true // default is false.
 ```
 
 I recommend doing the following:
 
-```
+```kotlin
 WendyConfig.debug = BuildConfig.DEBUG
 ```
 

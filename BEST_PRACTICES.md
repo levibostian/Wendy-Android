@@ -23,6 +23,29 @@ Wendy requires each subclass of `PendingTask` is designed to perform 1 task. The
 
 * Every instance of a `PendingTask` subclass must **all** have a `groupId` or **all** must *not* have a `groupId`.
 
+## PendingTask TAGs should not change
+
+When you choose a `TAG` for a pending task Wendy stores this `TAG` in it's internal DB, so if you
+change the `TAG` and Wendy tries to run a task with this old tag not mapped in the `PendingTasksFactory`
+you will receive an error.
+As [suggested by Levi](https://github.com/levibostian/Wendy-Android/issues/47#issuecomment-442848635), you should use
+a descriptive `TAG` name and don't change, so class `simpleName` is **NOT** a good
+idea if you plan to rename the class.
+
+But in case you did rename the `TAG` or really need to change the `TAG`,
+you can always do something like this in your app `PendingTasksFactory`:
+```kotlin
+    override fun getTask(tag: String): PendingTask? {
+        return when (tag) {
+            // My old tag that i plan to remove when i think it's safe
+            "WOW_SUCH_OLD_TAG_MUCH_LEGACY",
+            CreateGroceryListItemPendingTask.TAG -> CreateGroceryListItem.blank(database)
+            else -> null
+        }
+    }
+```
+
+
 # How do I delete a PendingTask that I added to Wendy?
 
 You don't delete `PendingTask`s. That is on purpose.
@@ -45,7 +68,7 @@ If you can help it, no, do not. Run sync operations whenever you can. The code i
 
 If you need to run async operations, here is some inspiration thanks to [evernote/android-job](https://github.com/evernote/android-job/wiki/FAQ#how-can-i-run-async-operations-in-a-job)'s wiki page.
 
-```
+```kotlin
 public class FooPendingTask extends PendingTask {
 
     @Override
@@ -86,12 +109,12 @@ Let's say that your API only allows grocery store items to be of String length 1
 
 Here is our `CreateGroceryStoreItemPendingTask`:
 
-```
+```kotlin
 class CreateGroceryStoreItemPendingTask(groceryStoreItem: String): PendingTask(
         manually_run = false,
         data_id = groceryStoreItem,
         group_id = null,
-        tag = CreateGroceryStoreItemPendingTask::class.java.simpleName) {
+        tag = "Creates a grocery store item") {
 
     override fun runTask(): PendingTaskResult {
         val apiCallResult = performApiCallToCreateGroceryStoreItem(data_id)
@@ -121,12 +144,12 @@ If `runTask()` encountered an error that requires the user's attention, then her
 
 In your `runTask()` when an error occurs, record an error to Wendy so you can refer to it later in your app. Below is an edited `runTask()` function including the recording of an error:
 
-```
+```kotlin
 class CreateGroceryStoreItemPendingTask(groceryStoreItem: String): PendingTask(
         manually_run = false,
         data_id = groceryStoreItem,
         group_id = null,
-        tag = CreateGroceryStoreItemPendingTask::class.java.simpleName) {
+        tag = "Creates a grocery store item") {
 
     companion object {
         const val GROCERY_STORE_ITEM_TOO_LONG_ERROR = "groceryStoreItemTooLongErrorCode"

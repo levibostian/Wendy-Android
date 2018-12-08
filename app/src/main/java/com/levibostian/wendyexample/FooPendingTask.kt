@@ -14,6 +14,7 @@ class FooPendingTask(manuallyRun: Boolean,
     companion object {
         fun blank(): FooPendingTask { return FooPendingTask(false, null, "") }
 
+        const val TAG = "Foo task that generates random errors"
         const val RANDOMLY_GENERATED_ERROR_ERROR_ID = "randomlyGeneratedErrorErrorId"
     }
 
