@@ -56,6 +56,21 @@ class WendyConfig {
          * @see TaskRunnerListener to learn more about what callbacks to expect.
          */
         fun addTaskRunnerListener(listener: TaskRunnerListener) = taskRunnerListeners.add(WeakReference(listener))
+
+        /**
+         * Removes a listener instance added one or more times with [addTaskRunnerListener]
+         * Note: if you added the same instance more than one times, this function will remove all of them
+         *
+         * @param listener the listener instance to be removed
+         *
+         * @return true if the listener was removed at least once, false if it was collected by the GC
+         * or you didn't added it before
+         */
+        fun removeTaskRunnerListener(listener: TaskRunnerListener): Boolean {
+            return taskRunnerListeners
+                .removeAll { it.get()?.equals(listener) ?: false }
+        }
+
         internal fun getTaskRunnerListeners(): List<TaskRunnerListener> {
             if (Looper.getMainLooper().thread != Thread.currentThread()) throw RuntimeException("You must be on UI thread.")
             return taskRunnerListeners
@@ -89,6 +104,20 @@ class WendyConfig {
             Wendy.shared.getLatestError(taskId)?.let { latestError ->
                 listener.errorRecorded(taskId, latestError.errorMessage, latestError.errorId)
             }
+        }
+
+        /**
+         * Removes a listener instance added one or more times with [addTaskStatusListenerForTask]
+         * Note: if you added the same instance more than one times, this function will remove all of them
+         *
+         * @param listener the listener instance to be removed
+         *
+         * @return true if the listener was removed at least once, false if it was collected by the GC
+         * or you didn't added it before
+         */
+        fun removeTaskStatusListener(listener: PendingTaskStatusListener): Boolean {
+            return taskStatusListeners
+                .removeAll { it.listener.get()?.equals(listener) ?: false }
         }
     }
 

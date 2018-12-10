@@ -87,6 +87,26 @@ This takes place when you:</p>
 <p>Listen to updates about a specific task and how it is going. Get updated when this specific task gets run by the task runner, then if it fails/succeeds/gets skipped.</p>
 </td>
 </tr>
+<tr>
+<td>
+<p><a href="remove-task-runner-listener.html">removeTaskRunnerListener</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">removeTaskRunnerListener</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.WendyConfig.Companion$removeTaskRunnerListener(com.levibostian.wendy.listeners.TaskRunnerListener)/listener">listener</span><span class="symbol">:</span>&nbsp;<a href="../../com.levibostian.wendy.listeners/-task-runner-listener/index.html"><span class="identifier">TaskRunnerListener</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Removes a listener instance added one or more times with <a href="add-task-runner-listener.html">addTaskRunnerListener</a>
+Note: if you added the same instance more than one times, this function will remove all of them</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="remove-task-status-listener.html">removeTaskStatusListener</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">removeTaskStatusListener</span><span class="symbol">(</span><span class="identifier" id="com.levibostian.wendy.WendyConfig.Companion$removeTaskStatusListener(com.levibostian.wendy.listeners.PendingTaskStatusListener)/listener">listener</span><span class="symbol">:</span>&nbsp;<a href="../../com.levibostian.wendy.listeners/-pending-task-status-listener/index.html"><span class="identifier">PendingTaskStatusListener</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Removes a listener instance added one or more times with <a href="add-task-status-listener-for-task.html">addTaskStatusListenerForTask</a>
+Note: if you added the same instance more than one times, this function will remove all of them</p>
+</td>
+</tr>
 </tbody>
 </table>
 </BODY>
