@@ -59,7 +59,7 @@ class WendyConfig {
 
         /**
          * Removes a listener instance added one or more times with [addTaskRunnerListener]
-         * Note: if you added the same instance more than one times, this function will remove all of them
+         * Note: if you added the same instance more than one time, this function will remove all of them
          *
          * @param listener the listener instance to be removed
          *
@@ -108,7 +108,7 @@ class WendyConfig {
 
         /**
          * Removes a listener instance added one or more times with [addTaskStatusListenerForTask]
-         * Note: if you added the same instance more than one times, this function will remove all of them
+         * Note: if you added the same instance more than one time, this function will remove all of them
          *
          * @param listener the listener instance to be removed
          *
