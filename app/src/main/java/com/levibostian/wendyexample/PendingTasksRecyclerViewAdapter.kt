@@ -1,7 +1,7 @@
 package com.levibostian.wendyexample
 
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +17,7 @@ import com.levibostian.wendy.service.Wendy
 import java.text.SimpleDateFormat
 import java.util.*
 
-class PendingTasksRecyclerViewAdapter(val data: List<PendingTask>) : RecyclerView.Adapter<PendingTasksRecyclerViewAdapter.ViewHolder>() {
+class PendingTasksRecyclerViewAdapter(val data: List<PendingTask>) : androidx.recyclerview.widget.RecyclerView.Adapter<PendingTasksRecyclerViewAdapter.ViewHolder>() {
 
     interface Listener {
         fun manuallyRunPressed(task: PendingTask)
@@ -26,7 +26,7 @@ class PendingTasksRecyclerViewAdapter(val data: List<PendingTask>) : RecyclerVie
 
     var listener: Listener? = null
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
         var idTextView: TextView = view.findViewById(R.id.id_textview)
         var dataIdTextView: TextView = view.findViewById(R.id.data_id_textview)
         var groupIdTextView: TextView = view.findViewById(R.id.group_id_textview)

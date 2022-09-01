@@ -1,6 +1,6 @@
 package com.levibostian.wendy.listeners
 
-import android.support.annotation.UiThread
+import androidx.annotation.UiThread
 import com.levibostian.wendy.WendyConfig
 import com.levibostian.wendy.service.PendingTask
 import com.levibostian.wendy.types.ReasonPendingTaskSkipped

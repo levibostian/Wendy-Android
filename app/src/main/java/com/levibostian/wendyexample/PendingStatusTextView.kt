@@ -3,7 +3,7 @@ package com.levibostian.wendyexample
 import android.annotation.TargetApi
 import android.content.Context
 import android.os.Build.VERSION_CODES.LOLLIPOP
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import android.util.AttributeSet
 import android.widget.TextView
 import com.levibostian.wendy.listeners.PendingTaskStatusListener

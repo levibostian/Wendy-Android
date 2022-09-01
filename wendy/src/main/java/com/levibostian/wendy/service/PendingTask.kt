@@ -1,6 +1,6 @@
 package com.levibostian.wendy.service
 
-import android.support.annotation.WorkerThread
+import androidx.annotation.WorkerThread
 import com.levibostian.wendy.db.PendingTaskFields
 import com.levibostian.wendy.db.PersistedPendingTask
 import com.levibostian.wendy.types.PendingTaskResult

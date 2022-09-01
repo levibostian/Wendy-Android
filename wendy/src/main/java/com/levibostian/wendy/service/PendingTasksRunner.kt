@@ -5,7 +5,7 @@ import android.os.AsyncTask
 import com.levibostian.wendy.types.ReasonPendingTaskSkipped
 import com.levibostian.wendy.util.LogUtil
 import kotlin.collections.ArrayList
-import android.support.annotation.WorkerThread
+import androidx.annotation.WorkerThread
 import com.levibostian.wendy.*
 import com.levibostian.wendy.db.PendingTasksManager
 import com.levibostian.wendy.db.PersistedPendingTask
@@ -134,6 +134,7 @@ internal class PendingTasksRunner(val context: Context,
 
     internal class PendingTasksRunnerAllTasksAsyncTask(val runner: PendingTasksRunner, val pendingTasksManager: PendingTasksManager) : AsyncTask<RunAllTasksFilter?, Int, Int>() {
 
+        @Deprecated("Deprecated in Java")
         @Suppress("UNCHECKED_CAST")
         @WorkerThread
         override fun doInBackground(vararg params: RunAllTasksFilter?): Int {
@@ -153,6 +154,7 @@ internal class PendingTasksRunner(val context: Context,
         /**
          * You may send a list of [PendingTask] IDs to run or simply send 1.
          */
+        @Deprecated("Deprecated in Java")
         @Suppress("UNCHECKED_CAST")
         @WorkerThread
         override fun doInBackground(vararg params: Long?): Int {
