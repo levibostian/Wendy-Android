@@ -346,14 +346,14 @@ class Wendy private constructor(private val context: Context, internal val tasks
     fun clearAsync(complete: () -> Unit?) {
         cancelTaskRunner()
 
-        ClearAsyncTask(this, { error ->
+        ClearAsyncTask(this) { error ->
             error?.let {
                 LogUtil.d("Error deleting data.")
                 throw it
             }
             LogUtil.d("Data cleared successfully.")
             complete()
-        }).execute()
+        }.execute()
     }
 
     /**
@@ -406,6 +406,7 @@ class Wendy private constructor(private val context: Context, internal val tasks
 
         private var doInBackgroundError: Throwable? = null
 
+        @Deprecated("Deprecated in Java")
         override fun doInBackground(vararg params: Unit?): Unit? {
             try {
                 wendy.deleteAllData()
@@ -416,6 +417,7 @@ class Wendy private constructor(private val context: Context, internal val tasks
             return null
         }
 
+        @Deprecated("Deprecated in Java")
         override fun onPostExecute(result: Unit?) {
             super.onPostExecute(result)
 

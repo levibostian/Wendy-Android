@@ -2,9 +2,15 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Wendy-Android.iml" filepath="$PROJECT_DIR$/Wendy-Android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/wendy/wendy.iml" filepath="$PROJECT_DIR$/wendy/wendy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Wendy-Android.iml" filepath="$PROJECT_DIR$/.idea/modules/Wendy-Android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Wendy-Android.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Wendy-Android.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Wendy-Android.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Wendy-Android.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Wendy-Android.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Wendy-Android.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Wendy-Android.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Wendy-Android.app.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/wendy/Wendy-Android.wendy.iml" filepath="$PROJECT_DIR$/.idea/modules/wendy/Wendy-Android.wendy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/wendy/Wendy-Android.wendy.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/wendy/Wendy-Android.wendy.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/wendy/Wendy-Android.wendy.main.iml" filepath="$PROJECT_DIR$/.idea/modules/wendy/Wendy-Android.wendy.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/wendy/Wendy-Android.wendy.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/wendy/Wendy-Android.wendy.unitTest.iml" />
     </modules>
   </component>
 </project>

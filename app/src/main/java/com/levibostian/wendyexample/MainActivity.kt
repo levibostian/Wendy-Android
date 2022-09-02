@@ -1,11 +1,11 @@
 package com.levibostian.wendyexample
 
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.app.NotificationCompat
-import android.support.v4.app.NotificationManagerCompat
-import android.support.v7.widget.LinearLayoutManager
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.widget.Toast
 
 import com.curiosityio.wendyexample.R
@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity(), TaskRunnerListener {
             }
         }
 
-        activity_main_tasks_recyclerview.layoutManager = LinearLayoutManager(this)
+        activity_main_tasks_recyclerview.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         refreshListOfTasks()
 
         WendyConfig.addTaskRunnerListener(this)
