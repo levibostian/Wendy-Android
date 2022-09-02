@@ -1,4 +1,8 @@
-[![Release](https://jitpack.io/v/levibostian/Wendy-Android.svg)](https://jitpack.io/#levibostian/Wendy-Android)
+This Fork has been updated slightly in an attempt to make it compatible with newer Android versions, it is available on JitPack:
+
+[![](https://jitpack.io/v/appoly/Wendy-Android.svg)](https://jitpack.io/#appoly/Wendy-Android)
+
+The original is available here: [![Release](https://jitpack.io/v/levibostian/Wendy-Android.svg)](https://jitpack.io/#levibostian/Wendy-Android)
 
 # Wendy
 
